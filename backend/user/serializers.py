@@ -2,25 +2,32 @@ from rest_framework import serializers
 from .models import User
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserPatchSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
-    wins = serializers.IntegerField(read_only=True)
-    losses = serializers.IntegerField(read_only=True)
-    username = serializers.CharField(required=True, min_length=4, max_length=100)
     email = serializers.EmailField(required=True, max_length=100)
     nickname = serializers.CharField(required=True, min_length=4, max_length=100)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'nickname', 'wins', 'losses']
+        fields = ['id', 'email', 'nickname']
 
 
-class UserPostSerializer(UserSerializer):
+class UserGetSerializer(UserPatchSerializer):
+    username = serializers.CharField(required=True, min_length=4, max_length=100)
+    wins = serializers.IntegerField(read_only=True)
+    losses = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = UserPatchSerializer.Meta.model
+        fields = UserPatchSerializer.Meta.fields + ['username', 'wins', 'losses']
+
+
+class UserPostSerializer(UserGetSerializer):
     password = serializers.CharField(write_only=True, min_length=4, max_length=100)
 
     class Meta:
-        model = UserSerializer.Meta.model
-        fields = UserSerializer.Meta.fields + ['password']
+        model = UserGetSerializer.Meta.model
+        fields = UserGetSerializer.Meta.fields + ['password']
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
