@@ -21,3 +21,7 @@ class UserPostSerializer(UserSerializer):
     class Meta:
         model = UserSerializer.Meta.model
         fields = UserSerializer.Meta.fields + ['password']
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
