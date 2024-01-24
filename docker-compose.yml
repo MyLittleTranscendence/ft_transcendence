@@ -25,5 +25,12 @@ services:
       - POSTGRES_PASSWORD=${SQL_PASSWORD}
     ports:
       - "5432:5432"
+  nginx:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+
 volumes:
   postgres_db:
