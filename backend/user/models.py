@@ -21,7 +21,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    nickname = models.CharField(max_length=100)
+    nickname = models.CharField(max_length=100, unique=True)
     profileImageUrl = models.CharField(max_length=100, blank=False, default="default_png")
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
