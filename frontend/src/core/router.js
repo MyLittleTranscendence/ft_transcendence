@@ -1,29 +1,33 @@
-const router = (routes) => {
-  const handleRouteChange = () => {
+export default class Router {
+  static routes = {};
+
+  static init(routes) {
+    window.addEventListener("popstate", Router.handleRouteChange);
+    window.addEventListener("click", Router.handleLinkClick);
+    Router.routes = routes;
+    Router.handleRouteChange();
+  }
+
+  static handleRouteChange() {
     const path = window.location.pathname;
-    const route = routes[path];
+    const route = Router.routes[path];
     if (route) {
       route.render();
     }
-  };
+  }
 
-  const navigate = (path) => {
-    window.history.pushState({}, "", path);
-    handleRouteChange();
-  };
-
-  window.addEventListener("popstate", () => handleRouteChange());
-  document.addEventListener("click", (e) => {
+  static handleLinkClick(e) {
     if (e.target.matches("[data-link]")) {
       e.preventDefault();
       const clickedURL = e.target.href;
       if (clickedURL !== window.location.href) {
-        navigate(clickedURL);
+        Router.navigate(clickedURL);
       }
     }
-  });
+  }
 
-  handleRouteChange();
-};
-
-export default router;
+  static navigate(path) {
+    window.history.pushState({}, "", path);
+    Router.routes[path].render();
+  }
+}
