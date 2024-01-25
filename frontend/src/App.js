@@ -1,5 +1,5 @@
-import Router from "./core/Router.js";
-import Component from "./core/Component.js";
+import Router from "./core/router/Router.js";
+import Component from "./core/component/Component.js";
 import LandingPage from "./pages/LandingPage.js";
 import SignUpPage from "./pages/SignUpPage.js";
 import LobbyPage from "./pages/LobbyPage.js";
