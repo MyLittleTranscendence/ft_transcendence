@@ -93,3 +93,6 @@ local_db/
 
 # PyCharm
 .idea/
+
+# node
+node_modules/
