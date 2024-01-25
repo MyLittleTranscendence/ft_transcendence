@@ -1,4 +1,4 @@
 import App from "./App.js";
 
-const app = new App(document.getElementById("app"));
+const app = new App(document.getElementById("root"));
 app.render();
