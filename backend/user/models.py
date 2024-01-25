@@ -27,6 +27,6 @@ def upload_to(instance, filename):
 
 class User(AbstractUser):
     nickname = models.CharField(max_length=100, unique=True)
-    profile_image = models.ImageField(upload_to=upload_to, default='default.png')
+    profile_image = models.ImageField(upload_to=upload_to, default='profile_images/default.png')
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
