@@ -1,4 +1,4 @@
-import router from "./core/router.js";
+import Router from "./core/Router.js";
 import Component from "./core/Component.js";
 import LandingPage from "./pages/LandingPage.js";
 import SignUpPage from "./pages/SignUpPage.js";
@@ -28,6 +28,6 @@ export default class App extends Component {
       "/profile": new ProfilePage(appDiv),
     };
 
-    router(routes);
+    Router.init(routes);
   }
 }
