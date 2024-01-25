@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers, permissions
@@ -11,6 +13,8 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+
+from user.views import UserProfileUpdateView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -36,6 +40,9 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('docs/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('api/users/<int:pk>/profile_image/', UserProfileUpdateView.as_view(), name='userprofile-update'),
 ]
 
 # urlpatterns += router.urls
+# if settings.DEBUG:
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
