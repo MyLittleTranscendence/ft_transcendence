@@ -38,10 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'user',
     'rest_framework_simplejwt',
     'rest_framework_docs',
-    'drf_yasg'
+    'drf_yasg',
+    'user'
 ]
 
 MIDDLEWARE = [
@@ -146,7 +146,9 @@ REST_FRAMEWORK = {
     ],
 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+
+    'EXCEPTION_HANDLER': 'backend.exception_handler.exception_handler',
 }
 
 LOGGING = {
@@ -166,3 +168,6 @@ LOGGING = {
 }
 
 AUTH_USER_MODEL = 'user.User'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -1,9 +1,8 @@
+import uuid
+
 from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.hashers import is_password_usable, make_password
 from django.contrib.auth.models import AbstractUser, User
 from django.db import models
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 
 
 class UserManager(BaseUserManager):
@@ -20,13 +19,14 @@ class UserManager(BaseUserManager):
         return user
 
 
+def upload_to(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+    return f'profile_images/{filename}'
+
+
 class User(AbstractUser):
     nickname = models.CharField(max_length=100, unique=True)
-    profileImageUrl = models.CharField(max_length=100, blank=False, default="default_png")
+    profile_image = models.ImageField(upload_to=upload_to, default='default.png')
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
-
-    # @receiver(pre_save, sender=User)
-    # def password_hashing(instance, **kwargs):
-    #     if not is_password_usable(instance.password):
-    #         instance.password = make_password(instance.password)
