@@ -1,3 +1,4 @@
-import App from './App.js';
+import App from "./App.js";
 
-new App(document.querySelector('#app'));
+const app = new App(document.getElementById("app"));
+app.render();
