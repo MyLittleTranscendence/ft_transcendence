@@ -1,7 +1,10 @@
-from .models import User
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, viewsets, status
+from rest_framework.parsers import MultiPartParser
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from user.serializers import UserGetSerializer,UserPatchSerializer, UserPostSerializer
+from user.serializers import UserGetSerializer, UserPatchSerializer, UserPostSerializer, UserProfileImageSerializer
+from .models import User
 
 
 class IsOwnerOrAdminUser(permissions.BasePermission):
@@ -30,3 +33,15 @@ class UserViewSet(viewsets.ModelViewSet):
             permission_classes = [permissions.IsAuthenticated]
         return [permission() for permission in permission_classes]
 
+
+class UserProfileUpdateView(APIView):
+    parser_classes = [MultiPartParser]
+    permission_classes = [IsOwnerOrAdminUser]
+
+    def put(self, request, pk):
+        user = User.objects.get(pk=pk)
+        serializer = UserProfileImageSerializer(user, data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

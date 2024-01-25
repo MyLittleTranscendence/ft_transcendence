@@ -16,10 +16,11 @@ class UserGetSerializer(UserPatchSerializer):
     username = serializers.CharField(required=True, min_length=4, max_length=100)
     wins = serializers.IntegerField(read_only=True)
     losses = serializers.IntegerField(read_only=True)
+    profile_image = serializers.ImageField(read_only=True)
 
     class Meta:
         model = UserPatchSerializer.Meta.model
-        fields = UserPatchSerializer.Meta.fields + ['username', 'wins', 'losses']
+        fields = UserPatchSerializer.Meta.fields + ['username', 'wins', 'losses', 'profile_image']
 
 
 class UserPostSerializer(UserGetSerializer):
@@ -32,3 +33,11 @@ class UserPostSerializer(UserGetSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
+
+class UserProfileImageSerializer(serializers.ModelSerializer):
+    profile_image = serializers.ImageField(use_url=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'profile_image']
