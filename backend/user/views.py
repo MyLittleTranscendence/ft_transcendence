@@ -41,7 +41,8 @@ class UserProfileUpdateView(APIView):
     def put(self, request, pk):
         user = User.objects.get(pk=pk)
         serializer = UserProfileImageSerializer(user, data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response(serializer.data)
+
