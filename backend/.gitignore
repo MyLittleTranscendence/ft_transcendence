@@ -68,6 +68,7 @@ ENV/
 env.bak/
 venv.bak/
 */.venv
+*/migrations
 
 # Spyder project settings
 .spyderproject
