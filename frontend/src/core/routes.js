@@ -6,7 +6,7 @@ import PvPGamePage from "../pages/PvPGamePage.js";
 import SignUpPage from "../pages/SignUpPage.js";
 import TournamentGamePage from "../pages/TournamentGamePage.js";
 
-export const routes = {
+const routes = {
   "/": (element) => new LobbyPage(element),
   "/landing": (element) => new LandingPage(element),
   "/sign-up": (element) => new SignUpPage(element),
@@ -15,3 +15,5 @@ export const routes = {
   "/my-page": (element) => new MyPage(element),
   "/profile": (element) => new ProfilePage(element),
 };
+
+export default routes;

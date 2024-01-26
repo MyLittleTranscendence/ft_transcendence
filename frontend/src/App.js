@@ -1,6 +1,6 @@
 import Component from "./core/Component.js";
 import router from "./core/router.js";
-import { routes } from "./core/routes.js";
+import routes from "./core/routes.js";
 
 export default class App extends Component {
   template() {

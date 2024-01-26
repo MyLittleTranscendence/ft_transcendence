@@ -14,6 +14,11 @@ const router = (routes) => {
     }
   };
 
+  const navigate = (path) => {
+    window.history.pushState({}, "", path);
+    handleRouteChange();
+  };
+
   const handleLinkClick = (e) => {
     if (e.target.matches("[data-link]")) {
       e.preventDefault();
@@ -27,11 +32,6 @@ const router = (routes) => {
   window.addEventListener("popstate", handleRouteChange);
   window.addEventListener("click", handleLinkClick);
 
-  const navigate = (path) => {
-    window.history.pushState({}, "", path);
-    handleRouteChange();
-  };
-
   handleRouteChange();
 
   routerInstance = { navigate };
@@ -40,3 +40,7 @@ const router = (routes) => {
 }; // IIFE를 사용하면 더 효율적
 
 export default router;
+
+/*
+const {navigate} = router();
+*/
