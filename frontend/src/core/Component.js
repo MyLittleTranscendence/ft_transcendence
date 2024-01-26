@@ -1,9 +1,9 @@
 export default class Component {
   $target; // 컴포넌트를 넣을 부모
 
-  $props;
+  props;
 
-  $state;
+  state;
 
   constructor($target, $props) {
     this.$target = $target;
