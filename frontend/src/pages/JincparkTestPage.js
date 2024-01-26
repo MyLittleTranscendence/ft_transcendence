@@ -1,5 +1,5 @@
-import Input from "../components/UI/Input.js";
 import Component from "../core/Component.js";
+import LoginForm from "../components/Login/LoginForm.js";
 
 export default class JincparkTestPage extends Component {
   template() {
@@ -7,14 +7,7 @@ export default class JincparkTestPage extends Component {
   }
 
   mounted() {
-    const component = new Input(this.$target.querySelector("#test"), {
-      type: "text",
-      id: "input test",
-      name: "name is for identifying this form when POST",
-      className: "",
-      placeholder: "hello world",
-      autocomplete: true,
-    });
-    component.render();
+    const loginForm = new LoginForm(this.$target.querySelector("#test"));
+    loginForm.render();
   }
 }
