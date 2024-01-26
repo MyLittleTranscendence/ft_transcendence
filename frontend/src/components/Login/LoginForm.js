@@ -4,17 +4,13 @@ import InfoInputGroup from "../UI/Input/InfoInputGroup.js";
 export default class LoginForm extends Component {
   template() {
     return `
-    <form>
-      <div
-        id="input-group-container"
-        class="container col d-flex align-items-center"
-      >
-      </div>
+    <form class="d-flex justify-content-center align-items-center">
+      <div id="input-group-container"></div>
     </form>`;
   }
 
   mounted() {
-    const formElement = this.$target.querySelector("#input-group-container");
+    const $form = this.$target.querySelector("#input-group-container");
 
     const idInputProps = {
       type: "text",
@@ -26,7 +22,7 @@ export default class LoginForm extends Component {
       required: true,
     };
     const pwInputProps = {
-      type: "text",
+      type: "password",
       id: "login-form-pw",
       name: "login-form",
       // value:
@@ -35,14 +31,14 @@ export default class LoginForm extends Component {
       required: true,
     };
 
-    const idInputGroup = new InfoInputGroup(formElement, {
-      lableText: "ID",
+    const idInputGroup = new InfoInputGroup($form, {
+      labelText: "ID",
       warningText: "ID does not exist",
       inputProps: idInputProps,
       holderId: "id-input-holder",
     });
-    const pwInputGroup = new InfoInputGroup(formElement, {
-      lableText: "PW",
+    const pwInputGroup = new InfoInputGroup($form, {
+      labelText: "PW",
       warningText: "Wrong password",
       inputProps: pwInputProps,
       holderId: "pw-input-holder",
