@@ -1,4 +1,4 @@
-import Input from "../components/Input.js";
+import Input from "../components/UI/Input.js";
 import Component from "../core/Component.js";
 
 export default class JincparkTestPage extends Component {

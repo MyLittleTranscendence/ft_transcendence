@@ -1,7 +1,7 @@
-import Component from "../core/Component.js";
-import appendCSSLink from "../utils/appendCSSLink.js";
+import Component from "../../core/Component.js";
+import appendCSSLink from "../../utils/appendCSSLink.js";
 
-appendCSSLink("src/components/Input.css");
+appendCSSLink("src/components/UI/Input.css");
 
 export default class Input extends Component {
   template() {
