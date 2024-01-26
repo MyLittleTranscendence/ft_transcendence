@@ -6,3 +6,4 @@ django-rest-framework-docs==0.1.7
 drf-yasg==1.21.7
 Pillow
 django-cors-headers
+requests

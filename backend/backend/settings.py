@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-e7dx@ldl=b#b)c$caq+@eh6pe4lk_6&=rorrvee4&=)7k&=0r)'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', "dummy-secret-key"),
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_docs',
     'drf_yasg',
-    'user'
+    'requests',
+    'user',
+    'custom_auth',
 ]
 
 MIDDLEWARE = [
@@ -209,3 +211,7 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS: True
+
+# 42 API
+CLIENT_ID_42 = os.environ.get('CLIENT_ID_42', "dummy")
+CLIENT_SECRET_42 = os.environ.get('CLIENT_SECRET_42', "dummy")
