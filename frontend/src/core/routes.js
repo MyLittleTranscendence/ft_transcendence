@@ -5,6 +5,7 @@ import ProfilePage from "../pages/ProfilePage.js";
 import PvPGamePage from "../pages/PvPGamePage.js";
 import SignUpPage from "../pages/SignUpPage.js";
 import TournamentGamePage from "../pages/TournamentGamePage.js";
+import JincparkTestPage from "../pages/JincparkTestPage.js";
 
 const routes = {
   "/": (element) => new LobbyPage(element),
@@ -14,6 +15,7 @@ const routes = {
   "/tournament": (element) => new TournamentGamePage(element),
   "/my-page": (element) => new MyPage(element),
   "/profile": (element) => new ProfilePage(element),
+  "/test-jincpark": (element) => new JincparkTestPage(element),
 };
 
 export default routes;
