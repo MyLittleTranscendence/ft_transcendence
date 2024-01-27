@@ -1,7 +1,7 @@
-import Component from "../../core/Component.js";
-import appendCSSLink from "../../utils/appendCSSLink.js";
+import Component from "../../../core/Component.js";
+import appendCSSLink from "../../../utils/appendCSSLink.js";
 
-appendCSSLink("src/components/UI/Input.css");
+appendCSSLink("src/components/UI/Input/Input.css");
 
 export default class Input extends Component {
   template() {
@@ -27,7 +27,7 @@ export default class Input extends Component {
         autocomplete=${autocomplete ? "on" : "off"}
         ${required ? "required" : ""}
         ${disabled ? "disabled" : ""}
-        class="form-control rounded-pill input-general ${className}"
+        class="form-control rounded-pill input-general ${className ? `${className}` : ""}"
       >
     `;
   }
