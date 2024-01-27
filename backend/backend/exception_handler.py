@@ -10,7 +10,7 @@ def exception_handler(exc, context):
     if response is None:
         if isinstance(exc, IntegrityError):
             return Response({'detail': '중복된 데이터입니다'}, status=status.HTTP_409_CONFLICT)
-        else:
-            return Response({'detail': '알 수 없는 에러입니다'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # else:
+        #     return Response({'detail': '알 수 없는 에러입니다'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return response

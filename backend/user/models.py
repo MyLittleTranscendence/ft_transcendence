@@ -18,6 +18,18 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def create_oauth_user(self, email):
+        user = self.model(
+            username=f'user_{uuid.uuid4()}',
+            email=self.normalize_email(email),
+            nickname=f'pingpong_{uuid.uuid4()}',
+            is_active=True
+        )
+
+        user.set_password(str(uuid.uuid4()))
+        user.save(using=self._db)
+        return user
+
 
 def upload_to(instance, filename):
     ext = filename.split('.')[-1]
@@ -27,6 +39,8 @@ def upload_to(instance, filename):
 
 class User(AbstractUser):
     nickname = models.CharField(max_length=100, unique=True)
-    profile_image = models.ImageField(upload_to=upload_to, default='default.png')
+    profile_image = models.ImageField(upload_to=upload_to, default='profile_images/default.png')
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
+
+    objects = UserManager()

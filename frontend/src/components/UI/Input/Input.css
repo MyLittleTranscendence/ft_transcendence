@@ -1,0 +1,12 @@
+.input-general {
+  box-sizing: border-box;
+  border: none;
+}
+
+.input-general:hover {
+  box-shadow: inset 0 0 0 2px #ffb800;
+}
+
+.input-general:focus {
+  box-shadow: inset 0 0 0 2px #ffb800;
+}
