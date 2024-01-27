@@ -1,9 +1,9 @@
 export default class Component {
   $target; // 컴포넌트를 넣을 부모
 
-  $props;
+  props;
 
-  $state;
+  state;
 
   constructor($target, $props) {
     this.$target = $target;
@@ -22,7 +22,15 @@ export default class Component {
   }
 
   render() {
-    this.$target.innerHTML = this.template(); // UI 렌더링
+    const fragment = document.createDocumentFragment();
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = this.template();
+
+    while (tempDiv.firstChild) {
+      fragment.appendChild(tempDiv.firstChild);
+    }
+    this.$target.appendChild(fragment);
+
     this.mounted();
   }
 
