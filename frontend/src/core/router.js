@@ -1,3 +1,5 @@
+import NotFoundPage from "../pages/NotFoundPage.js";
+
 const router = (() => {
   let routerInstance;
 
@@ -12,6 +14,9 @@ const router = (() => {
       if (createComponent) {
         const component = createComponent(document.getElementById("app"));
         component.render();
+      } else {
+        const notFound = new NotFoundPage(document.getElementById("app"));
+        notFound.render();
       }
     };
 
