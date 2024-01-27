@@ -8,6 +8,7 @@ export default class Input extends Component {
     const {
       type,
       id,
+      pattern,
       name,
       value,
       placeholder,
@@ -21,9 +22,10 @@ export default class Input extends Component {
       <input
         type="${type}"
         id="${id}"
+        ${pattern ? `pattern="${pattern}"` : ""}
         name="${name}"
         ${value ? `value="${value}"` : ""}
-        placeholder="${placeholder}"
+        ${placeholder ? `placeholder="${placeholder}` : ""}"
         autocomplete=${autocomplete ? "on" : "off"}
         ${required ? "required" : ""}
         ${disabled ? "disabled" : ""}
