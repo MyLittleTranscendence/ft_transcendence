@@ -1,5 +1,6 @@
 import Component from "../core/Component.js";
-import LoginForm from "../components/Login/LoginForm.js";
+// import LoginForm from "../components/Login/LoginForm.js";
+import SignUpForm from "../components/SignUp/SignUpForm.js";
 
 export default class JincparkTestPage extends Component {
   template() {
@@ -7,7 +8,12 @@ export default class JincparkTestPage extends Component {
   }
 
   mounted() {
-    const loginForm = new LoginForm(this.$target.querySelector("#test"));
-    loginForm.render();
+    const $div = this.$target.querySelector("#test");
+
+    // const loginForm = new LoginForm($div);
+    const signupForm = new SignUpForm($div);
+
+    // loginForm.render();
+    signupForm.render();
   }
 }
