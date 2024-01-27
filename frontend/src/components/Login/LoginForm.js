@@ -10,7 +10,7 @@ export default class LoginForm extends Component {
   }
 
   mounted() {
-    const $form = this.$target.querySelector("#input-group-container");
+    const $div = this.$target.querySelector("#input-group-container");
 
     const idInputProps = {
       type: "text",
@@ -31,14 +31,14 @@ export default class LoginForm extends Component {
       required: true,
     };
 
-    const idInputGroup = new InfoInputGroup($form, {
+    const idInputGroup = new InfoInputGroup($div, {
       labelText: "ID",
       warningText: "ID does not exist",
       inputProps: idInputProps,
       holderId: "id-input-holder",
     });
-    const pwInputGroup = new InfoInputGroup($form, {
-      labelText: "PW",
+    const pwInputGroup = new InfoInputGroup($div, {
+      labelText: "Password",
       warningText: "Wrong password",
       inputProps: pwInputProps,
       holderId: "pw-input-holder",
