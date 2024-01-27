@@ -6,6 +6,7 @@ import PvPGamePage from "../pages/PvPGamePage.js";
 import SignUpPage from "../pages/SignUpPage.js";
 import TournamentGamePage from "../pages/TournamentGamePage.js";
 import JincparkTestPage from "../pages/JincparkTestPage.js";
+import HyeonjunTestPage from "../pages/HyeonjunTestPage.js";
 
 const routes = {
   "/": (element) => new LobbyPage(element),
@@ -16,6 +17,7 @@ const routes = {
   "/my-page": (element) => new MyPage(element),
   "/profile": (element) => new ProfilePage(element),
   "/test-jincpark": (element) => new JincparkTestPage(element),
+  "/test-hyeonjun": (element) => new HyeonjunTestPage(element),
 };
 
 export default routes;

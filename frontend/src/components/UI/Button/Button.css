@@ -1,0 +1,22 @@
+.button-general {
+  background-color: #ffb800;
+  border: none;
+  border-radius: 2rem;
+  color: white;
+  padding: 1rem 3rem;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 1.5rem;
+  font-size: 1.5rem;
+  margin: 0.25rem 0.125rem;
+}
+
+.button-general:hover {
+  background-color: #be8900;
+  cursor: pointer;
+}
+
+.button-general:disabled {
+  background-color: #c1c1c1;
+  cursor: not-allowed;
+}
