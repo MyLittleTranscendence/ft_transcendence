@@ -12,10 +12,13 @@ export default class PageContainerWithLogo extends Component {
         id="page-container-with-logo"
         class="container mt-5 p-5 border border-white border-5 position-relative"
       >
-        <img
-          src="medium-logo.png"
-          class="position-absolute top-0 start-50 translate-middle"
-        />
+        <div
+          class="position-absolute top-0 start-50 translate-middle ps-5 pe-5 bg-primary"
+        >
+          <img
+            src="medium-logo.png"
+          />
+        </div>
       </div>
     `;
   }
