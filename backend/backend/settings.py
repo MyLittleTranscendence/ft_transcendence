@@ -222,3 +222,15 @@ CLIENT_SECRET_42 = os.environ.get('CLIENT_SECRET_42', "dummy")
 
 # MFA
 MFA_LIMIT_TIME = 3
+
+# SMTP
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', "dummy@happy.com")
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', "dummy")
+
+EMAIL_USE_TLS = True
+
+
