@@ -9,7 +9,6 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from custom_auth.oauth_42_constant import Oauth42Constant
 from custom_auth.oauth_service import Oauth42Service
 from custom_auth.serializers import Oauth42UserPostSerializer
-from user.serializers import UserPostSerializer
 
 
 class Login42(APIView):
@@ -31,8 +30,11 @@ class Login42CallBack(APIView):
         if not oauth_42_serializer.is_valid():
             return Response(oauth_42_serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         user = oauth_42_serializer.get_or_create_user(oauth_42_serializer.validated_data)
-        result = UserPostSerializer(user)
-        return Response({'access_token': access_token, 'user': result.data})
+        refresh = CustomTokenObtainPairSerializer.get_token(user)
+        return Response(
+            {'access': str(refresh.access_token),
+             'refresh': str(refresh),
+             'mfa_require': refresh['mfa_require']})
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -41,6 +43,12 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         token['mfa_require'] = user.mfa_enable
         return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = self.get_token(self.user)
+        data['mfa_require'] = refresh['mfa_require']
+        return data
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
