@@ -12,6 +12,7 @@ export default class Button extends Component {
         type="button"
         ${name ? `name="${name}"` : ""}
         class="btn rounded-pill
+        ${className ? className : ""}
         ${small ? "btn-sm" : "btn-lg"}"
         ${(disabled || loading) ? "disabled" : ""}
       >
