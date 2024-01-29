@@ -16,7 +16,7 @@ export default class Input extends Component {
       required,
       disabled,
       className,
-    } = this.$props;
+    } = this.props;
 
     return `
       <input
