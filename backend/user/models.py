@@ -37,5 +37,6 @@ class User(AbstractUser):
     profile_image = models.ImageField(upload_to=upload_to, default='profile_images/default.png')
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
+    mfa = models.BooleanField(default=False)
 
     objects = UserManager()
