@@ -1,52 +1,43 @@
 import NotFoundPage from "../pages/NotFoundPage.js";
 
-const router = (() => {
-  let routerInstance;
+export default class Router {
+  static routes;
 
-  if (routerInstance) {
-    return routerInstance;
+  static handleRouteChange() {
+    const path = window.location.pathname;
+    const createComponent = Router.routes[path];
+    if (createComponent) {
+      const component = createComponent(document.getElementById("app"));
+      component.render();
+    } else {
+      const notFound = new NotFoundPage(document.getElementById("app"));
+      notFound.render();
+    }
   }
 
-  return (routes) => {
-    const handleRouteChange = () => {
-      const path = window.location.pathname;
-      const createComponent = routes[path];
-      if (createComponent) {
-        const component = createComponent(document.getElementById("app"));
-        component.render();
-      } else {
-        const notFound = new NotFoundPage(document.getElementById("app"));
-        notFound.render();
+  static navigate(path) {
+    window.history.pushState({}, "", path);
+    Router.handleRouteChange();
+  }
+
+  static handleLinkClick = (e) => {
+    if (e.target.matches("[data-link]")) {
+      e.preventDefault();
+      const clickedURL = e.target.href;
+      if (clickedURL !== window.location.href) {
+        const path = new URL(clickedURL).pathname;
+        Router.navigate(path);
       }
-    };
-
-    const navigate = (path) => {
-      window.history.pushState({}, "", path);
-      handleRouteChange();
-    };
-
-    const handleLinkClick = (e) => {
-      if (e.target.matches("[data-link]")) {
-        e.preventDefault();
-        const clickedURL = e.target.href;
-        if (clickedURL !== window.location.href) {
-          navigate(clickedURL);
-        }
-      }
-    };
-
-    window.addEventListener("popstate", handleRouteChange);
-    window.addEventListener("click", handleLinkClick);
-
-    handleRouteChange();
-
-    routerInstance = { navigate };
-
-    return routerInstance;
+    }
   };
-})();
 
-export default router;
+  static init(routes) {
+    Router.routes = routes;
+    window.addEventListener("popstate", Router.handleRouteChange);
+    window.addEventListener("click", Router.handleLinkClick);
+    Router.handleRouteChange();
+  }
+}
 
 /*
 const {navigate} = router();
