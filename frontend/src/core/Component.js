@@ -22,15 +22,18 @@ export default class Component {
   }
 
   render() {
-    const fragment = document.createDocumentFragment();
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = this.template();
+    if (this.$target.id === "app") {
+      this.$target.innerHTML = this.template();
+    } else {
+      const fragment = document.createDocumentFragment();
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = this.template();
 
-    while (tempDiv.firstChild) {
-      fragment.appendChild(tempDiv.firstChild);
+      while (tempDiv.firstChild) {
+        fragment.appendChild(tempDiv.firstChild);
+      }
+      this.$target.appendChild(fragment);
     }
-    this.$target.appendChild(fragment);
-
     this.mounted();
   }
 
