@@ -18,6 +18,9 @@ export default class LandingPage extends Component {
             class="img-fluid"
           />
           <div id="landing-page-button-container" class="d-grid gap-3 mx-auto mt-3">
+            <a href="/sign-in" class="btn btn-lg bg-white rounded-pill sign-in-button">
+              Sign In
+            </a>
           </div>
         </div>
       </div>
@@ -34,15 +37,11 @@ export default class LandingPage extends Component {
       "#landing-page-button-container"
     );
 
-    const signInButton = new SignInButton($buttonContainer, {
-      content: "Sign In",
-    });
     const signInWith42Button = new SignInButton($buttonContainer, {
       content: "Sign In with ",
       logo: true,
     });
 
-    signInButton.render();
     signInWith42Button.render();
   }
 }
