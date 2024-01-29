@@ -8,14 +8,16 @@ export default class SignUpPage extends Component {
 
   mounted() {
     const buttonProps = {
-      text: "Sign Up",
       disabled: false,
-      name: "signupButton",
+      name: "Sign Up",
+      loading: false,
+      small: false,
     };
     const button = new Button(
       this.$target.querySelector("#button"),
       buttonProps
     );
+    // button.setState({ disabled: true });
     button.render();
   }
 }
