@@ -16,7 +16,7 @@ export default class PageContainerWithLogo extends Component {
           class="position-absolute top-0 start-50 translate-middle ps-5 pe-5 bg-primary"
         >
           <img
-            src="medium-logo.png"
+            src="asset/logo-medium.png"
           />
         </div>
       </div>
