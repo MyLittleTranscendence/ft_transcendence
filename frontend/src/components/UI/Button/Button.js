@@ -5,14 +5,16 @@ appendCSSLink("src/components/UI/Button/Button.css");
 
 export default class Button extends Component {
   template() {
-    const { disabled, name } = this.$props;
+    const { disabled, name, loading } = this.$props;
+    const buttonClass = small ? 'button-small' : 'button-general';
 
     return `
 	    <button
-        ${disabled ? "disabled" : ""}
+        ${disabled ? 'disabled' : ''}
         name="${name}"
-        class="button-general" 
+        class="${buttonClass}" 
       >
+      ${loading ? '<div class="spinner-border"></div>' : ''}
       ${name}
       </button>
     `;

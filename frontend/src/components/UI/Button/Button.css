@@ -20,3 +20,26 @@
   background-color: #c1c1c1;
   cursor: not-allowed;
 }
+
+.button-small {
+  background-color: #ffb800;
+  border: none;
+  border-radius: 2rem;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 1.5rem;
+  font-size: 1rem;
+  margin: 0.25rem 0.125rem;
+}
+
+.button-small:hover {
+  background-color: #be8900;
+  cursor: pointer;
+}
+
+.button-small:disabled {
+  background-color: #c1c1c1;
+  cursor: not-allowed;
+}
