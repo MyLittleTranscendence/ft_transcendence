@@ -114,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -219,3 +219,6 @@ CORS_ALLOW_ALL_ORIGINS: True
 # 42 API
 CLIENT_ID_42 = os.environ.get('CLIENT_ID_42', "dummy")
 CLIENT_SECRET_42 = os.environ.get('CLIENT_SECRET_42', "dummy")
+
+# MFA
+MFA_LIMIT_TIME = 3

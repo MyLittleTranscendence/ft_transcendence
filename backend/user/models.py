@@ -1,8 +1,11 @@
 import uuid
+from datetime import datetime, timedelta
 
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser, User
 from django.db import models
+
+from backend import settings
 
 
 class UserManager(BaseUserManager):
@@ -11,7 +14,9 @@ class UserManager(BaseUserManager):
             username=username,
             email=self.normalize_email(email),
             nickname=nickname,
-            is_active=True
+            is_active=True,
+            mfa_code=str(uuid.uuid4()),
+            mfa_generate_time=datetime.now() - timedelta(minutes=settings.MFA_LIMIT_TIME)
         )
 
         user.set_password(password)
@@ -38,5 +43,7 @@ class User(AbstractUser):
     wins = models.IntegerField(default=0)
     losses = models.IntegerField(default=0)
     mfa_enable = models.BooleanField(default=False)
+    mfa_code = models.CharField(max_length=100)
+    mfa_generate_time = models.DateTimeField()
 
     objects = UserManager()
