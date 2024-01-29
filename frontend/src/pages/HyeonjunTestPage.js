@@ -3,21 +3,88 @@ import Button from "../components/UI/Button/Button.js";
 
 export default class SignUpPage extends Component {
   template() {
-    return '<div><h1>Hyeonjun Test Page</h1><div id="button"></div></div>';
+    return '<div><h1>Hyeonjun Test Page</h1><div id="signin"></div><div id="signup"></div><div id="loading"></div><div id="send"></div><div id="confirm"></div><div id="goback"></div>';
   }
 
   mounted() {
-    const buttonProps = {
+    const signInButtonProps = {
+      disabled: true,
+      name: "Sign In",
+      loading: false,
+      small: false,
+    };
+    const signUpButtonProps = {
       disabled: false,
       name: "Sign Up",
       loading: false,
       small: false,
     };
-    const button = new Button(
-      this.$target.querySelector("#button"),
-      buttonProps
+    const loadingButtonProps = {
+      disabled: false,
+      name: "",
+      loading: true,
+      small: false,
+    };
+    const sendVerificationButtonProps = {
+      disabled: true,
+      name: "Send verification code",
+      loading: false,
+      small: true,
+    };
+    const sendAgainButtonProps = {
+      disabled: false,
+      name: "Send again",
+      loading: false,
+      small: true,
+    };
+    const confirmButtonProps = {
+      disabled: true,
+      name: "Confirm",
+      loading: false,
+      small: false,
+    };
+    const goBackButtonProps = {
+      disabled: false,
+      name: "Go Back",
+      loading: false,
+      small: false,
+    };
+
+    const signInButton = new Button(
+      this.$target.querySelector("#signin"),
+      signInButtonProps
     );
-    // button.setState({ disabled: true });
-    button.render();
+    const signUpButton = new Button(
+      this.$target.querySelector("#signup"),
+      signUpButtonProps
+    );
+    const loadingButton = new Button(
+      this.$target.querySelector("#loading"),
+      loadingButtonProps
+    );
+    const sendVerificationButton = new Button(
+      this.$target.querySelector("#send"),
+      sendVerificationButtonProps
+    );
+    const sendAgainButton = new Button(
+      this.$target.querySelector("#send"),
+      sendAgainButtonProps
+    );
+    const confirmButton = new Button(
+      this.$target.querySelector("#confirm"),
+      confirmButtonProps
+    );
+    const goBackButton = new Button(
+      this.$target.querySelector("#goback"),
+      goBackButtonProps
+    );
+
+    signInButton.render();
+    signUpButton.render();
+    loadingButton.render();
+    sendVerificationButton.render();
+    sendAgainButton.render();
+    confirmButton.render();
+    goBackButton.render();
   }
 }
