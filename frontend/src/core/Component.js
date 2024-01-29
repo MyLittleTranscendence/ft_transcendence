@@ -5,9 +5,9 @@ export default class Component {
 
   state;
 
-  constructor($target, $props) {
+  constructor($target, props) {
     this.$target = $target;
-    this.$props = $props;
+    this.props = props;
     this.setup();
     this.setEvent();
   }
