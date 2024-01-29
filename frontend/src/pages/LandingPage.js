@@ -19,15 +19,15 @@ export default class LandingPage extends Component {
           <div class="d-grid gap-3 mx-auto mt-3">
             <button
               type="button"
-              class="btn bg-white btn-lg rounded-pill px-5"
-              style="font-weight: 700"
+              class="btn bg-white btn-lg rounded-pill px-5 custom-button-hover"
+              style="font-weight: 700;"
             >
               Sign In
             </button>
             <button
               type="button"
-              class="btn bg-white btn-lg rounded-pill px-5"
-              style="font-weight: 700"
+              class="btn bg-white btn-lg rounded-pill px-5 custom-button-hover"
+              style="font-weight: 700;"
             >
               Sign In with
               <img src="asset/42logo.png" style="width: 2rem; height: auto;"/>
