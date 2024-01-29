@@ -7,7 +7,7 @@ from rest_framework import routers, permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from custom_auth.views import Login42CallBack, Login42
+from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairView
 from user import views
 
 from rest_framework_simplejwt.views import (
@@ -35,7 +35,7 @@ router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),

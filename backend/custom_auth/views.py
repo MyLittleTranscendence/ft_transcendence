@@ -3,6 +3,8 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from custom_auth.oauth_42_constant import Oauth42Constant
 from custom_auth.oauth_service import Oauth42Service
@@ -31,3 +33,15 @@ class Login42CallBack(APIView):
         user = oauth_42_serializer.get_or_create_user(oauth_42_serializer.validated_data)
         result = UserPostSerializer(user)
         return Response({'access_token': access_token, 'user': result.data})
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['mfa_require'] = user.mfa_enable
+        return token
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
