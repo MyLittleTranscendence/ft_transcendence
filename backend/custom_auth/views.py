@@ -1,13 +1,13 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 
+import pytz
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.shortcuts import redirect
-from django.template.defaulttags import now
 from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.exceptions import AuthenticationFailed, TokenError
@@ -94,4 +94,82 @@ class MFACodeGenerateView(APIView):
             raise AuthenticationFailed("Access Token Invalid")
         except (TypeError, ValueError, ObjectDoesNotExist):
             raise PermissionDenied('Invalid access token')
+        return Response(status=201)
+
+
+class MFATokenGenerateView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        token = request.data.get('access')
+        code = request.data.get('code')
+        if not token or not code:
+            raise PermissionDenied('access token and code require')
+        try:
+            valid_data = AccessToken(token)
+            pk = valid_data['user_id']
+            user = User.objects.get(pk=pk)
+            if not user.mfa_enable:
+                raise PermissionDenied('bad access')
+            utc_now = datetime.now(pytz.utc)
+            if utc_now - timedelta(minutes=settings.MFA_LIMIT_TIME) > user.mfa_generate_time:
+                raise AuthenticationFailed("Code Timeout")
+            if user.mfa_code != code:
+                raise AuthenticationFailed("Code Invalid")
+            refresh = CustomTokenObtainPairSerializer.get_token(user)
+            refresh['mfa_require'] = False
+            return Response(
+                {'access': str(refresh.access_token),
+                 'refresh': str(refresh),
+                 'mfa_require': refresh['mfa_require']})
+
+        except TokenError:
+            raise AuthenticationFailed("Access Token Invalid")
+        except (TypeError, ValueError, ObjectDoesNotExist):
+            raise PermissionDenied('Invalid access token')
+
+
+class MFAEnableView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        token = request.data.get('access')
+        code = request.data.get('code')
+        if not token or not code:
+            raise PermissionDenied('access token and code require')
+        try:
+            valid_data = AccessToken(token)
+            pk = valid_data['user_id']
+            user = User.objects.get(pk=pk)
+            if user.mfa_enable:
+                raise PermissionDenied('bad access')
+            utc_now = datetime.now(pytz.utc)
+            if utc_now - timedelta(minutes=settings.MFA_LIMIT_TIME) > user.mfa_generate_time:
+                raise AuthenticationFailed("Code Timeout")
+            if user.mfa_code != code:
+                raise AuthenticationFailed("Code Invalid")
+            user.mfa_enable = True
+            user.save(update_fields=['mfa_enable'])
+            refresh = CustomTokenObtainPairSerializer.get_token(user)
+            refresh['mfa_require'] = False
+            return Response(
+                {'access': str(refresh.access_token),
+                 'refresh': str(refresh),
+                 'mfa_require': refresh['mfa_require']})
+
+        except TokenError:
+            raise AuthenticationFailed("Access Token Invalid")
+        except (TypeError, ValueError, ObjectDoesNotExist):
+            raise PermissionDenied('Invalid access token')
+
+
+class MFADisableView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        if not user.mfa_enable:
+            raise PermissionDenied('bad access')
+        user.mfa_enable = False
+        user.save(update_fields=['mfa_enable'])
         return Response(status=201)
