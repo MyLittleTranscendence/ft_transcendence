@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', "dummy-secret-key"),
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dummy-secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -114,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
@@ -135,8 +135,12 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
 
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework_simplejwt.authentication.JWTAuthentication',
+    # ],
+
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'custom_auth.authentication.CustomJWTAuthentication',
     ],
 
     'DEFAULT_RENDERER_CLASSES': [
@@ -215,3 +219,6 @@ CORS_ALLOW_ALL_ORIGINS: True
 # 42 API
 CLIENT_ID_42 = os.environ.get('CLIENT_ID_42', "dummy")
 CLIENT_SECRET_42 = os.environ.get('CLIENT_SECRET_42', "dummy")
+
+# MFA
+MFA_LIMIT_TIME = 3
