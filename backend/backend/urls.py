@@ -7,7 +7,8 @@ from rest_framework import routers, permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairView
+from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairView, MFACodeGenerateView, \
+    MFATokenGenerateView, MFAEnableView, MFADisableView
 from user import views
 
 from rest_framework_simplejwt.views import (
@@ -44,6 +45,10 @@ urlpatterns = [
     path('api/users/<int:pk>/profile_image/', UserProfileUpdateView.as_view(), name='userprofile-update'),
     path('api/login/oauth2/42api', Login42.as_view(), name='oauth-login-42'),
     path('api/login/oauth2/code/42api', Login42CallBack.as_view(), name='oauth-redirect-42'),
+    path('api/2fa/code', MFACodeGenerateView.as_view(), name='2fa-code-generate'),
+    path('api/2fa/token', MFATokenGenerateView.as_view(), name='2fa-token-generate'),
+    path('api/2fa/enable', MFAEnableView.as_view(), name='2fa-enable'),
+    path('api/2fa/disable', MFADisableView.as_view(), name='2fa-disable'),
 ]
 
 # urlpatterns += router.urls
