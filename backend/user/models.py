@@ -19,16 +19,11 @@ class UserManager(BaseUserManager):
         return user
 
     def create_oauth_user(self, email):
-        user = self.model(
-            username=f'user_{uuid.uuid4()}',
-            email=self.normalize_email(email),
-            nickname=f'pingpong_{uuid.uuid4()}',
-            is_active=True
-        )
-
-        user.set_password(str(uuid.uuid4()))
-        user.save(using=self._db)
-        return user
+        username = f'user_{uuid.uuid4()}'
+        email = self.normalize_email(email)
+        nickname = f'pingpong_{uuid.uuid4()}'
+        password = str(uuid.uuid4())
+        return self.create_user(username, email, nickname, password)
 
 
 def upload_to(instance, filename):
