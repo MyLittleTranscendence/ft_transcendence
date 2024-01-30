@@ -11,10 +11,10 @@ export default class Button extends Component {
       <button
         type="button"
         ${name ? `name="${name}"` : ""}
-        class="btn rounded-pill
-        ${className ? className : ""}
+        class="btn rounded-pill button-custom
+        ${className ? `${className}` : ""}
         ${small ? "btn-sm" : "btn-lg"}"
-        ${(disabled || loading) ? "disabled" : ""}
+        ${disabled || loading ? "disabled" : ""}
       >
         ${loading ? '<div class="spinner-grow spinner-grow-sm"></div>' : `${content}`}
       </button>

@@ -1,15 +1,15 @@
-.btn {
+.button-custom {
   background-color: #ffb800;
   color: white;
   font-weight: bold;
 }
 
-.btn:hover {
+.button-custom:hover {
   background-color: #be8900;
   color: white;
 }
 
-.btn:disabled {
+.button-custom:disabled {
   background-color: #c1c1c1;
   cursor: not-allowed;
 }
