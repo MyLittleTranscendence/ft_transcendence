@@ -1,17 +1,17 @@
 import Component from "../../core/Component.js";
 import Input from "../UI/Input/Input.js";
 
-export default class MessageForm extends Component {
+export default class ChatInput extends Component {
   template() {
     return `
-    <form class="d-flex align-items-center position-relative z-0">
+    <div class="d-flex align-items-center position-relative z-0">
       <div id="${this.props.id}-holder"></div>
       <img
         src="asset/sendIcon.svg"
         alt="send message"
         class="position-absolute z-1 end-0 me-3"
       />
-    </form>`;
+    </div>`;
   }
 
   mounted() {
