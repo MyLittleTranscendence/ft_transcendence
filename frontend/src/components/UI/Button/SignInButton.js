@@ -5,7 +5,7 @@ appendCSSLink("src/components/UI/Button/SignInButton.css");
 
 export default class SignInButton extends Component {
   template() {
-    const { content, type, path } = this.props;
+    const { id, content, type, path } = this.props;
 
     if (type === "link") {
       return `
@@ -16,6 +16,7 @@ export default class SignInButton extends Component {
     }
     return `
       <button
+        id="${id}"
         type="button"
         class="btn bg-white btn-lg rounded-pill px-5 sign-in-button"
       >
@@ -23,5 +24,13 @@ export default class SignInButton extends Component {
         <img src="asset/42logo.png" style="max-width: 2rem; height: auto;"/>
       </button>
     `;
+  }
+
+  mounted() {
+    if (this.props.type === "button") {
+      const { id, onClickHandler } = this.props;
+
+      this.addEvent("click", `#${id}`, onClickHandler);
+    }
   }
 }
