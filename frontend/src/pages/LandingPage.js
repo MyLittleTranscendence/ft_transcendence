@@ -1,7 +1,6 @@
 import PageContainer from "../components/UI/Container/PageContainer.js";
-import SignInButton from "../components/UI/Button/SignInButton.js";
+import SignInLink from "../components/LandingPage/SignInLink.js";
 import Component from "../core/Component.js";
-import oauthHandler from "../auth/oauthHandler.js";
 
 export default class LandingPage extends Component {
   template() {
@@ -18,7 +17,7 @@ export default class LandingPage extends Component {
             src="asset/logo-large.png"
             class="img-fluid"
           />
-          <div id="landing-page-button-container" class="d-grid gap-3 mx-auto mt-3">
+          <div id="landing-page-link-container" class="d-grid gap-3 mx-auto mt-3">
           </div>
         </div>
       </div>
@@ -32,22 +31,19 @@ export default class LandingPage extends Component {
     pageContainer.render();
 
     const $buttonContainer = this.$target.querySelector(
-      "#landing-page-button-container"
+      "#landing-page-link-container"
     );
 
-    const signInButton = new SignInButton($buttonContainer, {
-      type: "link",
+    const signInLink = new SignInLink($buttonContainer, {
       content: "Sign In",
       path: "/sign-in",
     });
-    const signInWith42Button = new SignInButton($buttonContainer, {
-      id: "oauth-sign-in-button",
-      type: "button",
-      content: "Sign In with ",
-      onClickHandler: oauthHandler,
+    const signInWith42Link = new SignInLink($buttonContainer, {
+      content: `Sign In with <img src="asset/42logo.png" style="max-width: 2rem;" />`,
+      path: "http://localhost:8000/api/login/oauth2/42api",
     });
 
-    signInButton.render();
-    signInWith42Button.render();
+    signInLink.render();
+    signInWith42Link.render();
   }
 }

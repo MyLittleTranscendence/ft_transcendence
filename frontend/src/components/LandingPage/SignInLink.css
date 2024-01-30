@@ -1,7 +1,7 @@
-.sign-in-button {
+.sign-in-link {
   font-weight: 700;
 }
 
-.sign-in-button:hover {
+.sign-in-link:hover {
   background-color: #dddddd !important;
 }
