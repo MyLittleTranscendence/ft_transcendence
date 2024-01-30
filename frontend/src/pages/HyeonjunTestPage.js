@@ -1,9 +1,10 @@
 import Component from "../core/Component.js";
 import Button from "../components/UI/Button/Button.js";
+import ProfileImage from "../components/UI/Profile/ProfileImage.js";
 
 export default class SignUpPage extends Component {
   template() {
-    return '<div><h1>Hyeonjun Test Page</h1><div id="signin"></div><div id="signup"></div><div id="loading"></div><div id="send"></div><div id="confirm"></div><div id="goback"></div>';
+    return '<div><h1>Hyeonjun Test Page</h1><div id="signin"></div><div id="signup"></div><div id="loading"></div><div id="send"></div><div id="confirm"></div><div id="goback"></div> <div id="profile"></div>';
   }
 
   mounted() {
@@ -49,6 +50,11 @@ export default class SignUpPage extends Component {
       loading: false,
       small: false,
     };
+    const profileImageProps = {
+      imageSize: "image-big",
+      imageSrc: "../../asset/default.png",
+      alt: "none",
+    }
 
     const signInButton = new Button(
       this.$target.querySelector("#signin"),
@@ -78,6 +84,10 @@ export default class SignUpPage extends Component {
       this.$target.querySelector("#goback"),
       goBackButtonProps
     );
+    const profileImage = new ProfileImage(
+      this.$target.querySelector("#profile"),
+      profileImageProps
+    );
 
     signInButton.render();
     signUpButton.render();
@@ -86,5 +96,6 @@ export default class SignUpPage extends Component {
     sendAgainButton.render();
     confirmButton.render();
     goBackButton.render();
+    profileImage.render();
   }
 }
