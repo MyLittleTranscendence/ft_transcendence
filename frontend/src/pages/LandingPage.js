@@ -1,6 +1,7 @@
 import PageContainer from "../components/UI/Container/PageContainer.js";
 import SignInButton from "../components/UI/Button/SignInButton.js";
 import Component from "../core/Component.js";
+import oauthHandler from "../auth/oauthHandler.js";
 
 export default class LandingPage extends Component {
   template() {
@@ -40,8 +41,10 @@ export default class LandingPage extends Component {
       path: "/sign-in",
     });
     const signInWith42Button = new SignInButton($buttonContainer, {
+      id: "oauth-sign-in-button",
       type: "button",
       content: "Sign In with ",
+      onClickHandler: oauthHandler,
     });
 
     signInButton.render();
