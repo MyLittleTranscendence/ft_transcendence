@@ -1,7 +1,6 @@
 import Component from "../core/Component.js";
 import PageContainer from "../components/UI/Container/PageContainer.js";
 import SignUpForm from "../components/Form/SignUpForm.js";
-import Button from "../components/UI/Button/Button.js";
 
 export default class SignUpPage extends Component {
   template() {
@@ -23,7 +22,6 @@ export default class SignUpPage extends Component {
           />
           <div
             id="signup-form-content"
-            class="d-grid gap-3 mx-auto mt-3"
           >
           </div>
         </div>
@@ -31,7 +29,9 @@ export default class SignUpPage extends Component {
     `;
   }
   mounted() {
-    const $pageContent = this.$target.querySelector("#signup-page-content");
+    const $pageContent = this.$target.querySelector(
+      "#signup-page-content"
+    );
   
     const pageContainer = new PageContainer(this.$target, $pageContent);
     pageContainer.render();
@@ -40,12 +40,7 @@ export default class SignUpPage extends Component {
       "#signup-form-content"
     );
   
-    const signUpForm = new SignUpForm($signUpContent);
-    const signUpButton = new Button($signUpContent, {
-      content: "Sign Up",
-    });
-  
+    const signUpForm = new SignUpForm($signUpContent);  
     signUpForm.render();
-    signUpButton.render();
   }
 }

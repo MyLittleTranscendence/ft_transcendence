@@ -1,5 +1,6 @@
 import Component from "../../core/Component.js";
 import InfoInputGroup from "../UI/Input/InfoInputGroup.js";
+import Button from "../UI/Button/Button.js"
 
 export default class SignUpForm extends Component {
   template() {
@@ -90,11 +91,16 @@ export default class SignUpForm extends Component {
       inputProps: emailInputProps,
       holderId: "email-input-holder",
     });
+    const signUpButton = new Button($div, {
+      disabled: true,
+      content: "Sign Up",
+    })
 
     idInputGroup.render();
     nicknameInputGroup.render();
     pwInputGroup.render();
     pwVerifyInputGroup.render();
     emailInputGroup.render();
+    signUpButton.render();
   }
 }
