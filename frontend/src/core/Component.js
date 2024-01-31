@@ -48,7 +48,9 @@ export default class Component {
   addEvent(eventType, selector, callback) {
     // 이벤트 등록 추상화
     this.$target.addEventListener(eventType, (event) => {
-      if (!event.target.closest(selector)) return false;
+      if (!event.target.closest(selector)) {
+        return false;
+      }
       callback(event);
       return true;
     });
