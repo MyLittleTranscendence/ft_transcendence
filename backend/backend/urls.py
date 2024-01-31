@@ -2,20 +2,16 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
-from rest_framework import routers, permissions
-
-from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import routers, permissions
+from rest_framework_simplejwt.views import (
+    TokenRefreshView,
+)
 
 from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairView, MFACodeGenerateView, \
     MFATokenGenerateView, MFAEnableView, MFADisableView
 from user import views
-
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
-
 from user.views import UserProfileUpdateView
 
 schema_view = get_schema_view(
@@ -33,6 +29,7 @@ schema_view = get_schema_view(
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
+router.register(r'check', views.UserCheckViewSet, basename="user check")
 
 urlpatterns = [
     path('api/', include(router.urls)),
@@ -43,12 +40,12 @@ urlpatterns = [
     path('docs/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('api/users/<int:pk>/profile_image/', UserProfileUpdateView.as_view(), name='userprofile-update'),
-    path('api/login/oauth2/42api', Login42.as_view(), name='oauth-login-42'),
-    path('api/login/oauth2/code/42api', Login42CallBack.as_view(), name='oauth-redirect-42'),
-    path('api/2fa/code', MFACodeGenerateView.as_view(), name='2fa-code-generate'),
-    path('api/2fa/token', MFATokenGenerateView.as_view(), name='2fa-token-generate'),
-    path('api/2fa/enable', MFAEnableView.as_view(), name='2fa-enable'),
-    path('api/2fa/disable', MFADisableView.as_view(), name='2fa-disable'),
+    path('api/login/oauth2/42api/', Login42.as_view(), name='oauth-login-42'),
+    path('api/login/oauth2/code/42api/', Login42CallBack.as_view(), name='oauth-redirect-42'),
+    path('api/2fa/code/', MFACodeGenerateView.as_view(), name='2fa-code-generate'),
+    path('api/2fa/token/', MFATokenGenerateView.as_view(), name='2fa-token-generate'),
+    path('api/2fa/enable/', MFAEnableView.as_view(), name='2fa-enable'),
+    path('api/2fa/disable/', MFADisableView.as_view(), name='2fa-disable'),
 ]
 
 # urlpatterns += router.urls
