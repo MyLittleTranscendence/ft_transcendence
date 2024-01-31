@@ -7,23 +7,23 @@ export default class SignUpPage extends Component {
   template() {
     return `
       <div
-        id="page-content"
+        id="signup-page-content"
         class="d-flex flex-column align-items-center justify-content-center"
       >
         <div
           class="container-sm d-flex flex-column align-items-center"
-          style="max-width: 40%; min-width: 10rem; padding: 13vw 0 13vw 0;"
+          style="max-width: 40%; min-width: 10rem; padding: 8vw 0 8vw 0;"
         >
+          <h2 style="font-weight: bold; color: white;">
+            Sign-Up to
+          </h2>
           <img
             src="asset/logo-large.png"
             class="img-fluid"
           />
           <div
-            id="sign-up-form-content"
-          >
-          </div>
-          <div
-            id="sign-up-button-content"
+            id="signup-form-content"
+            class="d-grid gap-3 mx-auto mt-3"
           >
           </div>
         </div>
@@ -31,13 +31,20 @@ export default class SignUpPage extends Component {
     `;
   }
   mounted() {
-    const $pageContent = this.$target.querySelector("#page-content");
-    const $signUpContent = this.$target.querySelector("#sign-up-form-content");
-    const $signUpButton = this.$target.querySelector("#sign-up-button-content");
+    const $pageContent = this.$target.querySelector("#signup-page-content");
+  
     const pageContainer = new PageContainer(this.$target, $pageContent);
-    const signUpForm = new SignUpForm($pageContent, $signUpContent);
-    const signUpButton = new Button($pageContent, $signUpButton); // TODO : 버튼에 props 전달하기
     pageContainer.render();
+  
+    const $signUpContent = this.$target.querySelector(
+      "#signup-form-content"
+    );
+  
+    const signUpForm = new SignUpForm($signUpContent);
+    const signUpButton = new Button($signUpContent, {
+      content: "Sign Up",
+    });
+  
     signUpForm.render();
     signUpButton.render();
   }
