@@ -17,7 +17,6 @@ class UserGetSerializer(UserPatchSerializer):
     wins = serializers.IntegerField(read_only=True)
     losses = serializers.IntegerField(read_only=True)
     profile_image = serializers.ImageField(read_only=True)
-    profile_image = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = UserPatchSerializer.Meta.model

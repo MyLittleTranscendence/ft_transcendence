@@ -1,5 +1,9 @@
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions, viewsets, status
+from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -38,6 +42,18 @@ class UserProfileUpdateView(APIView):
     parser_classes = [MultiPartParser]
     permission_classes = [IsOwnerOrAdminUser]
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                name='profile_image',
+                in_=openapi.IN_FORM,
+                description='Profile image file',
+                type=openapi.TYPE_FILE,
+                required=True
+            )
+        ],
+        responses={200: UserProfileImageSerializer}
+    )
     def put(self, request, pk):
         user = User.objects.get(pk=pk)
         serializer = UserProfileImageSerializer(user, data=request.data, context={'request': request})
@@ -46,3 +62,24 @@ class UserProfileUpdateView(APIView):
         serializer.save()
         return Response(serializer.data)
 
+
+class UserCheckViewSet(viewsets.GenericViewSet):
+    permission_classes = [AllowAny]
+
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('nickname', openapi.IN_QUERY, description="Nickname to check", type=openapi.TYPE_STRING)
+    ])
+    @action(methods=['get'], detail=False, url_path='nickname', pagination_class=None)
+    def nickname_check(self, request):
+        nickname = request.query_params.get('nickname')
+        exists = User.objects.filter(nickname=nickname).exists()
+        return Response({'exists': exists})
+
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('username', openapi.IN_QUERY, description="Username to check", type=openapi.TYPE_STRING)
+    ])
+    @action(methods=['get'], detail=False, url_path='username', pagination_class=None)
+    def username_check(self, request):
+        username = request.query_params.get('username')
+        exists = User.objects.filter(username=username).exists()
+        return Response({'exists': exists})
