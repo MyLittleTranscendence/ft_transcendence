@@ -32,10 +32,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    "django.contrib.sites",
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     'requests',
     'user',
     'custom_auth',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -262,4 +265,15 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
 
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+}
+
+# Channel
+ASGI_APPLICATION = "backend.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
+        },
+    },
 }

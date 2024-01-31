@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED=1
 
 RUN apk update
 
-RUN apk add build-base python3-dev py-pip jpeg-dev zlib-dev libpq-dev
+RUN apk add build-base python3-dev py-pip jpeg-dev zlib-dev libpq-dev libffi-dev
 
 COPY requirements.txt /usr/src/app/
 
