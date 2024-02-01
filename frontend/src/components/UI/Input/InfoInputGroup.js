@@ -6,7 +6,7 @@ appendCSSLink("src/components/UI/Input/InfoInputGroup.css");
 
 export default class InfoInputGroup extends Component {
   template() {
-    const { labelText, warningText, holderId } = this.props;
+    const { labelText, warningText, holderId, inputProps } = this.props;
     return `
     <div class="
       input-group
@@ -15,10 +15,12 @@ export default class InfoInputGroup extends Component {
       justify-content-center
       my-3
     ">
-      <label class="
+      <label 
+        for="${inputProps.id}"
+        class="
         fw-bold fs-5 info-input-label-text
         position-absolute
-      ">
+        ">
         ${labelText}
       </label>
       <div id="${holderId}" class="mx-3"></div>
