@@ -1,0 +1,10 @@
+.link {
+  background-color: #ffb800;
+  color: white;
+  font-weight: bold;
+}
+
+.link:hover {
+  background-color: #be8900;
+  color: white;
+}

@@ -6,7 +6,7 @@ appendCSSLink("src/components/UI/Input/InfoInputGroup.css");
 
 export default class InfoInputGroup extends Component {
   template() {
-    const { labelText, warningText, holderId } = this.$props;
+    const { labelText, warningText, holderId } = this.props;
     return `
     <div class="
       input-group
@@ -32,9 +32,9 @@ export default class InfoInputGroup extends Component {
   }
 
   mounted() {
-    const { holderId } = this.$props;
+    const { holderId } = this.props;
     const $div = this.$target.querySelector(`#${holderId}`);
-    const inputComponent = new Input($div, this.$props.inputProps);
+    const inputComponent = new Input($div, this.props.inputProps);
     inputComponent.render();
   }
 }
