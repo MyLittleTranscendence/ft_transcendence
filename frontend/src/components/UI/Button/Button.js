@@ -5,12 +5,12 @@ appendCSSLink("src/components/UI/Button/Button.css");
 
 export default class Button extends Component {
   template() {
-    const { disabled, name, loading, small, content, className, attributes } =
+    const { type, disabled, name, loading, small, content, className, attributes } =
       this.props;
 
     return `
       <button
-        type="button"
+        type=${`${type}` || "button"}
         ${name ? `name="${name}"` : ""}
         class="btn rounded-pill button-custom
         ${className ? `${className}` : ""}
