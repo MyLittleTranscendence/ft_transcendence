@@ -1,4 +1,5 @@
 from django.core.mail import send_mail
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
@@ -9,7 +10,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from backend import settings
-from backend.utils import validate_serializer
+from backend.utils import validate_serializer, set_cookie
 from custom_auth.oauth_42_constant import Oauth42Constant
 from custom_auth.oauth_service import Oauth42Service
 from custom_auth.serializers import Oauth42UserPostSerializer, CustomTokenObtainPairSerializer, \
@@ -37,10 +38,17 @@ class Login42CallBack(APIView):
         user = oauth_42_serializer.get_or_create_user(oauth_42_serializer.validated_data)
         refresh = CustomTokenObtainPairSerializer.get_token(user)
 
-        return Response(
-            {'access': str(refresh.access_token),
-             'refresh': str(refresh),
-             'mfa_require': refresh['mfa_require']})
+        redirect_url = 'http://localhost:3000'
+        response = HttpResponseRedirect(redirect_url)
+        set_cookie(response, refresh.access_token, "access_token")
+        set_cookie(response, refresh, "refresh_token")
+        set_cookie(response, refresh['mfa_require'], "mfa_require")
+        set_cookie(response, user.id, "user_id")
+        return response
+
+
+class CookieToResponse:
+    permission_classes = [AllowAny]
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -86,7 +94,8 @@ class MFATokenGenerateView(APIView):
         return Response(
             {'access': str(refresh.access_token),
              'refresh': str(refresh),
-             'mfa_require': refresh['mfa_require']}, status=201)
+             'mfa_require': refresh['mfa_require'],
+             'user_id': user.id}, status=201)
 
 
 class MFAEnableView(APIView):
@@ -110,7 +119,8 @@ class MFAEnableView(APIView):
         return Response(
             {'access': str(refresh.access_token),
              'refresh': str(refresh),
-             'mfa_require': refresh['mfa_require']}, status=201)
+             'mfa_require': refresh['mfa_require'],
+             'user_id': user.id}, status=201)
 
 
 class MFADisableView(APIView):
