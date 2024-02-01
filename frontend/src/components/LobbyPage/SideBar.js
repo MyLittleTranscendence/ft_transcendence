@@ -13,9 +13,10 @@ export default class SideBar extends Component {
         "
         style="max-width: 4rem;"
       >
-        <div 
-          id="sidebar-my-profile-holder"
-        ></div>
+        <a 
+          id="sidebar-my-profile-link"
+          href="/my-page"
+        ></a>
         <div
           id="friends-icon-holder"
           class="
@@ -30,7 +31,7 @@ export default class SideBar extends Component {
 
   mounted() {
     const myProfile = new ProfileImage(
-      this.$target.querySelector("#sidebar-my-profile-holder"),
+      this.$target.querySelector("#sidebar-my-profile-link"),
       {
         imageSize: "image-sm",
         imageSrc: "asset/default.png",
