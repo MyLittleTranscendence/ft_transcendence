@@ -234,3 +234,13 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', "dummy")
 EMAIL_USE_TLS = True
 
 
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'Enter your Bearer token in the format **Bearer &lt;token>**'
+        }
+    }
+}

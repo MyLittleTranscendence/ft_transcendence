@@ -1,25 +1,18 @@
-from datetime import datetime, timedelta
-
-import pytz
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from django.shortcuts import redirect
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.exceptions import AuthenticationFailed, TokenError
-from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from backend import settings
 from custom_auth.oauth_42_constant import Oauth42Constant
 from custom_auth.oauth_service import Oauth42Service
 from custom_auth.serializers import Oauth42UserPostSerializer, CustomTokenObtainPairSerializer, \
-    MFATokenGenerateSerializer
-from user.models import User
+    MFATokenGenerateSerializer, TokenResponseSerializer
 
 
 class Login42(APIView):
@@ -74,6 +67,14 @@ class MFATokenGenerateView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
+    @swagger_auto_schema(
+        request_body=MFATokenGenerateSerializer,
+        responses={
+            201: TokenResponseSerializer,
+            400: 'Bad Request'
+        },
+        operation_description="Generates MFA token and sends it via email.",
+    )
     def post(self, request):
         serializer = MFATokenGenerateSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
@@ -84,13 +85,21 @@ class MFATokenGenerateView(APIView):
         return Response(
             {'access': str(refresh.access_token),
              'refresh': str(refresh),
-             'mfa_require': refresh['mfa_require']})
+             'mfa_require': refresh['mfa_require']}, status=201)
 
 
 class MFAEnableView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
+    @swagger_auto_schema(
+        request_body=MFATokenGenerateSerializer,
+        responses={
+            201: TokenResponseSerializer,
+            400: 'Bad Request'
+        },
+        operation_description="Generates MFA token and sends it via email.",
+    )
     def post(self, request):
         serializer = MFATokenGenerateSerializer(data=request.data, context={'request': request})
         if not serializer.is_valid():
@@ -101,7 +110,7 @@ class MFAEnableView(APIView):
         return Response(
             {'access': str(refresh.access_token),
              'refresh': str(refresh),
-             'mfa_require': refresh['mfa_require']})
+             'mfa_require': refresh['mfa_require']}, status=201)
 
 
 class MFADisableView(APIView):
