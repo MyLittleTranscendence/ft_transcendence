@@ -1,6 +1,4 @@
-import getRouter from "src/core/router.js";
-
-const apiFetch = async (
+const fetchAPI = async (
   method,
   path,
   data = null,
@@ -8,23 +6,26 @@ const apiFetch = async (
 ) => {
   const options = {
     method,
-    headers: new Headers({ "Content-Type": "application/json" }),
   };
 
   if (method === "POST" || method === "PUT") {
     options.body = JSON.stringify(data);
+    options.headers = new Headers({ "Content-Type": "application/json" });
   }
 
   try {
     const res = await fetch(`http://localhost:8000/api${path}`, options);
+
     if (!res.ok) {
-      if (res.status === 401) {
-        getRouter().navigate("/laning");
-      }
+      throw new Error(`Error: ${res.status}`);
     }
+
+    let resData = await res.json();
+
+    return { status: res.status, data: resData };
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };
 
-export default apiFetch;
+export default fetchAPI;
