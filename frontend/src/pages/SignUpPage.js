@@ -7,40 +7,25 @@ export default class SignUpPage extends Component {
     return `
       <div
         id="signup-page-content"
-        class="d-flex flex-column align-items-center justify-content-center"
+        class="d-flex flex-column align-items-center"
       >
-        <div
-          class="container-sm d-flex flex-column align-items-center"
-          style="max-width: 40%; min-width: 10rem; padding: 8vw 0 8vw 0;"
-        >
-          <h2 style="font-weight: bold; color: white;">
-            Sign-Up to
-          </h2>
-          <img
-            src="asset/logo-large.png"
-            class="img-fluid"
-          />
-          <div
-            id="signup-form-content"
-          >
-          </div>
+        <h2 class="text-white">Sign-Up to</h2>
+        <div>
+          <img src="asset/logo-medium.png" class="img-fluid">
         </div>
       </div>
     `;
   }
+
   mounted() {
-    const $pageContent = this.$target.querySelector(
+    const $signUpPageContent = this.$target.querySelector(
       "#signup-page-content"
     );
   
-    const pageContainer = new PageContainer(this.$target, $pageContent);
+    const pageContainer = new PageContainer(this.$target, $signUpPageContent);
+    const signUpForm = new SignUpForm($signUpPageContent);
+
     pageContainer.render();
-  
-    const $signUpContent = this.$target.querySelector(
-      "#signup-form-content"
-    );
-  
-    const signUpForm = new SignUpForm($signUpContent);  
-    signUpForm.render();
+    signUpForm.render();  
   }
 }
