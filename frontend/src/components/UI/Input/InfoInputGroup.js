@@ -34,9 +34,9 @@ export default class InfoInputGroup extends Component {
   }
 
   mounted() {
-    const { holderId } = this.props;
+    const { holderId, inputProps } = this.props;
     const $div = this.$target.querySelector(`#${holderId}`);
-    const inputComponent = new Input($div, this.props.inputProps);
+    const inputComponent = new Input($div, inputProps);
     inputComponent.render();
   }
 }
