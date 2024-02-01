@@ -1,17 +1,21 @@
 import Component from "../../core/Component.js";
 import Input from "../UI/Input/Input.js";
 
-export default class MessageForm extends Component {
+export default class ChatInput extends Component {
   template() {
     return `
-    <form class="d-flex align-items-center position-relative z-0">
-      <div id="${this.props.id}-holder"></div>
+    <div class="
+      d-flex align-items-center
+      position-relative
+      w-100
+    ">
+      <div id="${this.props.id}-holder" class="w-100"></div>
       <img
         src="asset/sendIcon.svg"
         alt="send message"
         class="position-absolute z-1 end-0 me-3"
       />
-    </form>`;
+    </div>`;
   }
 
   mounted() {
@@ -22,7 +26,7 @@ export default class MessageForm extends Component {
       name,
       placeholder: "Type a message ...",
       required: true,
-      className: "form-control-lg pe-5",
+      className: "form-control-lg pe-5 w-100",
     };
     const input = new Input(
       this.$target.querySelector(`#${id}-holder`),

@@ -10,13 +10,26 @@ export default class PageContainerWithLogo extends Component {
     return `
       <div
         id="page-container-with-logo"
-        class="container mt-5 p-5 border border-white border-5 position-relative"
+        class="
+          container
+          mt-5 p-5
+          border border-white border-5
+          position-relative
+        "
       >
         <div
-          class="position-absolute top-0 start-50 translate-middle ps-5 pe-5 bg-primary"
+          class="
+            position-absolute
+            top-0 start-50
+            translate-middle
+            ps-5 pe-5
+            bg-primary
+          "
+          style="width: 18rem; height: auto;"
         >
           <img
             src="asset/logo-medium.png"
+            class="img-fluid"
           />
         </div>
       </div>
