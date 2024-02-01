@@ -126,9 +126,5 @@ class MFADisableView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user = request.user
-        if not user.mfa_enable:
-            raise PermissionDenied('bad access')
-        user.mfa_enable = False
-        user.save(update_fields=['mfa_enable'])
+        request.user.mfa_disable()
         return Response(status=201)

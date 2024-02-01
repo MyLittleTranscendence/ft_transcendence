@@ -65,3 +65,9 @@ class User(AbstractUser):
             raise AuthenticationFailed("Code Timeout")
         if self.mfa_code != mfa_code:
             raise AuthenticationFailed("Code Invalid")
+
+    def mfa_disable(self):
+        if not self.mfa_enable:
+            raise PermissionDenied('bad access, efa already disabled')
+        self.mfa_enable = False
+        self.save(update_fields=['mfa_enable'])
