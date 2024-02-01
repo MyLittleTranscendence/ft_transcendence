@@ -47,3 +47,10 @@ class User(AbstractUser):
     mfa_generate_time = models.DateTimeField()
 
     objects = UserManager()
+
+    def update_mfa_code(self):
+        code = str(uuid.uuid4())
+        self.mfa_code = code
+        self.mfa_generate_time = datetime.now()
+        self.save(update_fields=['mfa_code', 'mfa_generate_time'])
+        return self

@@ -57,30 +57,16 @@ class MFACodeGenerateView(APIView):
     authentication_classes = [JWTAuthentication]
 
     def post(self, request):
-        token = request.data.get('access')
-        if not token:
-            raise PermissionDenied('access token require')
-        try:
-            valid_data = AccessToken(token)
-            pk = valid_data['user_id']
-            user = User.objects.get(pk=pk)
-            code = str(uuid.uuid4())
+        user = request.user.update_mfa_code()
 
-            user.mfa_code = code
-            user.mfa_generate_time = datetime.now()
-            user.save(update_fields=['mfa_code', 'mfa_generate_time'])
+        send_mail(
+            '트센 2차 인증 메세지',
+            f'인증 코드: {user.mfa_code}',
+            settings.EMAIL_HOST,
+            [user.email],
+            fail_silently=False,
+        )
 
-            send_mail(
-                '트센 2차 인증 메세지',
-                f'인증 코드: {code}',
-                settings.EMAIL_HOST,
-                [user.email],
-                fail_silently=False,
-            )
-        except TokenError:
-            raise AuthenticationFailed("Access Token Invalid")
-        except (TypeError, ValueError, ObjectDoesNotExist):
-            raise PermissionDenied('Invalid access token')
         return Response(status=201)
 
 
