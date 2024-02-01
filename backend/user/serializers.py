@@ -17,6 +17,7 @@ class UserGetSerializer(UserPatchSerializer):
     wins = serializers.IntegerField(read_only=True)
     losses = serializers.IntegerField(read_only=True)
     profile_image = serializers.ImageField(read_only=True)
+    mfa_enable = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = UserPatchSerializer.Meta.model
@@ -41,3 +42,11 @@ class UserProfileImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'profile_image']
+
+
+class UserCheckSerializer(serializers.ModelSerializer):
+    exists = serializers.BooleanField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['exists']
