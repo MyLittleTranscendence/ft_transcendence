@@ -7,7 +7,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from user.serializers import UserGetSerializer, UserPatchSerializer, UserPostSerializer, UserProfileImageSerializer
+from user.serializers import UserGetSerializer, UserPatchSerializer, UserPostSerializer, UserProfileImageSerializer, \
+    UserCheckSerializer
 from .models import User
 
 
@@ -68,18 +69,24 @@ class UserCheckViewSet(viewsets.GenericViewSet):
 
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter('nickname', openapi.IN_QUERY, description="Nickname to check", type=openapi.TYPE_STRING)
-    ])
+    ],
+        responses={200: UserCheckSerializer}
+    )
     @action(methods=['get'], detail=False, url_path='nickname', pagination_class=None)
     def nickname_check(self, request):
         nickname = request.query_params.get('nickname')
         exists = User.objects.filter(nickname=nickname).exists()
-        return Response({'exists': exists})
+        serializer = UserCheckSerializer(exists)
+        return Response(serializer.data)
 
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter('username', openapi.IN_QUERY, description="Username to check", type=openapi.TYPE_STRING)
-    ])
+    ],
+        responses={200: UserCheckSerializer}
+    )
     @action(methods=['get'], detail=False, url_path='username', pagination_class=None)
     def username_check(self, request):
         username = request.query_params.get('username')
         exists = User.objects.filter(username=username).exists()
-        return Response({'exists': exists})
+        serializer = UserCheckSerializer(exists)
+        return Response(serializer.data)
