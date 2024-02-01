@@ -3,6 +3,8 @@ import Button from "../UI/Button/Button.js";
 import InfoInputGroup from "../UI/Input/InfoInputGroup.js";
 import Link from "../UI/Link/Link.js";
 
+import signInHandler from "../../services/auth/signInHandler.js";
+
 export default class SigninForm extends Component {
   template() {
     return `
@@ -61,8 +63,9 @@ export default class SigninForm extends Component {
       holderId: "pw-input-holder",
     });
     const signInButton = new Button($signInBtnHolder, {
+      type: "submit",
       content: "Sign In",
-      disabled: true,
+      disabled: false,
       attributes: `style="min-width: 10rem"`,
     });
     const signUpButton = new Link(this.$target, {
@@ -75,5 +78,7 @@ export default class SigninForm extends Component {
     pwInputGroup.render();
     signInButton.render();
     signUpButton.render();
+
+    $signInForm.addEventListener("submit", signInHandler);
   }
 }
