@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import serializers
+from rest_framework import serializers, viewsets
 from django.db import transaction
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -46,3 +46,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         refresh = self.get_token(self.user)
         data['mfa_require'] = refresh['mfa_require']
         return data
+
+
+class MFATokenGenerateSerializer(serializers.ModelSerializer):
+    mfa_code = serializers.CharField(max_length=100, required=True, write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['mfa_code']

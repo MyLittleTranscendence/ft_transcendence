@@ -1,4 +1,3 @@
-import uuid
 from datetime import datetime, timedelta
 
 import pytz
@@ -18,7 +17,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from backend import settings
 from custom_auth.oauth_42_constant import Oauth42Constant
 from custom_auth.oauth_service import Oauth42Service
-from custom_auth.serializers import Oauth42UserPostSerializer, CustomTokenObtainPairSerializer
+from custom_auth.serializers import Oauth42UserPostSerializer, CustomTokenObtainPairSerializer, \
+    MFATokenGenerateSerializer
 from user.models import User
 
 
@@ -75,33 +75,16 @@ class MFATokenGenerateView(APIView):
     authentication_classes = [JWTAuthentication]
 
     def post(self, request):
-        token = request.data.get('access')
-        code = request.data.get('code')
-        if not token or not code:
-            raise PermissionDenied('access token and code require')
-        try:
-            valid_data = AccessToken(token)
-            pk = valid_data['user_id']
-            user = User.objects.get(pk=pk)
-            if not user.mfa_enable:
-                raise PermissionDenied('bad access')
-            utc_now = datetime.now(pytz.utc)
-            if utc_now - timedelta(minutes=settings.MFA_LIMIT_TIME) > user.mfa_generate_time:
-                raise AuthenticationFailed("Code Timeout")
-            if user.mfa_code != code:
-                raise AuthenticationFailed("Code Invalid")
-            refresh = CustomTokenObtainPairSerializer.get_2fa_token(user)
-            # refresh = CustomTokenObtainPairSerializer.get_token(user)
-            # refresh['mfa_require'] = False
-            return Response(
-                {'access': str(refresh.access_token),
-                 'refresh': str(refresh),
-                 'mfa_require': refresh['mfa_require']})
-
-        except TokenError:
-            raise AuthenticationFailed("Access Token Invalid")
-        except (TypeError, ValueError, ObjectDoesNotExist):
-            raise PermissionDenied('Invalid access token')
+        serializer = MFATokenGenerateSerializer(data=request.data, context={'request': request})
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user = request.user
+        user.mfa_code_check(serializer.validated_data["mfa_code"])
+        refresh = CustomTokenObtainPairSerializer.get_2fa_token(user)
+        return Response(
+            {'access': str(refresh.access_token),
+             'refresh': str(refresh),
+             'mfa_require': refresh['mfa_require']})
 
 
 class MFAEnableView(APIView):

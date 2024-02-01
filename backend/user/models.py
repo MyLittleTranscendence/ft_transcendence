@@ -1,9 +1,11 @@
 import uuid
 from datetime import datetime, timedelta
 
+import pytz
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser, User
 from django.db import models
+from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 
 from backend import settings
 
@@ -54,3 +56,12 @@ class User(AbstractUser):
         self.mfa_generate_time = datetime.now()
         self.save(update_fields=['mfa_code', 'mfa_generate_time'])
         return self
+
+    def mfa_code_check(self, mfa_code):
+        utc_now = datetime.now(pytz.utc)
+        if not self.mfa_enable:
+            raise PermissionDenied('bad access, efa disabled')
+        if utc_now - timedelta(minutes=settings.MFA_LIMIT_TIME) > self.mfa_generate_time:
+            raise AuthenticationFailed("Code Timeout")
+        if self.mfa_code != mfa_code:
+            raise AuthenticationFailed("Code Invalid")
