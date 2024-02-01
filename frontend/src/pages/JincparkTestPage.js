@@ -1,7 +1,7 @@
 import Component from "../core/Component.js";
 // import LoginForm from "../components/Login/LoginForm.js";
 // import SignUpForm from "../components/SignUp/SignUpForm.js";
-import MessageForm from "../components/Form/MessageForm.js";
+import ChatInput from "../components/LobbyPage/ChatInput.js";
 
 export default class JincparkTestPage extends Component {
   template() {
@@ -13,13 +13,13 @@ export default class JincparkTestPage extends Component {
 
     // const loginForm = new LoginForm($div);
     // const signupForm = new SignUpForm($div);
-    const messageInput = new MessageForm($div, {
+    const chatInput = new ChatInput($div, {
       id: "message-input-test",
       name: "message-input",
     });
 
     // loginForm.render();
     // signupForm.render();
-    messageInput.render();
+    chatInput.render();
   }
 }
