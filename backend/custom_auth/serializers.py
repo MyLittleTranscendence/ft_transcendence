@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import serializers
+from rest_framework import serializers, viewsets
 from django.db import transaction
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from custom_auth.models import Oauth42User
 from user.models import User
@@ -27,5 +28,35 @@ class Oauth42UserPostSerializer(serializers.ModelSerializer):
             return user
 
 
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['mfa_require'] = user.mfa_enable
+        return token
+
+    @classmethod
+    def get_2fa_token(cls, user):
+        token = super().get_token(user)
+        token['mfa_require'] = False
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = self.get_token(self.user)
+        data['mfa_require'] = refresh['mfa_require']
+        return data
 
 
+class TokenResponseSerializer(serializers.Serializer):
+    access = serializers.CharField(read_only=True)
+    refresh = serializers.CharField(read_only=True)
+    mfa_require = serializers.BooleanField(read_only=True)
+
+
+class MFATokenGenerateSerializer(serializers.ModelSerializer):
+    mfa_code = serializers.CharField(max_length=100, required=True, write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['mfa_code']
