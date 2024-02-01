@@ -3,11 +3,9 @@ import getRouter from "../../core/router.js";
 const signInHandler = async (event) => {
   event.preventDefault();
 
-  const { srcElement } = event.srcElement;
-
   const data = {
-    username: srcElement[0].value,
-    password: srcElement[1].value,
+    username: event.srcElement[0].value,
+    password: event.srcElement[1].value,
   };
 
   try {
