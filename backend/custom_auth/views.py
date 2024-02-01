@@ -9,6 +9,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from backend import settings
+from backend.utils import validate_serializer
 from custom_auth.oauth_42_constant import Oauth42Constant
 from custom_auth.oauth_service import Oauth42Service
 from custom_auth.serializers import Oauth42UserPostSerializer, CustomTokenObtainPairSerializer, \
@@ -35,6 +36,7 @@ class Login42CallBack(APIView):
             return Response(oauth_42_serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         user = oauth_42_serializer.get_or_create_user(oauth_42_serializer.validated_data)
         refresh = CustomTokenObtainPairSerializer.get_token(user)
+
         return Response(
             {'access': str(refresh.access_token),
              'refresh': str(refresh),
@@ -77,8 +79,7 @@ class MFATokenGenerateView(APIView):
     )
     def post(self, request):
         serializer = MFATokenGenerateSerializer(data=request.data, context={'request': request})
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        validate_serializer(serializer)
         user = request.user
         user.mfa_code_check(serializer.validated_data["mfa_code"])
         refresh = CustomTokenObtainPairSerializer.get_2fa_token(user)
@@ -102,8 +103,7 @@ class MFAEnableView(APIView):
     )
     def post(self, request):
         serializer = MFATokenGenerateSerializer(data=request.data, context={'request': request})
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        validate_serializer(serializer)
         user = request.user
         user.update_mfa_enable(serializer.validated_data["mfa_code"])
         refresh = CustomTokenObtainPairSerializer.get_2fa_token(user)
