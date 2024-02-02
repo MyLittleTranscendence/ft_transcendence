@@ -1,31 +1,59 @@
-const fetchAPI = async (
-  method,
-  path,
-  data = null,
-  includeCredentials = false
-) => {
-  const options = {
-    method,
+const get = async (url) => {
+  const requestOptions = {
+    method: "GET",
   };
+  return await fetchRequest(url, requestOptions);
+};
 
-  if (method === "POST" || method === "PUT") {
-    options.body = JSON.stringify(data);
-    options.headers = new Headers({ "Content-Type": "application/json" });
-  }
+const post = async (url, body) => {
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  };
+  return await fetchRequest(url, requestOptions);
+};
 
+const put = async (url, body) => {
+  const requestOptions = {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  };
+  return await fetchRequest(url, requestOptions);
+};
+
+const deleteRequest = async (url) => {
+  return await fetchRequest(url, { method: "DELETE" });
+};
+
+const fetchRequest = async (url, requestOptions) => {
   try {
-    const res = await fetch(`http://localhost:8000/api${path}`, options);
+    const response = await fetch(
+      `http://localhost:8000/api${url}`,
+      requestOptions
+    );
+    const contentType = response.headers.get("Content-Type");
 
-    if (!res.ok) {
-      throw new Error(`Error: ${res.status}`);
+    if (!response.ok) {
+      const errorResponse = await response.json();
+      const error =
+        (errorResponse && errorResponse.message) || response.statusText;
+      throw new Error(error);
     }
 
-    let resData = await res.json();
-
-    return { status: res.status, data: resData };
-  } catch (e) {
-    console.error(e);
+    return contentType && (await response.json());
+  } catch (error) {
+    console.error("Fetch error:", error);
+    throw error;
   }
+};
+
+const fetchAPI = {
+  get,
+  post,
+  put,
+  delete: deleteRequest,
 };
 
 export default fetchAPI;

@@ -1,6 +1,7 @@
 import Component from "../../core/Component.js";
 import InfoInputGroup from "../UI/Input/InfoInputGroup.js";
 import Button from "../UI/Button/Button.js";
+import signUpHandler from "../../servicies/auth/signUpHandler.js";
 
 export default class SignUpForm extends Component {
   template() {
@@ -112,6 +113,6 @@ export default class SignUpForm extends Component {
     emailInputGroup.render();
     signUpButton.render();
 
-    $signUpForm.addEventListner("submit");
+    $signUpForm.addEventListener("submit", signUpHandler);
   }
 }
