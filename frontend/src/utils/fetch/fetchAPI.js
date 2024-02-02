@@ -1,32 +1,3 @@
-const get = async (url) => {
-  const requestOptions = {
-    method: "GET",
-  };
-  return await fetchRequest(url, requestOptions);
-};
-
-const post = async (url, body) => {
-  const requestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  };
-  return await fetchRequest(url, requestOptions);
-};
-
-const put = async (url, body) => {
-  const requestOptions = {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  };
-  return await fetchRequest(url, requestOptions);
-};
-
-const deleteRequest = async (url) => {
-  return await fetchRequest(url, { method: "DELETE" });
-};
-
 const fetchRequest = async (url, requestOptions) => {
   try {
     const response = await fetch(
@@ -48,6 +19,33 @@ const fetchRequest = async (url, requestOptions) => {
     throw error;
   }
 };
+
+const get = async (url) => {
+  const requestOptions = {
+    method: "GET",
+  };
+  return fetchRequest(url, requestOptions);
+};
+
+const post = async (url, body) => {
+  const requestOptions = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  };
+  return fetchRequest(url, requestOptions);
+};
+
+const put = async (url, body) => {
+  const requestOptions = {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  };
+  return fetchRequest(url, requestOptions);
+};
+
+const deleteRequest = async (url) => fetchRequest(url, { method: "DELETE" });
 
 const fetchAPI = {
   get,
