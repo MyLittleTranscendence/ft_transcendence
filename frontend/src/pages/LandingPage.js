@@ -1,5 +1,5 @@
 import PageContainer from "../components/UI/Container/PageContainer.js";
-import SignInLink from "../components/LandingPage/SignInLink.js";
+import SignInLink from "../components/Landing/SignInLink.js";
 import Component from "../core/Component.js";
 
 export default class LandingPage extends Component {

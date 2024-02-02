@@ -1,8 +1,8 @@
 import Component from "../core/Component.js";
 import PageContainerWithLogo from "../components/UI/Container/PageContainerWithLogo.js";
-import MatchContainer from "../components/LobbyPage/MatchContainer.js";
-import GlobalChatContainer from "../components/LobbyPage/GlobalChatContainer.js";
-import SideBar from "../components/LobbyPage/SideBar.js";
+import MatchContainer from "../components/Lobby/MatchContainer.js";
+import GlobalChatContainer from "../components/Lobby/GlobalChatContainer.js";
+import SideBar from "../components/Lobby/SideBar.js";
 
 export default class LobbyPage extends Component {
   template() {
