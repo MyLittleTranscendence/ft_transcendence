@@ -1,6 +1,6 @@
 import Component from "../core/Component.js";
 import PageContainer from "../components/UI/Container/PageContainer.js";
-import SignUpForm from "../components/Form/SignUpForm.js";
+import SignUpForm from "../components/SignUp/SignUpForm.js";
 
 export default class SignUpPage extends Component {
   template() {
@@ -18,12 +18,12 @@ export default class SignUpPage extends Component {
   }
 
   mounted() {
-    const $signUpPageContent = this.$target.querySelector(
+    const $SignUpContent = this.$target.querySelector(
       "#signup-page-content"
     );
   
-    const pageContainer = new PageContainer(this.$target, $signUpPageContent);
-    const signUpForm = new SignUpForm($signUpPageContent);
+    const pageContainer = new PageContainer(this.$target, $SignUpContent);
+    const signUpForm = new SignUpForm($SignUpContent);
 
     pageContainer.render();
     signUpForm.render();  
