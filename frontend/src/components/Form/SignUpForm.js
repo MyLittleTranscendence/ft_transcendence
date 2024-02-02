@@ -1,6 +1,7 @@
 import Component from "../../core/Component.js";
 import InfoInputGroup from "../UI/Input/InfoInputGroup.js";
-import Button from "../UI/Button/Button.js"
+import Button from "../UI/Button/Button.js";
+import signUpHandler from "../../handlers/api/signUpHandler.js";
 
 export default class SignUpForm extends Component {
   template() {
@@ -70,31 +71,31 @@ export default class SignUpForm extends Component {
 
     const idInputGroup = new InfoInputGroup($inputGroupContainer, {
       labelText: "ID",
-      warningText: "ID already exists",
+      warningText: "",
       inputProps: idInputProps,
       holderId: "id-input-holder",
     });
     const nicknameInputGroup = new InfoInputGroup($inputGroupContainer, {
       labelText: "Nickname",
-      warningText: "Nickname already exists",
+      warningText: "",
       inputProps: nicknameInputProps,
       holderId: "nickname-input-holder",
     });
     const pwInputGroup = new InfoInputGroup($inputGroupContainer, {
       labelText: "Password",
-      warningText: "Password too short / Password too long",
+      warningText: "",
       inputProps: pwInputProps,
       holderId: "pw-input-holder",
     });
     const pwVerifyInputGroup = new InfoInputGroup($inputGroupContainer, {
       labelText: "Verify Password",
-      warningText: "Password does not match",
+      warningText: "",
       inputProps: pwVerifyInputProps,
       holderId: "pw-verify-input-holder",
     });
     const emailInputGroup = new InfoInputGroup($inputGroupContainer, {
       labelText: "E-mail",
-      warningText: "Wrong E-mail format",
+      warningText: "",
       inputProps: emailInputProps,
       holderId: "email-input-holder",
     });
@@ -103,7 +104,7 @@ export default class SignUpForm extends Component {
       disabled: false,
       content: "Sign Up",
       attributes: 'style="min-width: 10rem"',
-    })
+    });
 
     idInputGroup.render();
     nicknameInputGroup.render();
@@ -111,5 +112,7 @@ export default class SignUpForm extends Component {
     pwVerifyInputGroup.render();
     emailInputGroup.render();
     signUpButton.render();
+
+    this.addEvent("submit", "#sign-up-form", signUpHandler);
   }
 }
