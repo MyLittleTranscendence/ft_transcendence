@@ -12,8 +12,10 @@ const signInHandler = async (event) => {
   fetchAPI
     .post("/login/default/", body)
     .then((data) => {
-      sessionStorage.setItem('access', data.access);
-      sessionStorage.setItem('refresh', data.refresh);
+      sessionStorage.setItem("access", data.access);
+      sessionStorage.setItem("refresh", data.refresh);
+      sessionStorage.setItem("mfa_require", data.mfa_require);
+      sessionStorage.setItem("user_id", data.user_id);
       getRouter().navigate("/");
     })
     .catch((error) => console.log(error));

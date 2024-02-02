@@ -1,8 +1,19 @@
 const fetchRequest = async (url, requestOptions) => {
   try {
+    const accessToken = sessionStorage.getItem("accessToken");
+
+    const finalRequestOptions = requestOptions;
+
+    if (accessToken) {
+      finalRequestOptions.headers = {
+        ...requestOptions.headers,
+        Authorization: `Bearer ${accessToken}`,
+      };
+    }
+
     const response = await fetch(
       `http://localhost:8000/api${url}`,
-      requestOptions
+      finalRequestOptions
     );
     const contentType = response.headers.get("Content-Type");
 
@@ -13,7 +24,11 @@ const fetchRequest = async (url, requestOptions) => {
       throw new Error(error);
     }
 
-    return contentType && (await response.json());
+    return (
+      contentType &&
+      contentType.includes("application/json") &&
+      (await response.json())
+    );
   } catch (error) {
     console.error("Fetch error:", error);
     throw error;

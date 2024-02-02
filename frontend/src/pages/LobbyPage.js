@@ -3,6 +3,8 @@ import PageContainerWithLogo from "../components/UI/Container/PageContainerWithL
 import MatchContainer from "../components/Lobby/MatchContainer.js";
 import GlobalChatContainer from "../components/Lobby/GlobalChatContainer.js";
 import SideBar from "../components/Lobby/SideBar.js";
+import TwoFASwitch from "../components/Lobby/TwoFASwitch.js";
+import TwoFAForm from "../components/SignIn/TwoFAForm.js";
 
 export default class LobbyPage extends Component {
   template() {
@@ -26,5 +28,10 @@ export default class LobbyPage extends Component {
     matchContainer.render();
     globalChatContainer.render();
     sideBar.render();
+
+    const twoFASwitch = new TwoFASwitch($pageContent);
+    const twoFAForm = new TwoFAForm($pageContent);
+    twoFASwitch.render();
+    twoFAForm.render();
   }
 }
