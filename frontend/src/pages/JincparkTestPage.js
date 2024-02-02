@@ -1,7 +1,7 @@
 import Component from "../core/Component.js";
 // import LoginForm from "../components/Login/LoginForm.js";
 // import SignUpForm from "../components/SignUp/SignUpForm.js";
-import ChatInput from "../components/Lobby/ChatInput.js";
+// import ChatInput from "../components/Lobby/ChatInput.js";
 import TwoFAForm from "../components/SignIn/TwoFAForm.js";
 
 export default class JincparkTestPage extends Component {
