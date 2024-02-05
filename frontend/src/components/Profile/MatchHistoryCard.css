@@ -1,0 +1,17 @@
+.match-history-card {
+  background-color: #0049d8;
+  border-radius: 2rem;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.match-history-win {
+  background-color: #00c213;
+  font-size: 1.5rem;
+}
+
+.match-history-lose {
+  background-color: #ff6363;
+}
