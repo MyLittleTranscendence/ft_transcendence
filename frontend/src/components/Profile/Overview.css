@@ -1,0 +1,9 @@
+.record {
+  color: #c1c1c1;
+  font-weight: bold;
+}
+
+.record-value {
+  color: white;
+  margin-left: 2rem;
+}
