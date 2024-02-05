@@ -4,9 +4,7 @@ import Overview from "./Overview.js";
 
 export default class Profile extends Component {
   template() {
-    const {
-      username,
-    } = this.props;
+    const { username } = this.props;
 
     return `
 		<div
@@ -27,35 +25,26 @@ export default class Profile extends Component {
     `;
   }
 
-	mounted() {
-		const {
-			imageSize,
-			imageSrc,
-			alt,
-			wins,
-			losses,
-		} = this.props;
+  mounted() {
+    const { imageSize, imageSrc, alt, wins, losses } = this.props;
 
-		const $profileContainer = this.$target.querySelector(
-			"#profile-container"
-		);
-		const $profileImageContent = $profileContainer.querySelector(
-			"#profile-image-content"
-		);
-		const $overviewContent = $profileContainer.querySelector(
-			"#overview-content"
-		);
+    const $profileContainer = this.$target.querySelector("#profile-container");
+    const $profileImageContent = $profileContainer.querySelector(
+      "#profile-image-content"
+    );
+    const $overviewContent =
+      $profileContainer.querySelector("#overview-content");
 
-		const profileImage = new ProfileImage($profileImageContent, {
-			imageSize,
-			imageSrc,
-			alt,
-		});
-		const overview = new Overview($overviewContent, {
-			wins,
-			losses,
-		})
-		profileImage.render();
-		overview.render();
-	}
+    const profileImage = new ProfileImage($profileImageContent, {
+      imageSize,
+      imageSrc,
+      alt,
+    });
+    const overview = new Overview($overviewContent, {
+      wins,
+      losses,
+    });
+    profileImage.render();
+    overview.render();
+  }
 }

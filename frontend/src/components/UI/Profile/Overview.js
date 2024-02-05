@@ -5,10 +5,7 @@ appendCSSLink("src/components/UI/Profile/Overview.css");
 
 export default class Overview extends Component {
   template() {
-    const {
-      wins,
-			losses,
-    } = this.props;
+    const { wins, losses } = this.props;
 
     return `
 		<div
@@ -35,7 +32,7 @@ export default class Overview extends Component {
 			<div class="record">Win Rate 
 				<span
 					class="record-value" style="margin-left: 1rem;">
-					${wins/(wins + losses) * 100}%
+					${(wins / (wins + losses)) * 100}%
 				</span>
 			</div>
 		</div>

@@ -19,11 +19,12 @@ export default class ProfilePage extends Component {
   }
 
   mounted() {
-    const $profileContainer = this.$target.querySelector(
-      "#profile-container"
+    const $profileContainer = this.$target.querySelector("#profile-container");
+
+    const pageContainer = new PageContainerWithLogo(
+      this.$target,
+      $profileContainer
     );
-  
-    const pageContainer = new PageContainerWithLogo(this.$target, $profileContainer);
     const profileContent = new Profile($profileContainer, {
       username: "hyeonjun",
       imageSize: "image-mid",
