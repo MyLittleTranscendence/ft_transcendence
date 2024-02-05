@@ -38,7 +38,7 @@ class Login42CallBack(APIView):
         user = oauth_42_serializer.get_or_create_user(oauth_42_serializer.validated_data)
         refresh = CustomTokenObtainPairSerializer.get_token(user)
 
-        redirect_url = 'http://localhost:3000'
+        redirect_url = 'http://localhost:3000?oauth=true'
         response = HttpResponseRedirect(redirect_url)
         set_cookie(response, refresh.access_token, "access_token")
         set_cookie(response, refresh, "refresh_token")
