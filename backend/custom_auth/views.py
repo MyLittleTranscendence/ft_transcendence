@@ -54,6 +54,12 @@ class CookieToResponse:
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
+    @swagger_auto_schema(
+        request_body=CustomTokenObtainPairSerializer,
+        responses={200: TokenResponseSerializer})
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
 
 class MFACodeGenerateView(APIView):
     permission_classes = [IsAuthenticated]
