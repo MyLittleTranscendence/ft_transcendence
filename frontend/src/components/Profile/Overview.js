@@ -1,5 +1,5 @@
-import Component from "../../../core/Component.js";
-import appendCSSLink from "../../../utils/appendCSSLink.js";
+import Component from "../../core/Component.js";
+import appendCSSLink from "../../utils/appendCSSLink.js";
 
 appendCSSLink("src/components/UI/Profile/Overview.css");
 

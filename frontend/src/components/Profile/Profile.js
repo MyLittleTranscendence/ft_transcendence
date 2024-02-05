@@ -1,5 +1,5 @@
-import Component from "../../../core/Component.js";
-import ProfileImage from "./ProfileImage.js";
+import Component from "../../core/Component.js";
+import ProfileImage from "../UI/Profile/ProfileImage.js";
 import Overview from "./Overview.js";
 
 export default class Profile extends Component {
