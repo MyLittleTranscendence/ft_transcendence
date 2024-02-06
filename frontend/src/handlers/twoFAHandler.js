@@ -1,5 +1,5 @@
-import fetchEnableTwoFA from "../api/fetchEnableTwoFA.js";
-import fetchSignInTwoFA from "../api/fetchSignInTwoFA.js";
+import fetchEnableTwoFA from "../api/auth/fetchEnableTwoFA.js";
+import fetchSignInTwoFA from "../api/auth/fetchSignInTwoFA.js";
 
 const twoFAHandler = (event) => {
   event.preventDefault();

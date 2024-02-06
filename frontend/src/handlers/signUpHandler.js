@@ -1,5 +1,4 @@
-import fetchAPI from "../../utils/fetch/fetchAPI.js";
-import getRouter from "../../core/router.js";
+import fetchSignUp from "../api/auth/fetchSignUp.js";
 
 const signUpHandler = async (event) => {
   event.preventDefault();
@@ -11,10 +10,7 @@ const signUpHandler = async (event) => {
     password: event.srcElement.querySelector("#signup-form-pw").value,
   };
 
-  fetchAPI
-    .post("/users/", body)
-    .then(() => getRouter().navigate("/sign-in"))
-    .catch((error) => console.log(error));
+  fetchSignUp(body);
 };
 
 export default signUpHandler;
