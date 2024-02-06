@@ -54,6 +54,10 @@ class TokenResponseSerializer(serializers.Serializer):
     user_id = serializers.IntegerField(read_only=True)
 
 
+class CodeResponseSerializer(serializers.Serializer):
+    email = serializers.EmailField(read_only=True)
+
+
 class MFATokenGenerateSerializer(serializers.ModelSerializer):
     mfa_code = serializers.CharField(max_length=100, required=True, write_only=True)
 
