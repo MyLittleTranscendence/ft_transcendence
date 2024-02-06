@@ -13,9 +13,7 @@ export default class TwoFAForm extends Component {
   setEvent() {
     this.addEvent("submit", "#two-fa-form", twoFAHandler);
     this.addEvent("click", "#send-code-btn", () =>
-      fetchSendCode(() => {
-        this.startTimer(179, this.$target.querySelector("#two-fa-timer"));
-      })
+      fetchSendCode((email) => this.onCodeSendSuccess(email))
     );
   }
 
@@ -30,6 +28,7 @@ export default class TwoFAForm extends Component {
         "
         data-form-type=${this.props.type}
       >
+        <p id="code-sent-notification" style="color:#c2c2c2;"></p>
         <div
           id="two-fa-group-container"
           class="
@@ -38,7 +37,9 @@ export default class TwoFAForm extends Component {
             align-items-center
             justify-content-center
             position-relative
+            mt-3
           "
+          style="max-width: 15rem"
         >
           <label
             for="two-fa-code-input"
@@ -100,9 +101,12 @@ export default class TwoFAForm extends Component {
     sendCodeButton.render();
     confirmButton.render();
 
-    fetchSendCode(() =>
-      this.startTimer(179, this.$target.querySelector("#two-fa-timer"))
-    );
+    fetchSendCode((email) => this.onCodeSendSuccess(email));
+  }
+
+  onCodeSendSuccess(email) {
+    this.startTimer(179, this.$target.querySelector("#two-fa-timer"));
+    this.notifyUserCodeHasSent(email);
   }
 
   startTimer(duration, $timerElement) {
@@ -132,5 +136,10 @@ export default class TwoFAForm extends Component {
         // Confirm 버튼 비활성화 로직
       }
     }, 1000);
+  }
+
+  notifyUserCodeHasSent(email) {
+    const $p = this.$target.querySelector("#code-sent-notification");
+    $p.innerText = `Verification code has sent to ${email}`;
   }
 }
