@@ -57,7 +57,14 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         request_body=CustomTokenObtainPairSerializer,
         responses={200: TokenResponseSerializer})
     def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
+        super_response = super().post(request, *args, **kwargs)
+        if super_response.status_code == status.HTTP_200_OK:
+            response = Response(
+                {'mfa_require': super_response.data.get('mfa_require', None),
+                 'user_id': super_response.data.get('user_id', None)}, status=200)
+            set_cookie(response, super_response.data.get('access', None), "access_token")
+            return response
+        return super_response
 
 
 class MFACodeGenerateView(APIView):
