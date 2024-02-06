@@ -6,15 +6,19 @@ appendCSSLink("src/components/Profile/MatchHistoryCard.css");
 
 export default class MatchHistoryCard extends Component {
   template() {
-    const { win, username, opponent, score } = this.props;
+    const { matchtype, win, username, opponent, score } = this.props;
 
     return `
       <div class="card match-history-card">
-        <div class="card-header ${win ? "match-history-win" : "match-history-lose"}">
-          ${win ? "Win" : "Lose"}
+        <div class="card-header bg-transparent border-0 card-header-custom">
+          ${matchtype}
         </div>
-        <div class="card-body">
+        <div class="card-body card-body-custom">
           <div class="d-flex justify-content-center align-items-center">
+            <div
+              class="${win ? "match-history-win" : "match-history-lose"}">
+              ${win ? "Win" : "Lose"}
+            </div>
             <div id="user-profile-image"></div>
             <span class="mx-2">
               ${username} vs ${opponent}
@@ -22,7 +26,7 @@ export default class MatchHistoryCard extends Component {
             <div id="opponent-profile-image"></div>
           </div>
         </div>
-        <div class="card-footer bg-transparent border-0">
+        <div class="card-footer bg-transparent border-0 card-footer-custom">
           ${score}
         </div>
       </div>

@@ -7,9 +7,29 @@
   text-align: center;
 }
 
-.match-history-win {
+.card-header-custom, .card-body-custom, .card-footer-custom {
+  padding-top: 0rem;
+  padding-bottom: 0rem;
+}
+
+.card-header-custom {
+  color: #FFB800;
+}
+
+.card-body-custom {
+  margin-right: 8rem;
+}
+
+.match-history-win, .match-history-lose {
   background-color: #00c213;
-  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3rem;
+  width: 4rem;
+  height: 2rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
 }
 
 .match-history-lose {

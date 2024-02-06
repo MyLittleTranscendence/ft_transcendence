@@ -38,10 +38,11 @@ export default class ProfilePage extends Component {
       losses: 42,
     });
     const matchHistoryContent = new MatchHistoryCard($profileContainer, {
-      win: true,
+      matchtype: "1 vs 1",
+      win: false,
       username: "hyeonjun",
       opponent: "fat-ass",
-      score: "2:0",
+      score: "0:2",
     });
 
     pageContainer.render();
