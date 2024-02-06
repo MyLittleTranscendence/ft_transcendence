@@ -18,9 +18,7 @@ export default class SignInPage extends Component {
   }
 
   mounted() {
-    const $SignInContent = this.$target.querySelector(
-      "#signin-page-content"
-    );
+    const $SignInContent = this.$target.querySelector("#signin-page-content");
 
     const pageContainer = new PageContainer(this.$target, $SignInContent);
     const signInForm = new SigninForm($SignInContent);
