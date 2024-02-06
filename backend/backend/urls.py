@@ -38,6 +38,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('docs/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path("chat/", include("chat.urls")),
     path('api/users/<int:pk>/profile-image/', UserProfileUpdateView.as_view(), name='userprofile-update'),
     path('api/login/oauth2/42api/', Login42.as_view(), name='oauth-login-42'),
     path('api/login/oauth2/code/42api/', Login42CallBack.as_view(), name='oauth-redirect-42'),
