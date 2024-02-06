@@ -1,25 +1,24 @@
-# chat/consumers.py
 import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.contrib.auth.models import AnonymousUser
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        token = self.scope['query_string']
-        # await self.close(code=401)
-        print(f"Connected user: {self.scope['user']}")
-        print(f"Connected user: {self.scope['user']}")
-        print(f"Connected user: {self.scope['user']}")
-        print(f"Connected user: {self.scope['user']}")
-        print(f"Connected user: {self.scope['user']}")
+    login_group = "login_group"
 
-        self.login_group = "login_group"
-        await self.channel_layer.group_add(self.login_group, self.channel_name)
-        await self.accept()
+    async def connect(self):
+        if isinstance(self.scope['user'], AnonymousUser):
+            await self.close(code=4001)
+        else:
+            await self.channel_layer.group_add(self.login_group, self.channel_name)
+            await self.channel_layer.group_add(str(self.scope['user'].id), self.channel_name)
+            await self.accept()
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.login_group, self.channel_name)
+        if hasattr(self, self.login_group):
+            await self.channel_layer.group_discard(self.login_group, self.channel_name)
+            await self.channel_layer.group_discard(str(self.scope['user'].id), self.channel_name)
 
     # Receive message from WebSocket
     async def receive(self, text_data):
