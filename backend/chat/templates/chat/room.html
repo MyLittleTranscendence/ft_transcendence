@@ -32,6 +32,9 @@
         if (data.type === 'total_message') {
             const formattedMessage = `*${data.type}* [${data.datetime}] ${data.sender_nickname} ${data.sender_id}: ${data.message}\n`;
             document.querySelector('#chat-log').value += formattedMessage;
+        } else if (data.type === 'single_message') {
+            const formattedMessage = `*${data.type}* [${data.datetime}] ${data.sender_nickname} ${data.sender_id}: ${data.message}\n`;
+            document.querySelector('#chat-log').value += formattedMessage;
         } else {
             document.querySelector('#chat-log').value += (data.message + '\n');
         }
@@ -52,8 +55,9 @@
         const messageInputDom = document.querySelector('#chat-message-input');
         const message = messageInputDom.value;
         chatSocket.send(JSON.stringify({
-            'type': 'total_message',
-            'message': message
+            'type': 'single_message',
+            'message': message,
+            'receiver_id': 1
         }));
         messageInputDom.value = '';
     };
