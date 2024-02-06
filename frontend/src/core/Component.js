@@ -39,16 +39,15 @@ export default class Component {
   setEvent() {} // 컴포넌트에서 필요한 이벤트 설정
 
   setState(newState) {
-    this.$state = { ...this.$state, ...newState };
+    this.state = { ...this.state, ...newState };
     this.render();
   }
 
   addEvent(eventType, selector, callback) {
-    const child = this.$target.querySelector(selector);
-    if (!child) {
-      console.error("Error: no child to add event listener");
-      return;
-    }
-    child.addEventListener(eventType, (event) => callback(event));
+    this.$target.addEventListener(eventType, (event) => {
+      if (event.target.closest(selector)) {
+        callback(event);
+      }
+    });
   }
 }

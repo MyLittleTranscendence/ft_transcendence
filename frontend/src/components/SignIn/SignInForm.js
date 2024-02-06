@@ -1,27 +1,31 @@
 import Component from "../../core/Component.js";
 import Button from "../UI/Button/Button.js";
-import InfoInputGroup from "../UI/Input/InfoInputGroup.js";
+import InputGroup from "../UI/Input/InputGroup.js";
 import Link from "../UI/Link/Link.js";
 
-import signInHandler from "../../handlers/api/signInHandler.js";
+import signInHandler from "../../handlers/signInHandler.js";
 
 export default class SigninForm extends Component {
+  setEvent() {
+    this.addEvent("submit", "#sign-in-form", signInHandler);
+  }
+
   template() {
     return `
-    <form
-      id="sign-in-form"
-      class="d-flex flex-column align-items-center"
-    >
-      <div id="input-group-container"></div>
-      <div id="sign-in-btn-holder"></div>
-      <text
-        class="fw-bold mt-5 mb-2"
-        style="color: #b2b2b2"
-      >
-        Are you not registered?
-      </text>
-    </form>
-    `;
+<form
+  id="sign-in-form"
+  class="d-flex flex-column align-items-center"
+>
+  <div id="input-group-container"></div>
+  <div id="sign-in-btn-holder"></div>
+  <text
+    class="fw-bold mt-5 mb-2"
+    style="color: #b2b2b2"
+  >
+    Are you not registered?
+  </text>
+</form>
+`;
   }
 
   mounted() {
@@ -50,13 +54,13 @@ export default class SigninForm extends Component {
       required: true,
     };
 
-    const idInputGroup = new InfoInputGroup($inputGroupContainer, {
+    const idInputGroup = new InputGroup($inputGroupContainer, {
       labelText: "ID",
       warningText: "ID does not exist",
       inputProps: idInputProps,
       holderId: "id-input-holder",
     });
-    const pwInputGroup = new InfoInputGroup($inputGroupContainer, {
+    const pwInputGroup = new InputGroup($inputGroupContainer, {
       labelText: "Password",
       warningText: "Wrong password",
       inputProps: pwInputProps,
@@ -78,7 +82,5 @@ export default class SigninForm extends Component {
     pwInputGroup.render();
     signInButton.render();
     signUpButton.render();
-
-    this.addEvent("submit", "#sign-in-form", signInHandler);
   }
 }

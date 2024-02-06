@@ -10,6 +10,15 @@ export default class TwoFAForm extends Component {
     this.timerInterval = null;
   }
 
+  setEvent() {
+    this.addEvent("submit", "#two-fa-form", twoFAHandler);
+    this.addEvent("click", "#send-code-btn", () =>
+      fetchSendCode(() => {
+        this.startTimer(179, this.$target.querySelector("#two-fa-timer"));
+      })
+    );
+  }
+
   template() {
     return `
       <form
@@ -91,16 +100,9 @@ export default class TwoFAForm extends Component {
     sendCodeButton.render();
     confirmButton.render();
 
-    this.addEvent("submit", "#two-fa-form", twoFAHandler);
-
-    const timerHandler = () => {
-      this.startTimer(179, this.$target.querySelector("#two-fa-timer"));
-    };
-
-    sendCodeButton.addEvent("click", "#send-code-btn", () =>
-      fetchSendCode(timerHandler)
+    fetchSendCode(() =>
+      this.startTimer(179, this.$target.querySelector("#two-fa-timer"))
     );
-    fetchSendCode(timerHandler);
   }
 
   startTimer(duration, $timerElement) {
