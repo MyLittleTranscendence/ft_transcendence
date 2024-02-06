@@ -1,4 +1,4 @@
-import fetchAPI from "../utils/fetch/fetchAPI.js";
+import fetchAPI from "../../utils/fetchAPI.js";
 
 const fetchSendCode = (startTimer) => {
   fetchAPI
