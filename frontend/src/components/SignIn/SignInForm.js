@@ -12,20 +12,20 @@ export default class SigninForm extends Component {
 
   template() {
     return `
-<form
-  id="sign-in-form"
-  class="d-flex flex-column align-items-center"
->
-  <div id="input-group-container"></div>
-  <div id="sign-in-btn-holder"></div>
-  <text
-    class="fw-bold mt-5 mb-2"
-    style="color: #b2b2b2"
-  >
-    Are you not registered?
-  </text>
-</form>
-`;
+    <form
+      id="sign-in-form"
+      class="d-flex flex-column align-items-center"
+    >
+      <div id="input-group-container"></div>
+      <div id="sign-in-btn-holder"></div>
+      <text
+        class="fw-bold mt-5 mb-2"
+        style="color: #b2b2b2"
+      >
+        Are you not registered?
+      </text>
+    </form>
+    `;
   }
 
   mounted() {
