@@ -8,6 +8,7 @@ from django.utils.timezone import now
 class ChatConsumer(AsyncWebsocketConsumer):
     LOGIN_GROUP = "login_group"
     TOTAL_MESSAGE = "total_message"
+    SINGLE_MESSAGE = "single_message"
 
     async def connect(self):
         if isinstance(self.scope['user'], AnonymousUser):
@@ -27,6 +28,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message_type = text_data_json.get('type')
         if message_type == self.TOTAL_MESSAGE:
             await self.handle_total_message(text_data_json)
+        elif message_type == self.SINGLE_MESSAGE:
+            await self.handle_single_message(text_data_json)
 
     async def handle_total_message(self, message_data):
         message = message_data["message"]
@@ -39,9 +42,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "datetime": str(now())
             })
 
+    async def handle_single_message(self, message_data):
+        message = message_data["message"]
+        receiver_id = message_data["receiver_id"]
+        await self.channel_layer.group_send(
+            str(receiver_id), {
+                "type": "single.message",
+                "message": message,
+                "sender_id": self.scope['user'].id,
+                "sender_nickname": self.scope['user'].nickname,
+                "datetime": str(now())
+            })
+
     async def total_message(self, event):
         await self.send(text_data=json.dumps({
             "type": self.TOTAL_MESSAGE,
+            "message": event["message"],
+            "sender_id": event["sender_id"],
+            "sender_nickname": event["sender_nickname"],
+            "datetime": event["datetime"]
+        }))
+
+    async def single_message(self, event):
+        await self.send(text_data=json.dumps({
+            "type": self.SINGLE_MESSAGE,
             "message": event["message"],
             "sender_id": event["sender_id"],
             "sender_nickname": event["sender_nickname"],
