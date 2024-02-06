@@ -37,13 +37,12 @@ class Login42CallBack(APIView):
             return Response(oauth_42_serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         user = oauth_42_serializer.get_or_create_user(oauth_42_serializer.validated_data)
         refresh = CustomTokenObtainPairSerializer.get_token(user)
-
-        redirect_url = 'http://localhost:3000?oauth=true'
+        redirect_url = f"http://localhost:3000" \
+                       f"?oauth=true" \
+                       f"&mfa_require={str(refresh['mfa_require']).lower()}" \
+                       f"&user_id={user.id}"
         response = HttpResponseRedirect(redirect_url)
         set_cookie(response, refresh.access_token, "access_token")
-        set_cookie(response, refresh, "refresh_token")
-        set_cookie(response, refresh['mfa_require'], "mfa_require")
-        set_cookie(response, user.id, "user_id")
         return response
 
 
