@@ -14,7 +14,7 @@ from backend.utils import validate_serializer, set_cookie
 from custom_auth.oauth_42_constant import Oauth42Constant
 from custom_auth.oauth_service import Oauth42Service
 from custom_auth.serializers import Oauth42UserPostSerializer, CustomTokenObtainPairSerializer, \
-    MFATokenGenerateSerializer, TokenResponseSerializer
+    MFATokenGenerateSerializer, TokenResponseSerializer, CodeResponseSerializer
 
 
 class Login42(APIView):
@@ -71,6 +71,9 @@ class MFACodeGenerateView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
+    @swagger_auto_schema(
+        responses={201: CodeResponseSerializer}
+    )
     def post(self, request):
         user = request.user.update_mfa_code()
 
@@ -82,7 +85,7 @@ class MFACodeGenerateView(APIView):
             fail_silently=False,
         )
 
-        return Response(status=201)
+        return Response({'email': user.email}, status=201)
 
 
 class MFATokenGenerateView(APIView):
