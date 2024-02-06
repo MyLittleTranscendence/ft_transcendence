@@ -2,9 +2,9 @@ import Component from "../../../core/Component.js";
 import appendCSSLink from "../../../utils/appendCSSLink.js";
 import Input from "./Input.js";
 
-appendCSSLink("src/components/UI/Input/InfoInputGroup.css");
+appendCSSLink("src/components/UI/Input/InputGroup.css");
 
-export default class InfoInputGroup extends Component {
+export default class InputGroup extends Component {
   template() {
     const { labelText, warningText, holderId, inputProps } = this.props;
     return `
@@ -18,14 +18,14 @@ export default class InfoInputGroup extends Component {
       <label 
         for="${inputProps.id}"
         class="
-        fw-bold fs-5 info-input-label-text
+        fw-bold fs-5 input-group-left
         position-absolute
         ">
         ${labelText}
       </label>
       <div id="${holderId}" class="mx-3"></div>
       <span class="
-        info-input-warning-text
+        input-group-right
         position-absolute
       ">
         ${warningText}

@@ -1,11 +1,11 @@
-.info-input-label-text {
+.input-group-left {
   color: #b2b2b2;
   left: 0;
   top: 50%;
   transform: translate(-100%, -50%);
 }
 
-.info-input-warning-text {
+.input-group-right {
   color: #ff9d9d;
   font-weight: 600;
   right: 0;
