@@ -4,5 +4,5 @@ from user.models import User
 
 
 class BlockUser(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    blocked_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    blocker = models.ForeignKey(User, related_name="blockers", on_delete=models.CASCADE)
+    blocking = models.ForeignKey(User, related_name="blockings", on_delete=models.CASCADE)
