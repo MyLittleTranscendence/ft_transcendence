@@ -1,21 +1,9 @@
 const fetchRequest = async (url, requestOptions) => {
   try {
-    const accessToken = sessionStorage.getItem("accessToken");
-
-    const finalRequestOptions = requestOptions;
-
-    if (accessToken) {
-      finalRequestOptions.headers = {
-        ...requestOptions.headers,
-        Authorization: `Bearer ${accessToken}`,
-      };
-    }
-
-    const response = await fetch(
-      `http://localhost:8000/api${url}`,
-      finalRequestOptions
-    );
-    const contentType = response.headers.get("Content-Type");
+    const response = await fetch(`http://localhost:8000/api${url}`, {
+      ...requestOptions,
+      credentials: "include",
+    });
 
     if (!response.ok) {
       const errorResponse = await response.json();
@@ -24,11 +12,11 @@ const fetchRequest = async (url, requestOptions) => {
       throw new Error(error);
     }
 
-    return (
-      contentType &&
-      contentType.includes("application/json") &&
-      (await response.json())
-    );
+    if (response.headers.get("Content-Type")?.includes("application/json")) {
+      return await response.json();
+    }
+
+    return {};
   } catch (error) {
     console.error("Fetch error:", error);
     throw error;
