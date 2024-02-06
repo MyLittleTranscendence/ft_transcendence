@@ -50,8 +50,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class TokenResponseSerializer(serializers.Serializer):
-    access = serializers.CharField(read_only=True)
-    refresh = serializers.CharField(read_only=True)
     mfa_require = serializers.BooleanField(read_only=True)
     user_id = serializers.IntegerField(read_only=True)
 
