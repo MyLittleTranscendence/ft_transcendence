@@ -57,7 +57,14 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         request_body=CustomTokenObtainPairSerializer,
         responses={200: TokenResponseSerializer})
     def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
+        super_response = super().post(request, *args, **kwargs)
+        if super_response.status_code == status.HTTP_200_OK:
+            response = Response(
+                {'mfa_require': super_response.data.get('mfa_require', None),
+                 'user_id': super_response.data.get('user_id', None)}, status=200)
+            set_cookie(response, super_response.data.get('access', None), "access_token")
+            return response
+        return super_response
 
 
 class MFACodeGenerateView(APIView):
@@ -96,11 +103,11 @@ class MFATokenGenerateView(APIView):
         user = request.user
         user.mfa_code_check(serializer.validated_data["mfa_code"])
         refresh = CustomTokenObtainPairSerializer.get_2fa_token(user)
-        return Response(
-            {'access': str(refresh.access_token),
-             'refresh': str(refresh),
-             'mfa_require': refresh['mfa_require'],
+        response = Response(
+            {'mfa_require': refresh['mfa_require'],
              'user_id': user.id}, status=201)
+        set_cookie(response, str(refresh.access_token), "access_token")
+        return response
 
 
 class MFAEnableView(APIView):
@@ -121,11 +128,11 @@ class MFAEnableView(APIView):
         user = request.user
         user.update_mfa_enable(serializer.validated_data["mfa_code"])
         refresh = CustomTokenObtainPairSerializer.get_2fa_token(user)
-        return Response(
-            {'access': str(refresh.access_token),
-             'refresh': str(refresh),
-             'mfa_require': refresh['mfa_require'],
+        response = Response(
+            {'mfa_require': refresh['mfa_require'],
              'user_id': user.id}, status=201)
+        set_cookie(response, str(refresh.access_token), "access_token")
+        return response
 
 
 class MFADisableView(APIView):
