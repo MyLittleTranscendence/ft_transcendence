@@ -103,11 +103,11 @@ class MFATokenGenerateView(APIView):
         user = request.user
         user.mfa_code_check(serializer.validated_data["mfa_code"])
         refresh = CustomTokenObtainPairSerializer.get_2fa_token(user)
-        return Response(
-            {'access': str(refresh.access_token),
-             'refresh': str(refresh),
-             'mfa_require': refresh['mfa_require'],
+        response = Response(
+            {'mfa_require': refresh['mfa_require'],
              'user_id': user.id}, status=201)
+        set_cookie(response, str(refresh.access_token), "access_token")
+        return response
 
 
 class MFAEnableView(APIView):
@@ -128,11 +128,11 @@ class MFAEnableView(APIView):
         user = request.user
         user.update_mfa_enable(serializer.validated_data["mfa_code"])
         refresh = CustomTokenObtainPairSerializer.get_2fa_token(user)
-        return Response(
-            {'access': str(refresh.access_token),
-             'refresh': str(refresh),
-             'mfa_require': refresh['mfa_require'],
+        response = Response(
+            {'mfa_require': refresh['mfa_require'],
              'user_id': user.id}, status=201)
+        set_cookie(response, str(refresh.access_token), "access_token")
+        return response
 
 
 class MFADisableView(APIView):
