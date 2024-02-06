@@ -1,7 +1,7 @@
 import Component from "../core/Component.js";
 import PageContainerWithLogo from "../components/UI/Container/PageContainerWithLogo.js";
 import Profile from "../components/Profile/Profile.js";
-import fetchAPI from "../utils/fetch/fetchAPI.js";
+import fetchAPI from "../utils/fetchAPI.js";
 
 export default class ProfilePage extends Component {
   template() {
