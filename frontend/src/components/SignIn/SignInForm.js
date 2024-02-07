@@ -7,7 +7,9 @@ import signInHandler from "../../handlers/signInHandler.js";
 
 export default class SigninForm extends Component {
   setEvent() {
-    this.addEvent("submit", "#sign-in-form", signInHandler);
+    this.addEvent("submit", "#sign-in-form", (event) => {
+      signInHandler(event, this.$target.querySelector("#sign-in-warningtext"));
+    });
   }
 
   template() {
@@ -17,6 +19,14 @@ export default class SigninForm extends Component {
       class="d-flex flex-column align-items-center"
     >
       <div id="input-group-container"></div>
+      <div
+        id="sign-in-warningtext"
+        style="
+        font-size: 0.8rem; margin-bottom: 0.5rem;
+        font-weight: bold; height: 1rem;
+        font-size: 0.2rem; color: #ff9d9d;
+        ">
+      </div>
       <div id="sign-in-btn-holder"></div>
       <text
         class="fw-bold mt-5 mb-2"
@@ -56,13 +66,11 @@ export default class SigninForm extends Component {
 
     const idInputGroup = new InputGroup($inputGroupContainer, {
       labelText: "ID",
-      warningText: "ID does not exist",
       inputProps: idInputProps,
       holderId: "id-input-holder",
     });
     const pwInputGroup = new InputGroup($inputGroupContainer, {
       labelText: "Password",
-      warningText: "Wrong password",
       inputProps: pwInputProps,
       holderId: "pw-input-holder",
     });

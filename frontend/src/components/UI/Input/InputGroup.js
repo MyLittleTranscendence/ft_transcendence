@@ -28,7 +28,7 @@ export default class InputGroup extends Component {
         input-group-right
         position-absolute
       ">
-        ${warningText}
+        ${warningText ? warningText : ""}
       </span>
     </div>`;
   }
