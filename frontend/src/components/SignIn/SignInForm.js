@@ -24,6 +24,7 @@ export default class SigninForm extends Component {
         style="
         font-size: 0.8rem; margin-bottom: 0.5rem;
         font-weight: bold; height: 1rem;
+        font-size: 0.2rem; color: #ff9d9d;
         ">
       </div>
       <div id="sign-in-btn-holder"></div>
@@ -89,18 +90,5 @@ export default class SigninForm extends Component {
     pwInputGroup.render();
     signInButton.render();
     signUpButton.render();
-  }
-
-  displayWarningText() {
-    const warningTextElement = document.createElement("div");
-    warningTextElement.setAttribute("id", "warning-text");
-    warningTextElement.textContent = "ID or PW is Incorrect";
-    warningTextElement.style.color = "#ff9d9d"; // 스타일은 예시이며, 필요에 따라 조정하세요.
-
-    const signInBtnHolder = document.querySelector("#sign-in-btn-holder");
-    signInBtnHolder.parentNode.insertBefore(
-      warningTextElement,
-      signInBtnHolder
-    );
   }
 }
