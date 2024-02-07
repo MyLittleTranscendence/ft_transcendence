@@ -9,6 +9,7 @@ from rest_framework import routers, permissions
 from block.views import BlockUserPost, BlockUserDelete, BlockUserListView
 from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairView, MFACodeGenerateView, \
     MFATokenGenerateView, MFAEnableView, MFADisableView
+from friend.views import FriendPostView, FriendDeleteView, FriendListView
 from user import views
 from user.views import UserProfileUpdateView
 
@@ -56,6 +57,11 @@ urlpatterns = [
     path('api/users/<int:user_id>/blocks/', BlockUserPost.as_view(), name='user-block-post'),
     path('api/users/<int:user_id>/blocks/<int:block_id>/', BlockUserDelete.as_view(), name='user-block-delete'),
     path('api/blocks/', BlockUserListView.as_view(), name='user-block-list'),
+
+    # friend
+    path('api/users/<int:user_id>/friends/', FriendPostView.as_view(), name='user-friend-post'),
+    path('api/users/<int:user_id>/friends/<int:friend_id>/', FriendDeleteView.as_view(), name='user-friend-delete'),
+    path('api/friends/', FriendListView.as_view(), name='user-friend-list'),
 ]
 
 # urlpatterns += router.urls
