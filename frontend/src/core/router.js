@@ -8,11 +8,11 @@ const initRouter = () => {
     const handleRouteChange = () => {
       const path = window.location.pathname;
       const searchParams = new URLSearchParams(window.location.search);
+      const mfaRequire = searchParams.get("mfa_require");
 
       let createComponent = routesMemo[path];
 
-      if (path === "/" && searchParams.get("oauth") === "true") {
-        const mfaRequire = searchParams.get("mfa_require");
+      if (path === "/" && mfaRequire) {
         sessionStorage.setItem("mfa_require", mfaRequire);
         sessionStorage.setItem("user_id", searchParams.get("user_id"));
         if (mfaRequire === "true") {
