@@ -1,14 +1,13 @@
 import fetchAPI from "../../utils/fetchAPI.js";
+import showToast from "../../utils/showToast.js";
 
 const fetchSendCode = (onCodeSendSuccess) => {
   fetchAPI
     .post("/2fa/code/")
     .then((data) => {
-      console.log("code sent to your email");
       onCodeSendSuccess(data.email);
-      // toast message pop up
     })
-    .catch((error) => console.error(error));
+    .catch(() => showToast("Failed to send 2FA code"));
 };
 
 export default fetchSendCode;

@@ -1,6 +1,7 @@
 import fetchAPI from "../../utils/fetchAPI.js";
 import getRouter from "../../core/router.js";
 import fetchUserInfo from "../user/fetchUserInfo.js";
+import showToast from "../../utils/showToast.js";
 
 const fetchSignInTwoFA = (code) => {
   fetchAPI
@@ -10,6 +11,7 @@ const fetchSignInTwoFA = (code) => {
     .then(() => {
       fetchUserInfo(sessionStorage.getItem("user_id"));
       getRouter().navigate("/");
+      showToast(`Welcome, ${sessionStorage.getItem("username")}!`);
     })
     .catch(() => console.error("2fa verification on sign-in failed"));
 };

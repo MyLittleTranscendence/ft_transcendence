@@ -1,13 +1,14 @@
 import fetchAPI from "../../utils/fetchAPI.js";
+import showToast from "../../utils/showToast.js";
 
 const fetchDisableTwoFA = () => {
   fetchAPI
     .post("/2fa/disable/")
     .then(() => {
       sessionStorage.setItem("mfa_require", false);
-      console.log("2fa successfully disabled");
+      showToast("2FA disabled successfully");
     })
-    .catch(() => console.error("2fa disable failed"));
+    .catch(() => showToast("Failed to disable 2FA"));
 };
 
 export default fetchDisableTwoFA;
