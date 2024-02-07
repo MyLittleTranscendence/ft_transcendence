@@ -10,23 +10,23 @@ export default class MatchHistoryCard extends Component {
 
     return `
       <div class="card match-history-card">
-        <div class="card-header bg-transparent border-0 card-header-custom">
+        <div class="card-header card-header-custom">
           ${matchtype}
         </div>
         <div class="card-body card-body-custom">
-          <div class="d-flex justify-content-center align-items-center">
             <div
-              class="${win ? "match-history-win" : "match-history-lose"}">
-              ${win ? "Win" : "Lose"}
+              class="${win ? "match-history-win" : "match-history-lost"}
+              match-history-blank">
+              ${win ? "Win" : "Lost"}
             </div>
-            <div id="user-profile-image"></div>
-            <span class="mx-2">
-              ${username} vs ${opponent}
-            </span>
-            <div id="opponent-profile-image"></div>
-          </div>
+            <div id="user-profile-image" class="match-history-image"></div>
+            <div class="match-history-username">${username}</div>
+            <div class="match-history-versus">vs</div>
+            <div class="match-history-username">${opponent}</div>
+            <div id="opponent-profile-image" class="match-history-image"></div>
+            <div class="match-history-blank"></div>
         </div>
-        <div class="card-footer bg-transparent border-0 card-footer-custom">
+        <div class="card-footer card-footer-custom">
           ${score}
         </div>
       </div>

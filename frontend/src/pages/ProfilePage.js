@@ -41,7 +41,7 @@ export default class ProfilePage extends Component {
       matchtype: "1 vs 1",
       win: false,
       username: "hyeonjun",
-      opponent: "fat-ass",
+      opponent: "fet-asx-bita500",
       score: "0:2",
     });
 

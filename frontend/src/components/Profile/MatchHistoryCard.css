@@ -5,33 +5,58 @@
   font-size: 1rem;
   font-weight: bold;
   text-align: center;
+  width: 40rem;
 }
 
-.card-header-custom, .card-body-custom, .card-footer-custom {
-  padding-top: 0rem;
-  padding-bottom: 0rem;
+.card-header-custom,
+.card-body-custom,
+.card-footer-custom {
+  padding-top: 0;
+  padding-bottom: 0;
+  background: transparent;
+  border: 0;
 }
 
 .card-header-custom {
-  color: #FFB800;
+  color: #ffb800;
 }
 
 .card-body-custom {
-  margin-right: 8rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.match-history-win, .match-history-lose {
+.match-history-win,
+.match-history-lost {
   background-color: #00c213;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 3rem;
-  width: 4rem;
   height: 2rem;
-  margin-left: 2rem;
-  margin-right: 2rem;
 }
 
-.match-history-lose {
+.match-history-lost {
   background-color: #ff6363;
+}
+
+.match-history-username {
+  width: 8rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.match-history-versus {
+  color: #c1c1c1;
+  width: 4rem;
+}
+
+.match-history-blank {
+  width: 4rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
 }
