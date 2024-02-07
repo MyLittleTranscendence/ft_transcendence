@@ -34,3 +34,4 @@ typing_extensions==4.9.0
 zope.interface==6.1
 
 channels_redis
+aioredis
