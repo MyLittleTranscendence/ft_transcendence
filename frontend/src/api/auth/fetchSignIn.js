@@ -2,7 +2,7 @@ import fetchAPI from "../../utils/fetchAPI.js";
 import getRouter from "../../core/router.js";
 import fetchUserInfo from "../user/fetchUserInfo.js";
 
-const fetchSignIn = (body, query) => {
+const fetchSignIn = (body, $query) => {
   const { navigate } = getRouter();
 
   fetchAPI
@@ -16,9 +16,7 @@ const fetchSignIn = (body, query) => {
       }
     })
     .catch(() => {
-      query.textContent = "ID or PW is Incorrect";
-      query.style.fontsize = "0.2rem";
-      query.style.color = "#ff9d9d";
+      $query.textContent = "ID or PW is Incorrect";
     });
 };
 

@@ -1,6 +1,6 @@
 import fetchSignIn from "../api/auth/fetchSignIn.js";
 
-const signInHandler = async (event, query) => {
+const signInHandler = async (event, $query) => {
   event.preventDefault();
 
   const body = {
@@ -8,7 +8,7 @@ const signInHandler = async (event, query) => {
     password: event.srcElement.querySelector("#signin-form-pw").value,
   };
 
-  fetchSignIn(body, query);
+  fetchSignIn(body, $query);
 };
 
 export default signInHandler;
