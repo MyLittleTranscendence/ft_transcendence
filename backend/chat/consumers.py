@@ -32,12 +32,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.accept()
             await self.redis_connection()
             await self.redis.set(f"user:{str(self.scope['user'].id)}:online", 1)
-            await self.handle_login_message()
+            await self.friends_status_message()
+            await self.handle_login_status(1)
 
     async def disconnect(self, close_code):
         await self.redis.delete(f"user:{str(self.scope['user'].id)}:online")
         await self.channel_layer.group_discard(self.LOGIN_GROUP, self.channel_name)
         await self.channel_layer.group_discard(str(self.scope['user'].id), self.channel_name)
+        await self.handle_login_status(0)
         self.redis.close()
 
     async def receive(self, text_data):
@@ -76,10 +78,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "sender_nickname": self.scope['user'].nickname,
                 "datetime": str(now())
             })
-
-    async def handle_login_message(self):
-        await self.friends_status_message()
-        await self.handle_login_status(1)
 
     async def handle_login_status(self, status):
         user_id = self.scope['user'].id
