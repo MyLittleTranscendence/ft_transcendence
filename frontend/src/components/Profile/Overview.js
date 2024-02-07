@@ -1,7 +1,7 @@
 import Component from "../../core/Component.js";
 import appendCSSLink from "../../utils/appendCSSLink.js";
 
-appendCSSLink("src/components/UI/Profile/Overview.css");
+appendCSSLink("src/components/Profile/Overview.css");
 
 export default class Overview extends Component {
   template() {
