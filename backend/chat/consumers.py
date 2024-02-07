@@ -1,8 +1,12 @@
 import json
 
+from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth.models import AnonymousUser
+from django.db.models import Q
 from django.utils.timezone import now
+
+from block.models import BlockUser
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -45,6 +49,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def handle_single_message(self, message_data):
         message = message_data["message"]
         receiver_id = message_data["receiver_id"]
+        sender_id = self.scope['user'].id
+
+        if await self.is_blocked(sender_id, receiver_id):
+            return
+
         await self.channel_layer.group_send(
             str(receiver_id), {
                 "type": "single.message",
@@ -71,3 +80,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "sender_nickname": event["sender_nickname"],
             "datetime": event["datetime"]
         }))
+
+    # 차단 당한 유저도 못 보내고 차단한 유저에게도 보낼 수 없다.
+    @database_sync_to_async
+    def is_blocked(self, sender_id, receiver_id):
+        return BlockUser.objects.filter(
+            Q(blocker_id=sender_id, blocking_id=receiver_id) |
+            Q(blocker_id=receiver_id, blocking_id=sender_id)
+        ).exists()
