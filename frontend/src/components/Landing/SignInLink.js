@@ -1,7 +1,7 @@
 import Component from "../../core/Component.js";
 import appendCSSLink from "../../utils/appendCSSLink.js";
 
-appendCSSLink("src/components/LandingPage/SignInLink.css");
+appendCSSLink("src/components/Landing/SignInLink.css");
 
 export default class SignInLink extends Component {
   template() {

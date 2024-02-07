@@ -2,6 +2,7 @@ import Component from "../core/Component.js";
 import PageContainerWithLogo from "../components/UI/Container/PageContainerWithLogo.js";
 import Profile from "../components/Profile/Profile.js";
 import fetchAPI from "../utils/fetchAPI.js";
+import MatchHistoryCard from "../components/Profile/MatchHistoryCard.js";
 
 export default class ProfilePage extends Component {
   template() {
@@ -13,6 +14,9 @@ export default class ProfilePage extends Component {
         <div
           id="profile-content"
         >
+        </div>
+        <div
+          id="match-history-content"
         </div>
       </div>
     `;
@@ -33,10 +37,16 @@ export default class ProfilePage extends Component {
       wins: 42,
       losses: 42,
     });
-    // const matchHistoryContent = new MatchHistory($profileContainer, );
+    const matchHistoryContent = new MatchHistoryCard($profileContainer, {
+      matchtype: "1 vs 1",
+      win: false,
+      username: "hyeonjun",
+      opponent: "fet-asx-bita500",
+      score: "0:2",
+    });
 
     pageContainer.render();
     profileContent.render();
-    // matchHistoryContent.render();
+    matchHistoryContent.render();
   }
 }
