@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'custom_auth',
     'chat',
     'block',
+    'friend',
 ]
 
 MIDDLEWARE = [
