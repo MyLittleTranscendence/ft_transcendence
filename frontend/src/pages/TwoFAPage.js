@@ -1,8 +1,8 @@
 import Component from "../core/Component.js";
 import PageContainer from "../components/UI/Container/PageContainer.js";
-import SigninForm from "../components/SignIn/SignInForm.js";
+import TwoFAForm from "../components/SignIn/TwoFAForm.js";
 
-export default class SignInPage extends Component {
+export default class TwoFAPage extends Component {
   template() {
     return `
       <div
@@ -10,7 +10,7 @@ export default class SignInPage extends Component {
         class="d-flex flex-column align-items-center"
       >
         <h2 class="text-white">Sign-In to</h2>
-        <div>
+        <div class="mb-5">
           <img src="asset/logo-medium.png" class="img-fluid">
         </div>
       </div>
@@ -21,9 +21,9 @@ export default class SignInPage extends Component {
     const $SignInContent = this.$target.querySelector("#signin-page-content");
 
     const pageContainer = new PageContainer(this.$target, $SignInContent);
-    const signInForm = new SigninForm($SignInContent);
+    const twoFAForm = new TwoFAForm($SignInContent, { type: "signin" });
 
     pageContainer.render();
-    signInForm.render();
+    twoFAForm.render();
   }
 }

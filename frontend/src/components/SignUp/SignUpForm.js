@@ -1,9 +1,13 @@
 import Component from "../../core/Component.js";
-import InfoInputGroup from "../UI/Input/InfoInputGroup.js";
+import InputGroup from "../UI/Input/InputGroup.js";
 import Button from "../UI/Button/Button.js";
-import signUpHandler from "../../handlers/api/signUpHandler.js";
+import signUpHandler from "../../handlers/signUpHandler.js";
 
 export default class SignUpForm extends Component {
+  setEvent() {
+    this.addEvent("submit", "#sign-up-form", signUpHandler);
+  }
+
   template() {
     return `
     <form
@@ -69,31 +73,31 @@ export default class SignUpForm extends Component {
       required: true,
     };
 
-    const idInputGroup = new InfoInputGroup($inputGroupContainer, {
+    const idInputGroup = new InputGroup($inputGroupContainer, {
       labelText: "ID",
       warningText: "",
       inputProps: idInputProps,
       holderId: "id-input-holder",
     });
-    const nicknameInputGroup = new InfoInputGroup($inputGroupContainer, {
+    const nicknameInputGroup = new InputGroup($inputGroupContainer, {
       labelText: "Nickname",
       warningText: "",
       inputProps: nicknameInputProps,
       holderId: "nickname-input-holder",
     });
-    const pwInputGroup = new InfoInputGroup($inputGroupContainer, {
+    const pwInputGroup = new InputGroup($inputGroupContainer, {
       labelText: "Password",
       warningText: "",
       inputProps: pwInputProps,
       holderId: "pw-input-holder",
     });
-    const pwVerifyInputGroup = new InfoInputGroup($inputGroupContainer, {
+    const pwVerifyInputGroup = new InputGroup($inputGroupContainer, {
       labelText: "Verify Password",
       warningText: "",
       inputProps: pwVerifyInputProps,
       holderId: "pw-verify-input-holder",
     });
-    const emailInputGroup = new InfoInputGroup($inputGroupContainer, {
+    const emailInputGroup = new InputGroup($inputGroupContainer, {
       labelText: "E-mail",
       warningText: "",
       inputProps: emailInputProps,
@@ -112,7 +116,5 @@ export default class SignUpForm extends Component {
     pwVerifyInputGroup.render();
     emailInputGroup.render();
     signUpButton.render();
-
-    this.addEvent("submit", "#sign-up-form", signUpHandler);
   }
 }

@@ -7,8 +7,20 @@ const initRouter = () => {
   const createRouter = () => {
     const handleRouteChange = () => {
       const path = window.location.pathname;
-      const createComponent = routesMemo[path];
-      if (createComponent) {
+      const searchParams = new URLSearchParams(window.location.search);
+
+      let createComponent = routesMemo[path];
+
+      if (path === "/" && searchParams.get("oauth") === "true") {
+        const mfaRequire = searchParams.get("mfa_require");
+        sessionStorage.setItem("mfa_require", mfaRequire);
+        sessionStorage.setItem("user_id", searchParams.get("user_id"));
+        if (mfaRequire === "true") {
+          createComponent = routesMemo["/mfa"];
+        }
+      }
+
+      if (createComponent && path !== "/mfa") {
         const component = createComponent(document.getElementById("app"));
         component.render();
       } else {

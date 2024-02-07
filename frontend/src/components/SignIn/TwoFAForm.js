@@ -1,8 +1,22 @@
 import Component from "../../core/Component.js";
 import Input from "../UI/Input/Input.js";
 import Button from "../UI/Button/Button.js";
+import fetchSendCode from "../../api/auth/fetchSendCode.js";
+import twoFAHandler from "../../handlers/twoFAHandler.js";
 
 export default class TwoFAForm extends Component {
+  constructor($target, props, state) {
+    super($target, props, state);
+    this.timerInterval = null;
+  }
+
+  setEvent() {
+    this.addEvent("submit", "#two-fa-form", twoFAHandler);
+    this.addEvent("click", "#send-code-btn", () =>
+      fetchSendCode((email) => this.onCodeSendSuccess(email))
+    );
+  }
+
   template() {
     return `
       <form
@@ -12,7 +26,9 @@ export default class TwoFAForm extends Component {
         flex-column
         align-items-center
         "
+        data-form-type=${this.props.type}
       >
+        <p id="code-sent-notification" style="color:#c2c2c2;"></p>
         <div
           id="two-fa-group-container"
           class="
@@ -21,12 +37,13 @@ export default class TwoFAForm extends Component {
             align-items-center
             justify-content-center
             position-relative
+            mt-3
           "
+          style="max-width: 15rem"
         >
           <label
             for="two-fa-code-input"
-            class="fw-bold"
-            style="color: #b2b2b2"
+            class="fw-bold position-absolute input-group-left"
           >
             Verification Code
           </label>
@@ -48,7 +65,11 @@ export default class TwoFAForm extends Component {
   }
 
   mounted() {
+    const { type } = this.props; // "enable" or "signin"
+
     const $container = this.$target.querySelector("#two-fa-group-container");
+    const $form = this.$target.querySelector("#two-fa-form");
+
     const codeInput = new Input($container, {
       type: "text",
       id: "two-fa-code-input",
@@ -60,47 +81,65 @@ export default class TwoFAForm extends Component {
     });
     const sendCodeButton = new Button($container, {
       small: true,
+      id: "send-code-btn",
       name: "send-code-btn",
       content: "Send again",
+      className: "position-absolute input-group-right",
+      attributes: `style="color: white !important"`,
     });
-    const confirmButton = new Button(
-      this.$target.querySelector("#two-fa-form"),
-      {
-        name: "two-fa-confirm",
-        content: "Confirm",
-        type: "submit",
-        className: "mt-5",
-        attributes: `style="min-width: 10rem;"`,
-      }
-    );
+    const confirmButton = new Button($form, {
+      id: `two-fa-${type}`,
+      name: `two-fa-${type}-confirm`,
+      content: type === "signin" ? "Confirm" : "Enable 2FA",
+      small: type === "enable",
+      type: "submit",
+      className: "mt-2",
+      attributes: `style="min-width: 10rem;"`,
+    });
 
     codeInput.render();
     sendCodeButton.render();
     confirmButton.render();
 
-    this.startTimer(179);
+    fetchSendCode((email) => this.onCodeSendSuccess(email));
   }
 
-  startTimer(duration) {
-    let timer = duration;
+  onCodeSendSuccess(email) {
+    this.startTimer(179, this.$target.querySelector("#two-fa-timer"));
+    this.notifyUserCodeHasSent(email);
+  }
+
+  startTimer(duration, $timerElement) {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+    }
+    let timeLeft = duration;
     let minutes;
     let seconds;
-    const interval = setInterval(() => {
-      minutes = parseInt(timer / 60, 10);
-      seconds = parseInt(timer % 60, 10);
+
+    const $timer = $timerElement;
+
+    this.timerInterval = setInterval(() => {
+      minutes = parseInt(timeLeft / 60, 10);
+      seconds = parseInt(timeLeft % 60, 10);
 
       minutes = minutes < 10 ? `0${minutes}` : minutes;
       seconds = seconds < 10 ? `0${seconds}` : seconds;
 
-      const $timerElement = this.$target.querySelector("#two-fa-timer");
-      $timerElement.textContent = `${minutes}:${seconds}`;
+      $timer.textContent = `${minutes}:${seconds}`;
 
-      timer -= 1;
-      if (timer < 0) {
-        clearInterval(interval);
-        $timerElement.textContent = "00:00";
+      timeLeft -= 1;
+      if (timeLeft < 0) {
+        clearInterval(this.timerInterval);
+        this.timerInterval = null;
+        $timer.textContent = "00:00";
         // Confirm 버튼 비활성화 로직
       }
     }, 1000);
+  }
+
+  notifyUserCodeHasSent(email) {
+    const $p = this.$target.querySelector("#code-sent-notification");
+    $p.innerText = `Verification code has sent to ${email}`;
   }
 }

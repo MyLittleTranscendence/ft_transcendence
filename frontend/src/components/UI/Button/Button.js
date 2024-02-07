@@ -6,6 +6,7 @@ appendCSSLink("src/components/UI/Button/Button.css");
 export default class Button extends Component {
   template() {
     const {
+      id,
       type,
       disabled,
       name,
@@ -18,6 +19,7 @@ export default class Button extends Component {
 
     return `
       <button
+        id="${id}"
         type="${type || "button"}"
         ${name ? `name="${name}"` : ""}
         class="btn rounded-pill button-custom
