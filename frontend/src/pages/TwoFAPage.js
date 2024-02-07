@@ -18,10 +18,10 @@ export default class TwoFAPage extends Component {
   }
 
   mounted() {
-    const $SignInContent = this.$target.querySelector("#signin-page-content");
+    const $signInContent = this.$target.querySelector("#signin-page-content");
 
-    const pageContainer = new PageContainer(this.$target, $SignInContent);
-    const twoFAForm = new TwoFAForm($SignInContent, { type: "signin" });
+    const pageContainer = new PageContainer(this.$target, $signInContent);
+    const twoFAForm = new TwoFAForm($signInContent, { type: "signin" });
 
     pageContainer.render();
     twoFAForm.render();
