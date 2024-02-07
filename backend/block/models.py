@@ -15,6 +15,8 @@ class BlockUser(models.Model):
 
     @classmethod
     def block(cls, blocker, blocking):
+        if blocker == blocking:
+            raise ValidationError(detail={"detail": "자기 자신을 차단할 수 없습니다!"})
         if cls.objects.filter(blocker=blocker, blocking=blocking).exists():
             raise ValidationError(detail={"detail": "이미 차단한 유저입니다!"})
         return cls.objects.create(blocker=blocker, blocking=blocking)
