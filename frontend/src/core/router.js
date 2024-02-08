@@ -1,30 +1,38 @@
+import fetchUserInfo from "../api/user/fetchUserInfo.js";
 import NotFoundPage from "../pages/NotFoundPage.js";
+import showToast from "../utils/showToast.js";
 
 const initRouter = () => {
   let instance;
   let routesMemo;
 
   const createRouter = () => {
-    const handleRouteChange = () => {
+    const $app = document.getElementById("app");
+
+    const handleRouteChange = async () => {
       const path = window.location.pathname;
       const searchParams = new URLSearchParams(window.location.search);
       const mfaRequire = searchParams.get("mfa_require");
+      const userId = searchParams.get("user_id");
 
       let createComponent = routesMemo[path];
 
-      if (path === "/" && mfaRequire) {
-        sessionStorage.setItem("mfa_require", mfaRequire);
-        sessionStorage.setItem("user_id", searchParams.get("user_id"));
-        if (mfaRequire === "true") {
+      if (path === "/" && mfaRequire && userId) {
+        if (mfaRequire === "false") {
+          const data = await fetchUserInfo(userId);
+          showToast(`Welcome, ${data.username}!`);
+        } else if (mfaRequire === "true") {
+          sessionStorage.setItem("user_id", userId);
           createComponent = routesMemo["/mfa"];
         }
+        window.history.pushState({}, "", path);
       }
 
       if (createComponent && path !== "/mfa") {
-        const component = createComponent(document.getElementById("app"));
+        const component = createComponent($app);
         component.render();
       } else {
-        const notFound = new NotFoundPage(document.getElementById("app"));
+        const notFound = new NotFoundPage($app);
         notFound.render();
       }
     };
@@ -65,7 +73,3 @@ const initRouter = () => {
 const getRouter = initRouter();
 
 export default getRouter;
-
-/*
-const {navigate} = router();
-*/
