@@ -12,23 +12,26 @@ class UserPatchSerializer(serializers.ModelSerializer):
         fields = ['id', 'email', 'nickname']
 
 
-class UserGetSerializer(UserPatchSerializer):
-    username = serializers.CharField(required=True, min_length=4, max_length=100)
+class UserGetSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    nickname = serializers.CharField(required=True, min_length=4, max_length=100)
     wins = serializers.IntegerField(read_only=True)
     losses = serializers.IntegerField(read_only=True)
     profile_image = serializers.ImageField(read_only=True)
 
     class Meta:
-        model = UserPatchSerializer.Meta.model
-        fields = UserPatchSerializer.Meta.fields + ['username', 'wins', 'losses', 'profile_image']
+        model = User
+        fields = ['id', 'nickname', 'wins', 'losses', 'profile_image']
 
 
 class UserMyProfileSerializer(UserGetSerializer):
+    username = serializers.CharField(required=True, min_length=4, max_length=100)
+    email = serializers.EmailField(required=True, max_length=100)
     mfa_enable = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = UserGetSerializer.Meta.model
-        fields = UserGetSerializer.Meta.fields + ['mfa_enable']
+        fields = UserGetSerializer.Meta.fields + ['username', 'email', 'mfa_enable']
 
 
 class UserPostSerializer(UserGetSerializer):
