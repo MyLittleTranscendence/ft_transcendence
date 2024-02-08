@@ -1,25 +1,21 @@
 import fetchAPI from "../../utils/fetchAPI.js";
 import getRouter from "../../core/router.js";
-import fetchUserInfo from "../user/fetchUserInfo.js";
-import showToast from "../../utils/showToast.js";
 
-const fetchSignIn = (body, $query) => {
+const fetchSignIn = async (body, $query) => {
   const { navigate } = getRouter();
+  const $warning = $query;
 
-  fetchAPI
-    .post("/login/default/", body)
-    .then((data) => {
-      if (data.mfa_require) {
-        navigate(`/?mfa_require=true&user_id=${data.user_id}`);
-      } else {
-        fetchUserInfo(data.user_id);
-        navigate("/");
-        showToast(`Welcome, ${data.username}!`);
-      }
-    })
-    .catch(() => {
-      $query.textContent = "ID or PW is Incorrect";
-    });
+  try {
+    const data = await fetchAPI.post("/login/default/", body);
+
+    if (data.mfa_require) {
+      navigate(`/?mfa_require=true&user_id=${data.user_id}`);
+    } else {
+      navigate(`/?mfa_require=false&user_id=${data.user_id}`);
+    }
+  } catch (e) {
+    $warning.textContent = "ID or PW is Incorrect";
+  }
 };
 
 export default fetchSignIn;
