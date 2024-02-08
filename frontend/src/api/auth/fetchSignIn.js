@@ -1,6 +1,7 @@
 import fetchAPI from "../../utils/fetchAPI.js";
 import getRouter from "../../core/router.js";
 import fetchUserInfo from "../user/fetchUserInfo.js";
+import showToast from "../../utils/showToast.js";
 
 const fetchSignIn = (body, $query) => {
   const { navigate } = getRouter();
@@ -13,6 +14,7 @@ const fetchSignIn = (body, $query) => {
       } else {
         fetchUserInfo(data.user_id);
         navigate("/");
+        showToast(`Welcome, ${data.username}!`);
       }
     })
     .catch(() => {
