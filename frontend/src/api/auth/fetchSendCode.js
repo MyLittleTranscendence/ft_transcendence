@@ -1,14 +1,17 @@
 import fetchAPI from "../../utils/fetchAPI.js";
+import showToast from "../../utils/showToast.js";
+import getRouter from "../../core/router.js";
 
 const fetchSendCode = (onCodeSendSuccess) => {
   fetchAPI
     .post("/2fa/code/")
     .then((data) => {
-      console.log("code sent to your email");
       onCodeSendSuccess(data.email);
-      // toast message pop up
     })
-    .catch((error) => console.error(error));
+    .catch((e) => {
+      showToast(e);
+      getRouter().navigate("/landing");
+    });
 };
 
 export default fetchSendCode;

@@ -8,7 +8,7 @@ const fetchRequest = async (url, requestOptions) => {
     if (!response.ok) {
       const errorResponse = await response.json();
       const error =
-        (errorResponse && errorResponse.message) || response.statusText;
+        (errorResponse && errorResponse.detail) || response.statusText;
       throw new Error(error);
     }
 

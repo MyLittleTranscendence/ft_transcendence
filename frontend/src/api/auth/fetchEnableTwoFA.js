@@ -1,4 +1,5 @@
 import fetchAPI from "../../utils/fetchAPI.js";
+import showToast from "../../utils/showToast.js";
 
 const fetchEnableTwoFA = (code) => {
   fetchAPI
@@ -7,9 +8,9 @@ const fetchEnableTwoFA = (code) => {
     })
     .then(() => {
       sessionStorage.setItem("mfa_require", true);
-      console.log("2fa successfully enabled");
+      showToast("2FA enabled successfully");
     })
-    .catch(() => console.error("2fa enable failed"));
+    .catch(() => showToast("Failed to enable 2FA"));
 };
 
 export default fetchEnableTwoFA;

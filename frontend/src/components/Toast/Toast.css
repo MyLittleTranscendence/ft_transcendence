@@ -1,0 +1,31 @@
+#toast-content {
+  visibility: hidden;
+  color: #6e6e6e;
+}
+
+#toast-content.show {
+  visibility: visible;
+  animation:
+    fadein 0.5s,
+    fadeout 0.5s 4s;
+}
+
+@keyframes fadein {
+  from {
+    bottom: -10%;
+    opacity: 0;
+  }
+  to {
+    bottom: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
