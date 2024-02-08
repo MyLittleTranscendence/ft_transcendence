@@ -3,12 +3,12 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from user.serializers import UserGetSerializer, UserPatchSerializer, UserPostSerializer, UserProfileImageSerializer, \
-    UserCheckSerializer
+    UserCheckSerializer, UserMyProfileSerializer
 from .models import User
 
 
@@ -37,6 +37,16 @@ class UserViewSet(viewsets.ModelViewSet):
         elif self.action == "retrieve":
             permission_classes = [permissions.IsAuthenticated]
         return [permission() for permission in permission_classes]
+
+
+class MyProfileGetView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(responses={200: UserMyProfileSerializer})
+    def get(self, request):
+        user = request.user
+        serializer = UserMyProfileSerializer(user, context={'request': request})
+        return Response(serializer.data)
 
 
 class UserProfileUpdateView(APIView):

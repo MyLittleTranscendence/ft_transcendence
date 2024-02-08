@@ -17,11 +17,18 @@ class UserGetSerializer(UserPatchSerializer):
     wins = serializers.IntegerField(read_only=True)
     losses = serializers.IntegerField(read_only=True)
     profile_image = serializers.ImageField(read_only=True)
-    mfa_enable = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = UserPatchSerializer.Meta.model
-        fields = UserPatchSerializer.Meta.fields + ['username', 'wins', 'losses', 'profile_image', 'mfa_enable']
+        fields = UserPatchSerializer.Meta.fields + ['username', 'wins', 'losses', 'profile_image']
+
+
+class UserMyProfileSerializer(UserGetSerializer):
+    mfa_enable = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = UserGetSerializer.Meta.model
+        fields = UserGetSerializer.Meta.fields + ['mfa_enable']
 
 
 class UserPostSerializer(UserGetSerializer):
