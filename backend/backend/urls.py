@@ -11,7 +11,7 @@ from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairVie
     MFATokenGenerateView, MFAEnableView, MFADisableView
 from friend.views import FriendPostView, FriendDeleteView, FriendListView
 from user import views
-from user.views import UserProfileUpdateView
+from user.views import UserProfileUpdateView, MyProfileGetView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -44,6 +44,7 @@ urlpatterns = [
 
     # user
     path('api/users/<int:pk>/profile-image/', UserProfileUpdateView.as_view(), name='userprofile-update'),
+    path('api/me/', MyProfileGetView.as_view(), name='my-profile-get'),
 
     # custom_auth
     path('api/login/oauth2/42api/', Login42.as_view(), name='oauth-login-42'),
