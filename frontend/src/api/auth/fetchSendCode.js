@@ -1,5 +1,6 @@
 import fetchAPI from "../../utils/fetchAPI.js";
 import showToast from "../../utils/showToast.js";
+import getRouter from "../../core/router.js";
 
 const fetchSendCode = (onCodeSendSuccess) => {
   fetchAPI
@@ -7,7 +8,10 @@ const fetchSendCode = (onCodeSendSuccess) => {
     .then((data) => {
       onCodeSendSuccess(data.email);
     })
-    .catch(() => showToast("Failed to send 2FA code"));
+    .catch((e) => {
+      showToast(e);
+      getRouter().navigate("/landing");
+    });
 };
 
 export default fetchSendCode;
