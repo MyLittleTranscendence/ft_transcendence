@@ -34,12 +34,12 @@ class UserMyProfileSerializer(UserGetSerializer):
         fields = UserGetSerializer.Meta.fields + ['username', 'email', 'mfa_enable']
 
 
-class UserPostSerializer(UserGetSerializer):
+class UserPostSerializer(UserMyProfileSerializer):
     password = serializers.CharField(write_only=True, min_length=4, max_length=100)
 
     class Meta:
-        model = UserGetSerializer.Meta.model
-        fields = UserGetSerializer.Meta.fields + ['password']
+        model = UserMyProfileSerializer.Meta.model
+        fields = UserMyProfileSerializer.Meta.fields + ['password']
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
