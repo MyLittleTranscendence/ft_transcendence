@@ -33,6 +33,6 @@ export default class Toast extends Component {
     this.$toastContent.classList.add("show");
     setTimeout(() => {
       this.$toastContent.classList.remove("show");
-    }, 4500);
+    }, 4400);
   }
 }
