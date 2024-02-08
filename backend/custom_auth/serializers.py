@@ -21,11 +21,11 @@ class Oauth42UserPostSerializer(serializers.ModelSerializer):
         email = validated_data.get("email")
         try:
             oauth_42_user = Oauth42User.objects.select_related('user').get(login=login)
-            return oauth_42_user.user
+            return oauth_42_user.user, False
         except ObjectDoesNotExist:
             user = User.objects.create_oauth_user(email)
             Oauth42User.objects.create(login=login, user=user)
-            return user
+            return user, True
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
