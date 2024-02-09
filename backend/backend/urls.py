@@ -7,6 +7,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import routers, permissions
 
 from block.views import BlockUserPost, BlockUserDelete, BlockUserListView
+from chat.views import TotalMessage, SingleMessage, LoginMessage
 from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairView, MFACodeGenerateView, \
     MFATokenGenerateView, MFAEnableView, MFADisableView
 from friend.views import FriendPostView, FriendDeleteView, FriendListView
@@ -41,6 +42,7 @@ urlpatterns = [
     path('docs/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path("chat/", include("chat.urls")),
+    path("game/", include("game.urls")),
 
     # user
     path('api/users/<int:pk>/profile-image/', UserProfileUpdateView.as_view(), name='userprofile-update'),
@@ -63,6 +65,12 @@ urlpatterns = [
     path('api/users/<int:user_id>/friends/', FriendPostView.as_view(), name='user-friend-post'),
     path('api/users/<int:user_id>/friends/<int:friend_id>/', FriendDeleteView.as_view(), name='user-friend-delete'),
     path('api/friends/', FriendListView.as_view(), name='user-friend-list'),
+
+    # game
+    path("api/socket/game/single_message/", SingleMessage.as_view(), name="total"),
+    path("api/socket/game/total_message/", TotalMessage.as_view(), name="total"),
+    path("api/socket/game/login_message/", LoginMessage.as_view(), name="total"),
+
 ]
 
 # urlpatterns += router.urls

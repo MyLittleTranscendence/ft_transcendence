@@ -40,7 +40,8 @@ class Login42CallBack(APIView):
         redirect_url = f"http://localhost:3000" \
                        f"?oauth=true" \
                        f"&mfa_require={str(refresh['mfa_require']).lower()}" \
-                       f"&is_new_user={str(is_new_user).lower()}"
+                       f"&is_new_user={str(is_new_user).lower()}" \
+                       f"&user_id={user.id}"
         response = HttpResponseRedirect(redirect_url)
         set_cookie(response, refresh.access_token, "access_token")
         return response

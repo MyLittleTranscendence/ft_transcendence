@@ -2,7 +2,7 @@ import fetchAPI from "../../utils/fetchAPI.js";
 import getRouter from "../../core/router.js";
 import showToast from "../../utils/showToast.js";
 
-const fetchSignIn = (body, $query) => {
+const fetchSignIn = async (body, $query) => {
   const { navigate } = getRouter();
   const $warning = $query;
 
