@@ -7,7 +7,7 @@ const fetchSignIn = async (body, $query) => {
   const $warning = $query;
 
   fetchAPI
-    .post("/login/default", body, false)
+    .post("/login/default", body)
     .then((data) => {
       if (data.mfa_require === true) {
         navigate("/?mfa_require=true");
