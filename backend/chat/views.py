@@ -97,7 +97,7 @@ class LoginMessage(APIView):
                 description='수신할 데이터',
                 examples={
                     "application/json": {
-                        "type": "friend_status",
+                        "type": "login_message",
                         "friends_status": {"1": 1, "3": 0}
                     }
                 },
