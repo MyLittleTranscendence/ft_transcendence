@@ -7,6 +7,7 @@ from drf_yasg.views import get_schema_view
 from rest_framework import routers, permissions
 
 from block.views import BlockUserPost, BlockUserDelete, BlockUserListView
+from chat.views import TotalMessage, SingleMessage, LoginMessage
 from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairView, MFACodeGenerateView, \
     MFATokenGenerateView, MFAEnableView, MFADisableView
 from friend.views import FriendPostView, FriendDeleteView, FriendListView
@@ -63,6 +64,12 @@ urlpatterns = [
     path('api/users/<int:user_id>/friends/', FriendPostView.as_view(), name='user-friend-post'),
     path('api/users/<int:user_id>/friends/<int:friend_id>/', FriendDeleteView.as_view(), name='user-friend-delete'),
     path('api/friends/', FriendListView.as_view(), name='user-friend-list'),
+
+    # chat
+    path("api/socket/chat/single_message/", SingleMessage.as_view(), name="total"),
+    path("api/socket/chat/total_message/", TotalMessage.as_view(), name="total"),
+    path("api/socket/chat/login_message/", LoginMessage.as_view(), name="total"),
+
 ]
 
 # urlpatterns += router.urls

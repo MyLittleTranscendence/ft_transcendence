@@ -126,7 +126,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             is_online = await self.redis.exists(f"user:{str(friend_id)}:online")
             friends_status[str(friend_id)] = is_online
         await self.send(text_data=json.dumps({
-            "type": "friend_status",
+            "type": self.LOGIN_MESSAGE,
             "friends_status": friends_status
         }))
 
