@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Single Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #gameCanvas {
+            border: 1px solid #000000;
+            margin: 20px 0; /* 캔버스 상하 여백 추가 */
+        }
+
+        #chat-log {
+            width: 800px; /* 캔버스 너비와 동일하게 설정 */
+            height: 600px;
+            margin-bottom: 10px;
+            overflow-y: auto; /* 로그가 많아지면 스크롤 */
+            background-color: #f0f0f0; /* 배경색 */
+            border: 1px solid #ddd; /* 테두리 */
+            padding: 10px; /* 안쪽 여백 */
+        }
+    </style>
+</head>
+<body>
+<canvas id="gameCanvas" width="400" height="300"></canvas>
+<textarea id="chat-log" cols="100" rows="20"></textarea><br>
+<input id="chat-message-submit" type="button" value="Start">
+
+<!-- 게임 상태를 그릴 캔버스 추가 -->
+
+<script>
+    const gameSocket = new WebSocket('ws://' + window.location.host + '/ws/game/');
+
+    gameSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        if (data.type === 'game_update') {
+            const formattedMessage = `[탁구공 위치] X: ${data.circle_x.toFixed(2)}, Y: ${data.circle_y.toFixed(2)} | [탁구채 위치] X: ${data.bar_x.toFixed(2)}, Y: ${data.bar_y.toFixed(2)}\n`;
+            document.querySelector('#chat-log').value += formattedMessage;
+            updateGameCanvas(data);
+        } else {
+            document.querySelector('#chat-log').value += (data.message + '\n');
+        }
+    };
+
+    function updateGameCanvas(data) {
+        const canvas = document.getElementById('gameCanvas');
+        if (canvas.getContext) {
+            const ctx = canvas.getContext('2d');
+            // 캔버스 클리어
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // 탁구채 그리기
+            ctx.fillStyle = 'black';
+            ctx.fillRect(data.bar_x, data.bar_y, 9, 50);
+            // 탁구공 그리기
+            ctx.beginPath();
+            ctx.arc(data.circle_x, data.circle_y, 9, 0, Math.PI*2, true);
+            ctx.fill();
+        }
+    }
+
+    gameSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function (e) {
+        gameSocket.send(JSON.stringify({
+            'type': 'single_game_create',
+        }));
+    };
+</script>
+</body>
+</html>

@@ -77,7 +77,6 @@ class MFACodeGenerateView(APIView):
     )
     def post(self, request):
         user = request.user.update_mfa_code()
-
         send_mail(
             '트센 2차 인증 메세지',
             f'인증 코드: {user.mfa_code}',
@@ -85,7 +84,6 @@ class MFACodeGenerateView(APIView):
             [user.email],
             fail_silently=False,
         )
-
         return Response({'email': user.email}, status=201)
 
 
