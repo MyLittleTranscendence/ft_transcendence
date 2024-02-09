@@ -10,7 +10,7 @@ const fetchSendCode = (onCodeSendSuccess) => {
     })
     .catch((e) => {
       showToast(e);
-      getRouter().navigate("/landing");
+      getRouter().navigate("/start");
     });
 };
 
