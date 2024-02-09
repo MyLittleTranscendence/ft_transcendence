@@ -10,25 +10,21 @@ const initRouter = () => {
     const handleRouteChange = () => {
       const path = window.location.pathname;
       const searchParams = new URLSearchParams(window.location.search);
-
-      const isMFARequire =
-        path === "/" && searchParams.get("mfa_require") === "true";
-      const OAuthFinishQueryParam = searchParams.get("is_new_user");
-      const isOAuthFinished = OAuthFinishQueryParam === true;
-      const isNewOAuthUser = OAuthFinishQueryParam === "true";
-
-      if (isOAuthFinished && !isNewOAuthUser) {
-        window.history.replaceState(null, "", "/?login=true");
-      }
-
       let createComponent = routesMemo[path];
 
-      if (isNewOAuthUser) {
-        const userId = searchParams.get("user_id");
-        window.history.replaceState(null, "", `/?${userId}`);
-        createComponent = routesMemo["/set-nickname"];
-      } else if (isMFARequire) {
-        createComponent = routesMemo["/mfa"];
+      if (searchParams.size > 0 && searchParams.get("login") !== "true") {
+        const isMFARequire = searchParams.get("mfa_require") === "true";
+        const isNewOAuthUser = searchParams.get("is_new_user") === "true";
+
+        if (isMFARequire) {
+          createComponent = routesMemo["/mfa"];
+        } else if (isNewOAuthUser) {
+          const userId = searchParams.get("user_id");
+          window.history.replaceState(null, "", `/?user_id=${userId}`);
+          createComponent = routesMemo["/set-nickname"];
+        } else if (!isNewOAuthUser) {
+          window.history.replaceState(null, "", "/?login=true&oauth=true");
+        }
       }
 
       if (createComponent && path !== "/mfa" && path !== "/set-nickname") {
