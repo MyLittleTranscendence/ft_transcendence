@@ -20,10 +20,18 @@ const initRouter = () => {
           createComponent = routesMemo["/mfa"];
         } else if (isNewOAuthUser) {
           const userId = searchParams.get("user_id");
-          window.history.replaceState(null, "", `/?user_id=${userId}`);
+          window.history.replaceState(
+            null,
+            "",
+            `/?set-nickname=true&user_id=${userId}`
+          );
           createComponent = routesMemo["/set-nickname"];
         } else if (!isNewOAuthUser) {
-          window.history.replaceState(null, "", "/?login=true&oauth=true");
+          window.history.replaceState(
+            null,
+            "",
+            "/?login=true&oauth_finish=true"
+          );
         }
       }
 

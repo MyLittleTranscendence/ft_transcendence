@@ -2,6 +2,7 @@ import fetchMyInfo from "./api/user/fetchMyInfo.js";
 import Component from "./core/Component.js";
 import getRouter from "./core/router.js";
 import routes from "./core/routes.js";
+import showToast from "./utils/showToast.js";
 
 export default class App extends Component {
   template() {
@@ -31,19 +32,25 @@ export default class App extends Component {
             handleRouteChange();
           }
         })
-        .catch(() => {
+        .catch((e) => {
           sessionStorage.clear();
           navigate("/start");
+          showToast(e);
         });
     };
 
     if (
-      sessionStorage.getItem("login") !== "true" &&
-      searchParams.get("oauth") !== "true"
+      sessionStorage.getItem("login") === "true" ||
+      searchParams.get("oauth_finish") === "true"
     ) {
-      navigate("/start");
-    } else {
       validateSession();
+    } else if (
+      searchParams.get("mfa_require") === "true" ||
+      searchParams.get("oauth") === "true"
+    ) {
+      handleRouteChange();
+    } else {
+      navigate("/start");
     }
   }
 }
