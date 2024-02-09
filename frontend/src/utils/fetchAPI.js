@@ -45,12 +45,22 @@ const put = async (url, body) => {
   return fetchRequest(url, requestOptions);
 };
 
+const patch = async (url, body) => {
+  const requestOptions = {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  };
+  return fetchRequest(url, requestOptions);
+};
+
 const deleteRequest = async (url) => fetchRequest(url, { method: "DELETE" });
 
 const fetchAPI = {
   get,
   post,
   put,
+  patch,
   delete: deleteRequest,
 };
 
