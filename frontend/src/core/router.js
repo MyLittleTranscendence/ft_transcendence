@@ -1,6 +1,4 @@
-import fetchUserInfo from "../api/user/fetchUserInfo.js";
 import NotFoundPage from "../pages/NotFoundPage.js";
-import showToast from "../utils/showToast.js";
 
 const initRouter = () => {
   let instance;
@@ -9,26 +7,31 @@ const initRouter = () => {
   const createRouter = () => {
     const $app = document.getElementById("app");
 
-    const handleRouteChange = async () => {
+    const handleRouteChange = () => {
       const path = window.location.pathname;
       const searchParams = new URLSearchParams(window.location.search);
-      const mfaRequire = searchParams.get("mfa_require");
-      const userId = searchParams.get("user_id");
+
+      const isMFARequire =
+        path === "/" && searchParams.get("mfa_require") === "true";
+      const OAuthFinishQueryParam = searchParams.get("is_new_user");
+      const isOAuthFinished = OAuthFinishQueryParam === true;
+      const isNewOAuthUser = OAuthFinishQueryParam === "true";
+
+      if (isOAuthFinished && !isNewOAuthUser) {
+        window.history.replaceState(null, "", "/?login=true");
+      }
 
       let createComponent = routesMemo[path];
 
-      if (path === "/" && mfaRequire && userId) {
-        if (mfaRequire === "false") {
-          const data = await fetchUserInfo(userId);
-          showToast(`Welcome, ${data.username}!`);
-        } else if (mfaRequire === "true") {
-          sessionStorage.setItem("user_id", userId);
-          createComponent = routesMemo["/mfa"];
-        }
-        window.history.pushState({}, "", path);
+      if (isNewOAuthUser) {
+        const userId = searchParams.get("user_id");
+        window.history.replaceState(null, "", `/?${userId}`);
+        createComponent = routesMemo["/set-nickname"];
+      } else if (isMFARequire) {
+        createComponent = routesMemo["/mfa"];
       }
 
-      if (createComponent && path !== "/mfa") {
+      if (createComponent && path !== "/mfa" && path !== "/set-nickname") {
         const component = createComponent($app);
         component.render();
       } else {
@@ -38,8 +41,10 @@ const initRouter = () => {
     };
 
     const navigate = (path) => {
-      window.history.pushState({}, "", path);
-      handleRouteChange();
+      if (window.history.pathname !== path) {
+        window.history.pushState({}, "", path);
+        handleRouteChange();
+      }
     };
 
     const handleLinkClick = (e) => {
@@ -56,9 +61,7 @@ const initRouter = () => {
     window.addEventListener("popstate", handleRouteChange);
     window.addEventListener("click", handleLinkClick);
 
-    handleRouteChange();
-
-    return { navigate };
+    return { navigate, handleRouteChange };
   };
 
   return (routes) => {
