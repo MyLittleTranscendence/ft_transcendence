@@ -3,7 +3,7 @@ import showToast from "../../utils/showToast.js";
 
 const fetchEnableTwoFA = (code) => {
   fetchAPI
-    .post("/2fa/enable/", {
+    .post("/2fa/enable", {
       mfa_code: code,
     })
     .then(() => {

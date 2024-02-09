@@ -1,20 +1,18 @@
 import fetchAPI from "../../utils/fetchAPI.js";
 import getRouter from "../../core/router.js";
 import showToast from "../../utils/showToast.js";
-import fetchUserInfo from "../user/fetchUserInfo.js";
 
-const fetchSignInTwoFA = async (code) => {
-  try {
-    await fetchAPI.post("/2fa/token/", {
+const fetchSignInTwoFA = (code) => {
+  const { navigate } = getRouter();
+  fetchAPI
+    .post("/2fa/token", {
       mfa_code: code,
+    })
+    .then(() => navigate("/?login=true"))
+    .catch((e) => {
+      showToast(e);
+      navigate("/start");
     });
-    const data = await fetchUserInfo(sessionStorage.getItem("user_id"));
-
-    getRouter().navigate("/");
-    showToast(`Welcome, ${data.username}!`);
-  } catch (e) {
-    showToast(e);
-  }
 };
 
 export default fetchSignInTwoFA;

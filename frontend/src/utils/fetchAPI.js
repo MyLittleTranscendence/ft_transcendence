@@ -1,26 +1,23 @@
 const fetchRequest = async (url, requestOptions) => {
-  try {
-    const response = await fetch(`http://localhost:8000/api${url}`, {
-      ...requestOptions,
-      credentials: "include",
-    });
+  const response = await fetch(`http://localhost:8000/api${url}/`, {
+    ...requestOptions,
+    credentials: "include",
+  });
 
-    if (!response.ok) {
-      const errorResponse = await response.json();
-      const error =
-        (errorResponse && errorResponse.detail) || response.statusText;
-      throw new Error(error);
-    }
-
-    if (response.headers.get("Content-Type")?.includes("application/json")) {
-      return await response.json();
-    }
-
-    return {};
-  } catch (error) {
-    console.error("Fetch error:", error);
+  if (!response.ok) {
+    const errorResponse = await response.json();
+    const errorDetail =
+      (errorResponse && errorResponse.detail) || response.statusText;
+    const error = new Error(errorDetail);
+    error.status = response.status;
     throw error;
   }
+
+  if (response.headers.get("Content-Type")?.includes("application/json")) {
+    return response.json();
+  }
+
+  return {};
 };
 
 const get = async (url) => {
@@ -48,12 +45,22 @@ const put = async (url, body) => {
   return fetchRequest(url, requestOptions);
 };
 
+const patch = async (url, body) => {
+  const requestOptions = {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  };
+  return fetchRequest(url, requestOptions);
+};
+
 const deleteRequest = async (url) => fetchRequest(url, { method: "DELETE" });
 
 const fetchAPI = {
   get,
   post,
   put,
+  patch,
   delete: deleteRequest,
 };
 

@@ -16,6 +16,7 @@ export default class Link extends Component {
           ${small ? "btn-sm" : "btn-lg"}
         "
         ${attributes || ""}
+        data-link
       >
         ${content}
       </a>

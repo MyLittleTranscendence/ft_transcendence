@@ -1,12 +1,12 @@
 import PageContainer from "../components/UI/Container/PageContainer.js";
-import SignInLink from "../components/Landing/SignInLink.js";
+import SignInLink from "../components/Start/SignInLink.js";
 import Component from "../core/Component.js";
 
-export default class LandingPage extends Component {
+export default class StartPage extends Component {
   template() {
     return `
       <div
-        id="landing-page-content"
+        id="start-page-content"
         class="d-flex flex-column align-items-center justify-content-center"
       >
         <div
@@ -17,7 +17,7 @@ export default class LandingPage extends Component {
             src="asset/logo-large.png"
             class="img-fluid"
           />
-          <div id="landing-page-link-container" class="d-grid gap-3 mx-auto mt-3">
+          <div id="start-page-link-container" class="d-grid gap-3 mx-auto mt-3">
           </div>
         </div>
       </div>
@@ -25,18 +25,19 @@ export default class LandingPage extends Component {
   }
 
   mounted() {
-    const $pageContent = this.$target.querySelector("#landing-page-content");
+    const $pageContent = this.$target.querySelector("#start-page-content");
 
     const pageContainer = new PageContainer(this.$target, $pageContent);
     pageContainer.render();
 
     const $buttonContainer = this.$target.querySelector(
-      "#landing-page-link-container"
+      "#start-page-link-container"
     );
 
     const signInLink = new SignInLink($buttonContainer, {
       content: "Sign In",
       path: "/sign-in",
+      type: "default-sign-in",
     });
     const signInWith42Link = new SignInLink($buttonContainer, {
       content: `Sign In with <img src="asset/42logo.png" style="max-width: 2rem;" />`,

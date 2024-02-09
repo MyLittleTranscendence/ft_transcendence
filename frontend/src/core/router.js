@@ -1,6 +1,4 @@
-import fetchUserInfo from "../api/user/fetchUserInfo.js";
 import NotFoundPage from "../pages/NotFoundPage.js";
-import showToast from "../utils/showToast.js";
 
 const initRouter = () => {
   let instance;
@@ -9,26 +7,35 @@ const initRouter = () => {
   const createRouter = () => {
     const $app = document.getElementById("app");
 
-    const handleRouteChange = async () => {
+    const handleRouteChange = () => {
       const path = window.location.pathname;
       const searchParams = new URLSearchParams(window.location.search);
-      const mfaRequire = searchParams.get("mfa_require");
-      const userId = searchParams.get("user_id");
-
       let createComponent = routesMemo[path];
 
-      if (path === "/" && mfaRequire && userId) {
-        if (mfaRequire === "false") {
-          const data = await fetchUserInfo(userId);
-          showToast(`Welcome, ${data.username}!`);
-        } else if (mfaRequire === "true") {
-          sessionStorage.setItem("user_id", userId);
+      if (searchParams.size > 0 && searchParams.get("login") !== "true") {
+        const isMFARequire = searchParams.get("mfa_require") === "true";
+        const isNewOAuthUser = searchParams.get("is_new_user") === "true";
+
+        if (isMFARequire) {
           createComponent = routesMemo["/mfa"];
+        } else if (isNewOAuthUser) {
+          const userId = searchParams.get("user_id");
+          window.history.replaceState(
+            null,
+            "",
+            `/?set-nickname=true&user_id=${userId}`
+          );
+          createComponent = routesMemo["/set-nickname"];
+        } else if (!isNewOAuthUser) {
+          window.history.replaceState(
+            null,
+            "",
+            "/?login=true&oauth_finish=true"
+          );
         }
-        window.history.pushState({}, "", path);
       }
 
-      if (createComponent && path !== "/mfa") {
+      if (createComponent && path !== "/mfa" && path !== "/set-nickname") {
         const component = createComponent($app);
         component.render();
       } else {
@@ -38,8 +45,10 @@ const initRouter = () => {
     };
 
     const navigate = (path) => {
-      window.history.pushState({}, "", path);
-      handleRouteChange();
+      if (window.history.pathname !== path) {
+        window.history.pushState({}, "", path);
+        handleRouteChange();
+      }
     };
 
     const handleLinkClick = (e) => {
@@ -56,9 +65,7 @@ const initRouter = () => {
     window.addEventListener("popstate", handleRouteChange);
     window.addEventListener("click", handleLinkClick);
 
-    handleRouteChange();
-
-    return { navigate };
+    return { navigate, handleRouteChange };
   };
 
   return (routes) => {
