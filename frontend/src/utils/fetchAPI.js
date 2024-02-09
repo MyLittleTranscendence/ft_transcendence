@@ -1,7 +1,7 @@
-const fetchRequest = async (url, requestOptions) => {
+const fetchRequest = async (url, requestOptions, auth = true) => {
   const response = await fetch(`http://localhost:8000/api${url}/`, {
     ...requestOptions,
-    credentials: "include",
+    credentials: auth === true ? "include" : "omit",
   });
 
   if (!response.ok) {
@@ -27,13 +27,13 @@ const get = async (url) => {
   return fetchRequest(url, requestOptions);
 };
 
-const post = async (url, body) => {
+const post = async (url, body, auth) => {
   const requestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   };
-  return fetchRequest(url, requestOptions);
+  return fetchRequest(url, requestOptions, auth);
 };
 
 const put = async (url, body) => {

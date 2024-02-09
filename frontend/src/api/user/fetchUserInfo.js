@@ -2,7 +2,7 @@ import fetchAPI from "../../utils/fetchAPI.js";
 
 const fetchUserInfo = (userId) =>
   fetchAPI
-    .get(`/users/${userId}/`)
+    .get(`/users/${userId}`)
     .then(
       (data) =>
         // sessionStorage.setItem("user_id", data.id);

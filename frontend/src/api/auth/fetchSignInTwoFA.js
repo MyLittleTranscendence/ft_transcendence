@@ -5,7 +5,7 @@ import showToast from "../../utils/showToast.js";
 const fetchSignInTwoFA = (code) => {
   const { navigate } = getRouter();
   fetchAPI
-    .post("/2fa/token/", {
+    .post("/2fa/token", {
       mfa_code: code,
     })
     .then(() => navigate("/?login=true"))

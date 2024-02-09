@@ -3,7 +3,7 @@ import showToast from "../../utils/showToast.js";
 
 const fetchDisableTwoFA = () => {
   fetchAPI
-    .post("/2fa/disable/")
+    .post("/2fa/disable")
     .then(() => {
       sessionStorage.setItem("mfa_require", false);
       showToast("2FA disabled successfully");
