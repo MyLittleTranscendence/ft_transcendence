@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>Chat Room</title>
+    <title>Game Room</title>
 </head>
 <body>
 <textarea id="chat-log" cols="100" rows="20"></textarea><br>
@@ -13,21 +13,13 @@
 <script>
     const roomName = JSON.parse(document.getElementById('room-name').textContent);
 
-    {#const chatSocket = new WebSocket(#}
-    {#    'ws://'#}
-    {#    + window.location.host#}
-    {#    + '/ws/game/'#}
-    {#    + roomName#}
-    {#    + '/'#}
-    {#);#}
-
-    const chatSocket = new WebSocket(
+    const gameSocket = new WebSocket(
         'ws://'
         + window.location.host
-        + '/ws/chat/'
+        + '/ws/game/'
     );
 
-    chatSocket.onmessage = function (e) {
+    gameSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
         if (data.type === 'total_message') {
             const formattedMessage = `*${data.type}* [${data.datetime}] ${data.sender_nickname} ${data.sender_id}: ${data.message}\n`;
@@ -40,7 +32,7 @@
         }
     };
 
-    chatSocket.onclose = function (e) {
+    gameSocket.onclose = function (e) {
         console.error('Chat socket closed unexpectedly');
     };
 
@@ -54,7 +46,7 @@
     document.querySelector('#chat-message-submit').onclick = function (e) {
         const messageInputDom = document.querySelector('#chat-message-input');
         const message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
+        gameSocket.send(JSON.stringify({
             'type': 'single_message',
             'message': message,
             'receiver_id': 1

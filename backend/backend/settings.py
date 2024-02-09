@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'chat',
     'block',
     'friend',
+    'game',
 ]
 
 MIDDLEWARE = [
