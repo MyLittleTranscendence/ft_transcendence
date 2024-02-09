@@ -3,7 +3,15 @@ import Component from "../../../core/Component.js";
 export default class FriendsIcon extends Component {
   template() {
     return `
+    <a
+      tabindex="0"
+      class="btn"
+      role="button"
+      data-bs-toggle="popover"
+      data-bs-placement="left"
+    >
       <img src="asset/icon_people.svg">
+    </a>
       ${
         this.props.isOnline
           ? `
@@ -24,5 +32,18 @@ export default class FriendsIcon extends Component {
           : ""
       }
     `;
+  }
+
+  mounted() {
+    var popoverTriggerList = [].slice.call(
+      document.querySelectorAll('[data-bs-toggle="popover"]')
+    );
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+      return new bootstrap.Popover(popoverTriggerEl, {
+        html: true,
+        title: "<span class='d-flex justify-content-center'>Friends</span>",
+        content: "This place will be list of friends. Comming Soon!",
+      });
+    });
   }
 }
