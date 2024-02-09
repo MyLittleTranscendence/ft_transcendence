@@ -4,7 +4,7 @@ import getRouter from "../../core/router.js";
 const fetchMyInfo = async () => {
   const { navigate } = getRouter();
   try {
-    const data = await fetchAPI.get("/me/");
+    const data = await fetchAPI.get("/me");
 
     sessionStorage.setItem("user_id", data.id);
     sessionStorage.setItem("username", data.username);
