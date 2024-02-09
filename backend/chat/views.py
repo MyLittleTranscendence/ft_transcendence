@@ -104,7 +104,7 @@ class LoginMessage(APIView):
                 schema=openapi.Schema(
                 type=openapi.TYPE_OBJECT,
                 properties={
-                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['friend_status']),
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['login_message']),
                     'friends_status': openapi.Schema(
                         type=openapi.TYPE_OBJECT,
                         additional_properties=openapi.Schema(
