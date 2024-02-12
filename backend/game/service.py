@@ -1,4 +1,5 @@
 import asyncio
+import uuid
 from datetime import datetime
 
 from channels.layers import get_channel_layer
@@ -10,6 +11,13 @@ class GameService:
     _instance = None
     _redis = None
     _channel_layer = None
+
+    SINGLE_GAME = "single_game"
+    MULTI_GAME = "multi_game"
+    TOURNAMENT_GAME = "tournament_game"
+
+    BEFORE = "before"
+    START = "start"
 
     def __init__(self):
         raise RuntimeError("Call get_instance() instead")
@@ -30,12 +38,33 @@ class GameService:
         if await self.is_user_in_game(user_id):
             print(f"User {user_id}은(는) 이미 게임 중입니다.")
             return
+        await self.set_user_in_game(user_id)
         print(f"User {user_id} 게임 시작")
+        game_session = str(uuid.uuid4()) # 게임 세션 생성
+        await self.set_game_info(user_id, user_id, self.SINGLE_GAME, game_session)# 게임 데이터 넣기
+        asyncio.create_task(self.single_game_start([user_id], game_session)) # 게임 돌리기
+        # 게임 정리
+
+    async def set_game_info(self, left_user_id, right_user_id, game_type, game_session):
+        await self._redis.hset(f"game_info:{game_session}", mapping={
+            "left_user_id": str(left_user_id),
+            "right_user_id": str(right_user_id),
+            "left_bar_mv": "NONE",
+            "right_bar_mv": "NONE",
+            "game_type": game_type,
+            "left_score": "0",
+            "right_score": "0",
+            "status": self.BEFORE,
+            "winner": "NONE"
+        })
+
+    async def move_bar(self, user_id):
+        if not await self.is_user_in_game(user_id):
+            print(f"User {user_id}은(는) 게임 중이 아닙니다.")
+            return
         asyncio.create_task(self.single_game_start(user_id))
 
-    async def single_game_start(self, user_id):
-        await self.set_user_in_game(user_id)
-
+    async def single_game_start(self, users_id: list, game_session):
         ## 게임판 크기
         screen_width = 400
         screen_height = 300
@@ -92,11 +121,15 @@ class GameService:
                 speed_y = -speed_y
                 circle_y = screen_height - circle_diameter
 
-            message = f"{time_passed} {circle_x} {circle_y} {speed_x} {speed_y}"
-            await self.handle_single_message(user_id, bar_x, bar_y, circle_x, circle_y)
+            for user_id in users_id:
+                await self.handle_single_message(user_id, bar_x, bar_y, circle_x, circle_y)
             start_time = current_time
             await asyncio.sleep(1 / 60)  # 1/60초 대기
-        await self.set_user_in_game(user_id, False)
+
+        # 게임 정보 업데이트 추가 -> 게임의 타입에 따라 결정
+        await self._redis.delete(f"game_info:{game_session}")
+        for user_id in users_id:
+            await self.set_user_in_game(user_id, False)
 
     async def handle_single_message(self, user_id, bar_x, bar_y, circle_x, circle_y):
         receiver_id = user_id
