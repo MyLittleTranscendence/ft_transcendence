@@ -26,11 +26,18 @@ class GameConsumer(DefaultConsumer):
         if message_type == GameMessageType.MOVE_BAR:
             await self.game_service.move_bar(self.scope['user'].id, text_data_json.get("command"))
 
-    async def single_game(self, event):
+    async def update_game(self, event):
         await self.send(text_data=json.dumps({
             "type": "game_update",
             "bar_x": event["bar_x"],
             "bar_y": event["bar_y"],
+            "bar_right_x": event["bar_right_x"],
+            "bar_right_y": event["bar_right_y"],
             "circle_x": event["circle_x"],
             "circle_y": event["circle_y"],
+            # "bar_width": event["bar_width"],
+            # "bar_height": event["bar_height"],
+            # "circle_radius": event["circle_radius"],
+            # "screen_height": event["screen_height"],
+            # "screen_width": event["screen_width"],
         }))

@@ -74,30 +74,33 @@ class GameService:
     async def game_start(self, users_id: list, game_session):
         await self.update_game_info(game_session, "status", self.START)
         ## 게임판 크기
-        screen_width = 400
-        screen_height = 300
+        screen_width = 800
+        screen_height = 600
 
         ## 탁구채 크기 (width, height)
-        bar_width = 9
-        bar_height = 50
+        bar_width = 18
+        bar_height = 100
 
         ## 탁구채의 시작점 (x,y), 좌측 맨끝 중앙
         bar_x = bar_start_x = 0
         bar_y = bar_start_y = (screen_height - bar_height) / 2
+
+        bar_right_x = bar_right_start_x = screen_width - bar_width
+        bar_right_y = (screen_height - bar_height) / 2
 
         ## 탁구공 크기 (반지름)
         circle_radius = 9
         circle_diameter = circle_radius * 2
 
         ## 탁구공 시작점 (x, y), 우측 맨끝 중앙
-        circle_x = circle_start_x = screen_width - circle_diameter  ## 원의 지름 만큼 빼기
-        circle_y = circle_start_y = (screen_width - circle_diameter) / 2
+        circle_x = circle_start_x = (screen_width - circle_diameter) / 2  ## 원의 지름 만큼 빼기
+        circle_y = circle_start_y = (screen_height - circle_diameter) / 2
 
         bar_move = 0
-        speed_x, speed_y, speed_bar = -screen_width / 1.28, screen_height / 1.92, screen_height * 1.2
+        speed_x, speed_y, speed_bar = -screen_width / 2.28, screen_height / 2.92, screen_height * 1.5
 
         start_time = datetime.now()
-        for _ in range(1000):
+        for _ in range(100):
             current_time = datetime.now()
             time_passed = current_time - start_time
             time_sec = time_passed.total_seconds()
@@ -114,31 +117,62 @@ class GameService:
             else:
                 bar_move = 0
             await self.update_game_info(game_session, "left_bar_mv", "NONE")
-            bar_y += bar_move * 1.3
+            bar_y += bar_move
 
-            if bar_y >= screen_height:
+            right_bar_mv = game_info.get("right_bar_mv")
+            if right_bar_mv == "U":
+                bar_move = -ai_speed
+            elif right_bar_mv == "D":
+                bar_move = ai_speed
+            else:
+                bar_move = 0
+            await self.update_game_info(game_session, "right_bar_mv", "NONE")
+            bar_right_y += bar_move
+
+            if bar_y >= screen_height - bar_height:
                 bar_y = screen_height - bar_height
             elif bar_y <= 0:
                 bar_y = 0
+
+            if bar_right_y >= screen_height - bar_height:
+                bar_right_y = screen_height - bar_height
+            elif bar_right_y <= 0:
+                bar_right_y = 0
 
             if circle_x < bar_width:  ## bar에 닿았을 때
                 if circle_y >= bar_y - circle_radius and circle_y <= bar_y + bar_height + circle_radius:
                     circle_x = bar_width
                     speed_x = -speed_x
+
+            if circle_x + circle_radius >= bar_right_x:  # 오른쪽 탁구채에 닿았을 때
+                if circle_y >= bar_right_y - circle_radius and circle_y <= bar_right_y + bar_height + circle_radius:
+                    circle_x = bar_right_x - circle_diameter  # 탁구공의 오른쪽 가장자리를 탁구채의 왼쪽 가장자리에 맞춥니다.
+                    speed_x = -speed_x  # 탁구공의 X축 이동 방향을 반전시킵니다.
+
             if circle_x < -circle_radius:  ## bar에 닿지 않고 좌측 벽면에 닿았을 때, 게임 종료 및 초기화
                 circle_x, circle_y = circle_start_x, circle_start_y
                 bar_x, bar_y = bar_start_x, bar_start_y
-            elif circle_x > screen_width - circle_diameter:  ## 우측 벽면에 닿았을 때
+                bar_right_x, bar_right_y = bar_right_start_x, bar_start_y
                 speed_x = -speed_x
+                speed_y = -speed_y
+
+            if circle_x + circle_radius > screen_width:
+                circle_x, circle_y = circle_start_x, circle_start_y
+                bar_x, bar_y = bar_start_x, bar_start_y
+                bar_right_x, bar_right_y = bar_right_start_x, bar_start_y
+                speed_x = -speed_x
+                speed_y = -speed_y
+
             if circle_y <= 0:  ## 위측 벽면에 닿았을때
                 speed_y = -speed_y
                 circle_y = 0
-            elif circle_y >= screen_height - circle_diameter:  ## 아래 벽면에 닿았을때
+            if circle_y >= screen_height - circle_diameter:  ## 아래 벽면에 닿았을때
                 speed_y = -speed_y
                 circle_y = screen_height - circle_diameter
 
             for user_id in users_id:
-                await self.handle_single_message(user_id, bar_x, bar_y, circle_x, circle_y)
+                await self.handle_update_message(user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y,
+                                                 bar_width, bar_height, circle_radius, screen_height, screen_width)
             start_time = current_time
             await asyncio.sleep(1 / 60)  # 1/60초 대기
 
@@ -148,16 +182,24 @@ class GameService:
             await self.delete_user_game_session(user_id, game_session)
         await self.delete_game_info(game_session)
 
-    async def handle_single_message(self, user_id, bar_x, bar_y, circle_x, circle_y):
+    async def handle_update_message(self, user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y,
+                                    bar_width, bar_height, circle_radius, screen_height, screen_width):
         receiver_id = user_id
 
         await self._channel_layer.group_send(
             str(receiver_id), {
-                "type": "single.game",  # 처리할 메시지 타입
+                "type": "update.game",  # 처리할 메시지 타입
                 "bar_x": bar_x,
                 "bar_y": bar_y,
+                "bar_right_x": bar_right_x,
+                "bar_right_y": bar_right_y,
                 "circle_x": circle_x,
-                "circle_y": circle_y
+                "circle_y": circle_y,
+                # "bar_width": bar_width,
+                # "bar_height": bar_height,
+                # "circle_radius": circle_radius,
+                # "screen_height": screen_height,
+                # "screen_width": screen_width,
             })
 
     async def is_user_in_game(self, user_id):
