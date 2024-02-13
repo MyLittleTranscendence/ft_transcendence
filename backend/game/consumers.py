@@ -15,6 +15,11 @@ class GameConsumer(DefaultConsumer):
         if not isinstance(self.scope['user'], AnonymousUser):
             self.game_service = await GameService.get_instance()
 
+        user_id = self.scope['user'].id
+        if await self.game_service.is_user_in_game(user_id):
+            game_session = await self.game_service.get_user_game_session(user_id)
+            await self.game_service.handle_info_message(user_id, game_session)
+
     async def disconnect(self, close_code):
         await super(GameConsumer, self).disconnect(close_code)
 
@@ -25,6 +30,8 @@ class GameConsumer(DefaultConsumer):
             await self.game_service.start_single_pingpong_game(self.scope['user'].id)
         if message_type == GameMessageType.MOVE_BAR:
             await self.game_service.move_bar(self.scope['user'].id, text_data_json.get("command"))
+        if message_type == GameMessageType.MULTI_GAME_QUEUE:
+            await self.game_service.multi_queue(self.scope['user'].id)
 
     async def update_game(self, event):
         await self.send(text_data=json.dumps({
