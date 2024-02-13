@@ -43,21 +43,10 @@ class GameService:
         game_session = str(uuid.uuid4()) # 게임 세션 생성
         await self.set_user_game_session(user_id, game_session) # 유저 게임 세션 넣기
         await self.set_game_info(user_id, user_id, self.SINGLE_GAME, game_session) # 게임 데이터 넣기
+        # 게임 정보 보내주기
         asyncio.create_task(self.game_start([user_id], game_session)) # 게임 돌리기
-        # 게임 정리
 
-    async def set_game_info(self, left_user_id, right_user_id, game_type, game_session):
-        await self._redis.hset(f"game_info:{game_session}", mapping={
-            "left_user_id": str(left_user_id),
-            "right_user_id": str(right_user_id),
-            "left_bar_mv": "NONE",
-            "right_bar_mv": "NONE",
-            "game_type": game_type,
-            "left_score": "0",
-            "right_score": "0",
-            "status": self.BEFORE,
-            "winner": "NONE"
-        })
+
 
     async def move_bar(self, user_id):
         if not await self.is_user_in_game(user_id):
@@ -132,9 +121,10 @@ class GameService:
             await asyncio.sleep(1 / 60)  # 1/60초 대기
 
         # 게임 정보 업데이트 추가 -> 게임의 타입에 따라 결정
-        await self._redis.delete(f"game_info:{game_session}")
-        for user_id in users_id:
+        for user_id in users_id: # 게임 정리
             await self.set_user_in_game(user_id, False)
+            await self.delete_user_game_session(user_id, game_session)
+        await self.delete_game_info(game_session)
 
     async def handle_single_message(self, user_id, bar_x, bar_y, circle_x, circle_y):
         receiver_id = user_id
@@ -157,3 +147,22 @@ class GameService:
 
     async def set_user_game_session(self, user_id, game_session):
         await self._redis.set(f"user:{user_id}:game_session", game_session)
+
+    async def delete_user_game_session(self, user_id, game_session):
+        await self._redis.delete(f"user:{user_id}:game_session", game_session)
+
+    async def set_game_info(self, left_user_id, right_user_id, game_type, game_session):
+        await self._redis.hset(f"game_info:{game_session}", mapping={
+            "left_user_id": str(left_user_id),
+            "right_user_id": str(right_user_id),
+            "left_bar_mv": "NONE",
+            "right_bar_mv": "NONE",
+            "game_type": game_type,
+            "left_score": "0",
+            "right_score": "0",
+            "status": self.BEFORE,
+            "winner": "NONE"
+        })
+
+    async def delete_game_info(self, game_session):
+        await self._redis.delete(f"game_info:{game_session}")
