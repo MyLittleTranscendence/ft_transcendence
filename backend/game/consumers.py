@@ -15,6 +15,11 @@ class GameConsumer(DefaultConsumer):
         if not isinstance(self.scope['user'], AnonymousUser):
             self.game_service = await GameService.get_instance()
 
+        user_id = self.scope['user'].id
+        if await self.game_service.is_user_in_game(user_id):
+            game_session = await self.game_service.get_user_game_session(user_id)
+            await self.game_service.handle_info_message(user_id, game_session)
+
     async def disconnect(self, close_code):
         await super(GameConsumer, self).disconnect(close_code)
 
