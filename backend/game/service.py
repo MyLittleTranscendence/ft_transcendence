@@ -41,8 +41,9 @@ class GameService:
         await self.set_user_in_game(user_id)
         print(f"User {user_id} 게임 시작")
         game_session = str(uuid.uuid4()) # 게임 세션 생성
-        await self.set_game_info(user_id, user_id, self.SINGLE_GAME, game_session)# 게임 데이터 넣기
-        asyncio.create_task(self.single_game_start([user_id], game_session)) # 게임 돌리기
+        await self.set_user_game_session(user_id, game_session) # 유저 게임 세션 넣기
+        await self.set_game_info(user_id, user_id, self.SINGLE_GAME, game_session) # 게임 데이터 넣기
+        asyncio.create_task(self.game_start([user_id], game_session)) # 게임 돌리기
         # 게임 정리
 
     async def set_game_info(self, left_user_id, right_user_id, game_type, game_session):
@@ -60,11 +61,15 @@ class GameService:
 
     async def move_bar(self, user_id):
         if not await self.is_user_in_game(user_id):
-            print(f"User {user_id}은(는) 게임 중이 아닙니다.")
             return
-        asyncio.create_task(self.single_game_start(user_id))
+        game_session = await self._redis.get(f"user:{user_id}:game_session")
+        if game_session is None:
+            return
+        # 왼쪽 유저 혹은 오른쪽 유저가 아니면 리턴
+        # 싱글 게임일 경우 예외적으로 적용
+        # 아니면 그냥 왼쪽 오른쪽 여부에 따라 UP, DOWN 세팅
 
-    async def single_game_start(self, users_id: list, game_session):
+    async def game_start(self, users_id: list, game_session):
         ## 게임판 크기
         screen_width = 400
         screen_height = 300
@@ -149,3 +154,6 @@ class GameService:
 
     async def set_user_in_game(self, user_id, in_game=True):
         await self._redis.set(f"user:{user_id}:in_game", "true" if in_game else "false")
+
+    async def set_user_game_session(self, user_id, game_session):
+        await self._redis.set(f"user:{user_id}:game_session", game_session)
