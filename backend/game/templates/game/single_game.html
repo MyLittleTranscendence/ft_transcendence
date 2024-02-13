@@ -59,7 +59,7 @@
             ctx.fillRect(data.bar_x, data.bar_y, 9, 50);
             // 탁구공 그리기
             ctx.beginPath();
-            ctx.arc(data.circle_x, data.circle_y, 9, 0, Math.PI*2, true);
+            ctx.arc(data.circle_x, data.circle_y, 9, 0, Math.PI * 2, true);
             ctx.fill();
         }
     }
@@ -73,6 +73,21 @@
             'type': 'single_game_create',
         }));
     };
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'w' || event.key === 'W') {
+            gameSocket.send(JSON.stringify({
+                'type': 'move_bar',
+                'command': 'W'
+            }));
+        }
+        if (event.key === 's' || event.key === 'S') {
+            gameSocket.send(JSON.stringify({
+                'type': 'move_bar',
+                'command': 'S'
+            }));
+        }
+    });
 </script>
 </body>
 </html>

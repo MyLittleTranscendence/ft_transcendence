@@ -35,30 +35,44 @@ class GameService:
         self._redis = redis_connection.redis
 
     async def start_single_pingpong_game(self, user_id):
-        if await self.is_user_in_game(user_id):
-            print(f"User {user_id}은(는) 이미 게임 중입니다.")
-            return
+        # if await self.is_user_in_game(user_id):
+        #     print(f"User {user_id}은(는) 이미 게임 중입니다.")
+        #     return
         await self.set_user_in_game(user_id)
         print(f"User {user_id} 게임 시작")
-        game_session = str(uuid.uuid4()) # 게임 세션 생성
-        await self.set_user_game_session(user_id, game_session) # 유저 게임 세션 넣기
-        await self.set_game_info(user_id, user_id, self.SINGLE_GAME, game_session) # 게임 데이터 넣기
+        game_session = str(uuid.uuid4())  # 게임 세션 생성
+        await self.set_user_game_session(user_id, game_session)  # 유저 게임 세션 넣기
+        await self.set_game_info(user_id, user_id, self.SINGLE_GAME, game_session)  # 게임 데이터 넣기
         # 게임 정보 보내주기
-        asyncio.create_task(self.game_start([user_id], game_session)) # 게임 돌리기
+        asyncio.create_task(self.game_start([user_id], game_session))  # 게임 돌리기
 
-
-
-    async def move_bar(self, user_id):
+    async def move_bar(self, user_id, command):
         if not await self.is_user_in_game(user_id):
             return
-        game_session = await self._redis.get(f"user:{user_id}:game_session")
+
+        game_session = await self.get_user_game_session(user_id)
         if game_session is None:
             return
-        # 왼쪽 유저 혹은 오른쪽 유저가 아니면 리턴
-        # 싱글 게임일 경우 예외적으로 적용
-        # 아니면 그냥 왼쪽 오른쪽 여부에 따라 UP, DOWN 세팅
+
+        game_info = await self.get_game_info(game_session)
+        if game_info is None:
+            return
+
+        if game_info.get("status") != self.START:
+            return
+        if game_info.get("game_type") == self.SINGLE_GAME:
+            if command in ["U", "D"]:
+                await self.update_game_info(game_session, "right_bar_mv", command)
+            if command in ["W", "S"]:
+                await self.update_game_info(game_session, "left_bar_mv", "U" if command == "W" else "D")
+        else:
+            if game_info.get("left_user_id") == str(user_id):
+                await self.update_game_info(game_session, "left_bar_mv", command)
+            elif game_info.get("right_user_id") == str(user_id):
+                await self.update_game_info(game_session, "right_bar_mv", command)
 
     async def game_start(self, users_id: list, game_session):
+        await self.update_game_info(game_session, "status", self.START)
         ## 게임판 크기
         screen_width = 400
         screen_height = 300
@@ -83,7 +97,7 @@ class GameService:
         speed_x, speed_y, speed_bar = -screen_width / 1.28, screen_height / 1.92, screen_height * 1.2
 
         start_time = datetime.now()
-        for _ in range(300):
+        for _ in range(1000):
             current_time = datetime.now()
             time_passed = current_time - start_time
             time_sec = time_passed.total_seconds()
@@ -92,10 +106,18 @@ class GameService:
             circle_y += speed_y * time_sec
             ai_speed = speed_bar * time_sec
 
-            bar_y += bar_move
+            game_info = await self.get_game_info(game_session)
+            if game_info.get("left_bar_mv") == "U":
+                bar_move = -ai_speed
+            elif game_info.get("left_bar_mv") == "D":
+                bar_move = ai_speed
+            else:
+                bar_move = 0
+            await self.update_game_info(game_session, "left_bar_mv", "NONE")
+            bar_y += bar_move * 1.3
 
             if bar_y >= screen_height:
-                bar_y = screen_height
+                bar_y = screen_height - bar_height
             elif bar_y <= 0:
                 bar_y = 0
 
@@ -121,7 +143,7 @@ class GameService:
             await asyncio.sleep(1 / 60)  # 1/60초 대기
 
         # 게임 정보 업데이트 추가 -> 게임의 타입에 따라 결정
-        for user_id in users_id: # 게임 정리
+        for user_id in users_id:  # 게임 정리
             await self.set_user_in_game(user_id, False)
             await self.delete_user_game_session(user_id, game_session)
         await self.delete_game_info(game_session)
@@ -151,6 +173,9 @@ class GameService:
     async def delete_user_game_session(self, user_id, game_session):
         await self._redis.delete(f"user:{user_id}:game_session", game_session)
 
+    async def get_user_game_session(self, user_id):
+        return await self._redis.get(f"user:{user_id}:game_session")
+
     async def set_game_info(self, left_user_id, right_user_id, game_type, game_session):
         await self._redis.hset(f"game_info:{game_session}", mapping={
             "left_user_id": str(left_user_id),
@@ -163,6 +188,12 @@ class GameService:
             "status": self.BEFORE,
             "winner": "NONE"
         })
+
+    async def update_game_info(self, game_session, key, value):
+        await self._redis.hset(f"game_info:{game_session}", str(key), str(value))
+
+    async def get_game_info(self, game_session):
+        return await self._redis.hgetall(f"game_info:{game_session}")
 
     async def delete_game_info(self, game_session):
         await self._redis.delete(f"game_info:{game_session}")

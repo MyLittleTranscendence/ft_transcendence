@@ -24,7 +24,7 @@ class GameConsumer(DefaultConsumer):
         if message_type == GameMessageType.SINGLE_GAME_CREATE:
             await self.game_service.start_single_pingpong_game(self.scope['user'].id)
         if message_type == GameMessageType.MOVE_BAR:
-            await self.game_service.move_bar(self.scope['user'].id)
+            await self.game_service.move_bar(self.scope['user'].id, text_data_json.get("command"))
 
     async def single_game(self, event):
         await self.send(text_data=json.dumps({
