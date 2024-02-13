@@ -43,7 +43,7 @@ class GameService:
         game_session = str(uuid.uuid4())  # 게임 세션 생성
         await self.set_user_game_session(user_id, game_session)  # 유저 게임 세션 넣기
         await self.set_game_info(user_id, user_id, self.SINGLE_GAME, game_session)  # 게임 데이터 넣기
-        # 게임 정보 보내주기
+        await self.handle_info_message(user_id, game_session)  # 게임 정보 보내주기
         asyncio.create_task(self.game_start([user_id], game_session))  # 게임 돌리기
 
     async def move_bar(self, user_id, command):
@@ -73,6 +73,9 @@ class GameService:
 
     async def game_start(self, users_id: list, game_session):
         await self.update_game_info(game_session, "status", self.START)
+        left_score = 0
+        right_score = 0
+
         ## 게임판 크기
         screen_width = 800
         screen_height = 600
@@ -100,7 +103,7 @@ class GameService:
         speed_x, speed_y, speed_bar = -screen_width / 2.28, screen_height / 2.92, screen_height * 1.5
 
         start_time = datetime.now()
-        for _ in range(100):
+        while left_score < 11 and right_score < 11:
             current_time = datetime.now()
             time_passed = current_time - start_time
             time_sec = time_passed.total_seconds()
@@ -139,15 +142,20 @@ class GameService:
             elif bar_right_y <= 0:
                 bar_right_y = 0
 
-            if circle_x < bar_width:  ## bar에 닿았을 때
-                if circle_y >= bar_y - circle_radius and circle_y <= bar_y + bar_height + circle_radius:
+            if circle_x < bar_width:
+                if bar_y - circle_radius <= circle_y <= bar_y + bar_height + circle_radius:
                     circle_x = bar_width
                     speed_x = -speed_x
+                    # Y축 방향 변경 로직 추가
+                    # offset_y = (circle_y - (bar_y + bar_height / 2)) / (bar_height / 2)  # -1.0 ~ 1.0 사이의 값을 계산
+                    # speed_y += offset_y * 1  # speed_adjustment_factor는 조정 가능한 상수
 
-            if circle_x + circle_radius >= bar_right_x:  # 오른쪽 탁구채에 닿았을 때
-                if circle_y >= bar_right_y - circle_radius and circle_y <= bar_right_y + bar_height + circle_radius:
-                    circle_x = bar_right_x - circle_diameter  # 탁구공의 오른쪽 가장자리를 탁구채의 왼쪽 가장자리에 맞춥니다.
-                    speed_x = -speed_x  # 탁구공의 X축 이동 방향을 반전시킵니다.
+            if circle_x + circle_radius >= bar_right_x:
+                if bar_right_y - circle_radius <= circle_y <= bar_right_y + bar_height + circle_radius:
+                    circle_x = bar_right_x - circle_diameter
+                    speed_x = -speed_x
+                    # offset_y = (circle_y - (bar_right_y + bar_height / 2)) / (bar_height / 2)  # -1.0 ~ 1.0 사이의 값을 계산
+                    # speed_y += offset_y * 1  # speed_adjustment_factor는 조정 가능한 상수
 
             if circle_x < -circle_radius:  ## bar에 닿지 않고 좌측 벽면에 닿았을 때, 게임 종료 및 초기화
                 circle_x, circle_y = circle_start_x, circle_start_y
@@ -155,6 +163,10 @@ class GameService:
                 bar_right_x, bar_right_y = bar_right_start_x, bar_start_y
                 speed_x = -speed_x
                 speed_y = -speed_y
+                right_score += 1
+                await self.update_game_info(game_session, "right_score", right_score)
+                for user_id in users_id:
+                    await self.handle_info_message(user_id, game_session)
 
             if circle_x + circle_radius > screen_width:
                 circle_x, circle_y = circle_start_x, circle_start_y
@@ -162,6 +174,10 @@ class GameService:
                 bar_right_x, bar_right_y = bar_right_start_x, bar_start_y
                 speed_x = -speed_x
                 speed_y = -speed_y
+                left_score += 1
+                await self.update_game_info(game_session, "left_score", left_score)
+                for user_id in users_id:
+                    await self.handle_info_message(user_id, game_session)
 
             if circle_y <= 0:  ## 위측 벽면에 닿았을때
                 speed_y = -speed_y
@@ -182,26 +198,6 @@ class GameService:
             await self.delete_user_game_session(user_id, game_session)
         await self.delete_game_info(game_session)
 
-    async def handle_update_message(self, user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y,
-                                    bar_width, bar_height, circle_radius, screen_height, screen_width):
-        receiver_id = user_id
-
-        await self._channel_layer.group_send(
-            str(receiver_id), {
-                "type": "update.game",  # 처리할 메시지 타입
-                "bar_x": bar_x,
-                "bar_y": bar_y,
-                "bar_right_x": bar_right_x,
-                "bar_right_y": bar_right_y,
-                "circle_x": circle_x,
-                "circle_y": circle_y,
-                # "bar_width": bar_width,
-                # "bar_height": bar_height,
-                # "circle_radius": circle_radius,
-                # "screen_height": screen_height,
-                # "screen_width": screen_width,
-            })
-
     async def is_user_in_game(self, user_id):
         in_game = await self._redis.get(f"user:{user_id}:in_game")
         return in_game == "true"
@@ -218,6 +214,15 @@ class GameService:
     async def get_user_game_session(self, user_id):
         return await self._redis.get(f"user:{user_id}:game_session")
 
+    async def update_game_info(self, game_session, key, value):
+        await self._redis.hset(f"game_info:{game_session}", str(key), str(value))
+
+    async def get_game_info(self, game_session):
+        return await self._redis.hgetall(f"game_info:{game_session}")
+
+    async def delete_game_info(self, game_session):
+        await self._redis.delete(f"game_info:{game_session}")
+
     async def set_game_info(self, left_user_id, right_user_id, game_type, game_session):
         await self._redis.hset(f"game_info:{game_session}", mapping={
             "left_user_id": str(left_user_id),
@@ -231,11 +236,36 @@ class GameService:
             "winner": "NONE"
         })
 
-    async def update_game_info(self, game_session, key, value):
-        await self._redis.hset(f"game_info:{game_session}", str(key), str(value))
+    async def handle_update_message(self, user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y,
+                                    bar_width, bar_height, circle_radius, screen_height, screen_width):
 
-    async def get_game_info(self, game_session):
-        return await self._redis.hgetall(f"game_info:{game_session}")
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "update.game",  # 처리할 메시지 타입
+                "bar_x": bar_x,
+                "bar_y": bar_y,
+                "bar_right_x": bar_right_x,
+                "bar_right_y": bar_right_y,
+                "circle_x": circle_x,
+                "circle_y": circle_y,
+                # "bar_width": bar_width,
+                # "bar_height": bar_height,
+                # "circle_radius": circle_radius,
+                # "screen_height": screen_height,
+                # "screen_width": screen_width,
+            })
 
-    async def delete_game_info(self, game_session):
-        await self._redis.delete(f"game_info:{game_session}")
+    async def handle_info_message(self, user_id, game_session):
+        game_info = await self.get_game_info(game_session)
+
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "info.game",
+                "left_user_id": game_info.get("left_user_id"),
+                "right_user_id": game_info.get("right_user_id"),
+                "game_type": game_info.get("game_type"),
+                "left_score": game_info.get("left_score"),
+                "right_score": game_info.get("right_score"),
+                "status": game_info.get("status"),
+                "winner": game_info.get("winner"),
+            })

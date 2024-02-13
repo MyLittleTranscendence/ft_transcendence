@@ -18,7 +18,7 @@
 
         #chat-log {
             width: 800px; /* 캔버스 너비와 동일하게 설정 */
-            height: 100px;
+            height: 0px;
             margin-bottom: 10px;
             overflow-y: auto; /* 로그가 많아지면 스크롤 */
             background-color: #f0f0f0; /* 배경색 */
@@ -31,7 +31,17 @@
 <canvas id="gameCanvas" width="800" height="600"></canvas>
 <textarea id="chat-log" cols="100" rows="3"></textarea><br>
 <input id="chat-message-submit" type="button" value="Start">
+<div id="gameInfo" style="margin: 20px; padding: 10px; border: 1px solid #ddd; background-color: #f0f0f0;">
+    <h2>Game Info</h2>
+    <p id="gameType">Game Type: </p>
+    <p id="players">Players: </p>
+    <p id="scores">Scores: </p>
+    <p id="gameStatus">Status: </p>
+    <p id="winnerInfo">Winner: </p>
+    <p id="leftUser">LeftUser: </p>
+    <p id="rightUser">RightUser: </p>
 
+</div>
 <!-- 게임 상태를 그릴 캔버스 추가 -->
 
 <script>
@@ -39,10 +49,20 @@
 
     gameSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
-        if (data.type === 'game_update') {
+        if (data.type === 'update_game') {
             const formattedMessage = `[탁구공 위치] X: ${data.circle_x.toFixed(2)}, Y: ${data.circle_y.toFixed(2)} | [탁구채 위치] X: ${data.bar_x.toFixed(2)}, Y: ${data.bar_y.toFixed(2)}\n`;
             document.querySelector('#chat-log').value += formattedMessage;
             updateGameCanvas(data);
+        } else if (data.type === 'info_game') {
+            // 게임 정보 업데이트 로직
+            document.getElementById('gameType').textContent = `Game Type: ${data.game_type}`;
+            document.getElementById('players').textContent = `Players: ${data.left_user_id} vs ${data.right_user_id}`;
+            document.getElementById('scores').textContent = `Scores: ${data.left_score} - ${data.right_score}`;
+            document.getElementById('gameStatus').textContent = `Status: ${data.status}`;
+            const winnerText = data.winner !== "NONE" ? data.winner : "No winner yet";
+            document.getElementById('winnerInfo').textContent = `Winner: ${winnerText}`;
+            document.getElementById('leftUser').textContent = `LeftUser: ${data.left_user_id}`;
+            document.getElementById('rightUser').textContent = `RightUser: ${data.right_user_id}`;
         } else {
             document.querySelector('#chat-log').value += (data.message + '\n');
         }

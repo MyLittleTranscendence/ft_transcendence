@@ -28,7 +28,7 @@ class GameConsumer(DefaultConsumer):
 
     async def update_game(self, event):
         await self.send(text_data=json.dumps({
-            "type": "game_update",
+            "type": GameMessageType.UPDATE_GAME,
             "bar_x": event["bar_x"],
             "bar_y": event["bar_y"],
             "bar_right_x": event["bar_right_x"],
@@ -40,4 +40,16 @@ class GameConsumer(DefaultConsumer):
             # "circle_radius": event["circle_radius"],
             # "screen_height": event["screen_height"],
             # "screen_width": event["screen_width"],
+        }))
+
+    async def info_game(self, event):
+        await self.send(text_data=json.dumps({
+            "type": GameMessageType.INFO_GAME,
+            "left_user_id": event["left_user_id"],
+            "right_user_id": event["right_user_id"],
+            "game_type": event["game_type"],
+            "left_score": event["left_score"],
+            "right_score": event["right_score"],
+            "status": event["status"],
+            "winner": event["winner"],
         }))
