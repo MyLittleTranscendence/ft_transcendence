@@ -1,13 +1,12 @@
 import json
 
-import aioredis
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth.models import AnonymousUser
 from django.db.models import Q
 from django.utils.timezone import now
 
-from backend import settings
+from backend.redis import RedisConnection
 from block.models import BlockUser
 from friend.models import Friend
 
@@ -17,11 +16,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
     TOTAL_MESSAGE = "total_message"
     SINGLE_MESSAGE = "single_message"
     LOGIN_MESSAGE = "login_message"
-    REDIS_HOST, REDIS_PORT = settings.CHANNEL_LAYERS["default"]["CONFIG"]["hosts"][0]
-
-    async def redis_connection(self):
-        self.redis = await aioredis.from_url(f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}", encoding="utf-8",
-                                             decode_responses=True)
 
     async def connect(self):
         if isinstance(self.scope['user'], AnonymousUser):
@@ -30,7 +24,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_add(self.LOGIN_GROUP, self.channel_name)
             await self.channel_layer.group_add(str(self.scope['user'].id), self.channel_name)
             await self.accept()
-            await self.redis_connection()
+            redis_connection = await RedisConnection.get_instance()
+            self.redis = redis_connection.redis
             await self.redis.set(f"user:{str(self.scope['user'].id)}:online", 1)
             await self.friends_status_message()
             await self.handle_login_status(1)
@@ -40,7 +35,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.LOGIN_GROUP, self.channel_name)
         await self.channel_layer.group_discard(str(self.scope['user'].id), self.channel_name)
         await self.handle_login_status(0)
-        self.redis.close()
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)

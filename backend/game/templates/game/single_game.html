@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Single Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #gameCanvas {
+            border: 1px solid #000000;
+            margin: 20px 0; /* 캔버스 상하 여백 추가 */
+        }
+
+        #chat-log {
+            width: 800px; /* 캔버스 너비와 동일하게 설정 */
+            height: 0px;
+            margin-bottom: 10px;
+            overflow-y: auto; /* 로그가 많아지면 스크롤 */
+            background-color: #f0f0f0; /* 배경색 */
+            border: 1px solid #ddd; /* 테두리 */
+            padding: 10px; /* 안쪽 여백 */
+        }
+    </style>
+</head>
+<body>
+<canvas id="gameCanvas" width="800" height="600"></canvas>
+<textarea id="chat-log" cols="100" rows="3"></textarea><br>
+<input id="chat-message-submit" type="button" value="Start">
+<div id="gameInfo" style="margin: 20px; padding: 10px; border: 1px solid #ddd; background-color: #f0f0f0;">
+    <h2>Game Info</h2>
+    <p id="gameType">Game Type: </p>
+    <p id="players">Players: </p>
+    <p id="scores">Scores: </p>
+    <p id="gameStatus">Status: </p>
+    <p id="winnerInfo">Winner: </p>
+    <p id="leftUser">LeftUser: </p>
+    <p id="rightUser">RightUser: </p>
+
+</div>
+<!-- 게임 상태를 그릴 캔버스 추가 -->
+
+<script>
+    const gameSocket = new WebSocket('ws://' + window.location.host + '/ws/game/');
+
+    gameSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        if (data.type === 'update_game') {
+            const formattedMessage = `[탁구공 위치] X: ${data.circle_x.toFixed(2)}, Y: ${data.circle_y.toFixed(2)} | [탁구채 위치] X: ${data.bar_x.toFixed(2)}, Y: ${data.bar_y.toFixed(2)}\n`;
+            document.querySelector('#chat-log').value += formattedMessage;
+            updateGameCanvas(data);
+        } else if (data.type === 'info_game') {
+            // 게임 정보 업데이트 로직
+            document.getElementById('gameType').textContent = `Game Type: ${data.game_type}`;
+            document.getElementById('players').textContent = `Players: ${data.left_user_id} vs ${data.right_user_id}`;
+            document.getElementById('scores').textContent = `Scores: ${data.left_score} - ${data.right_score}`;
+            document.getElementById('gameStatus').textContent = `Status: ${data.status}`;
+            const winnerText = data.winner !== "NONE" ? data.winner : "No winner yet";
+            document.getElementById('winnerInfo').textContent = `Winner: ${winnerText}`;
+            document.getElementById('leftUser').textContent = `LeftUser: ${data.left_user_id}`;
+            document.getElementById('rightUser').textContent = `RightUser: ${data.right_user_id}`;
+        } else if (data.type === 'wait_game') {
+            displayCountdown(data.time);
+        } else {
+            document.querySelector('#chat-log').value += (data.message + '\n');
+        }
+    };
+
+    function updateGameCanvas(data) {
+        const canvas = document.getElementById('gameCanvas');
+        if (canvas.getContext) {
+            const ctx = canvas.getContext('2d');
+            // 캔버스 클리어
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // 탁구채 그리기
+            ctx.fillStyle = 'black';
+            ctx.fillRect(data.bar_x, data.bar_y, 18, 100);
+            ctx.fillRect(data.bar_right_x, data.bar_right_y, 18, 100);
+            // 탁구공 그리기
+            ctx.beginPath();
+            ctx.arc(data.circle_x, data.circle_y, 9, 0, Math.PI * 2, true);
+            ctx.fill();
+        }
+    }
+
+    function displayCountdown(time) {
+    const canvas = document.getElementById('gameCanvas');
+    if (canvas.getContext) {
+        const ctx = canvas.getContext('2d');
+        // 캔버스 클리어
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // 카운트다운 텍스트 설정
+        ctx.font = '48px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'black';
+        // 캔버스 중앙에 시간 표시
+        ctx.fillText(time, canvas.width / 2, canvas.height / 2);
+    }
+}
+
+    gameSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.querySelector('#chat-message-submit').onclick = function (e) {
+        gameSocket.send(JSON.stringify({
+            'type': 'single_game_create',
+        }));
+    };
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'w' || event.key === 'W') {
+            gameSocket.send(JSON.stringify({
+                'type': 'move_bar',
+                'command': 'W'
+            }));
+        }
+        if (event.key === 's' || event.key === 'S') {
+            gameSocket.send(JSON.stringify({
+                'type': 'move_bar',
+                'command': 'S'
+            }));
+        }
+
+        if (event.key === 'ArrowUp') {
+            gameSocket.send(JSON.stringify({
+                'type': 'move_bar',
+                'command': 'U'
+            }));
+        }
+
+        if (event.key === 'ArrowDown') {
+            gameSocket.send(JSON.stringify({
+                'type': 'move_bar',
+                'command': 'D'
+            }));
+        }
+    });
+</script>
+</body>
+</html>
