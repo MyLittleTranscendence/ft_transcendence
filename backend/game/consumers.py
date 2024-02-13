@@ -53,3 +53,9 @@ class GameConsumer(DefaultConsumer):
             "status": event["status"],
             "winner": event["winner"],
         }))
+
+    async def wait_game(self, event):
+        await self.send(text_data=json.dumps({
+            "type": GameMessageType.WAIT_GAME,
+            "time": event['time'],
+        }))

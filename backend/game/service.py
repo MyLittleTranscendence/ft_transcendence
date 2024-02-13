@@ -18,6 +18,7 @@ class GameService:
 
     BEFORE = "before"
     START = "start"
+    END = "end"
 
     def __init__(self):
         raise RuntimeError("Call get_instance() instead")
@@ -72,6 +73,11 @@ class GameService:
                 await self.update_game_info(game_session, "right_bar_mv", command)
 
     async def game_start(self, users_id: list, game_session):
+        for i in range(11):
+            for user_id in users_id:
+                await self.handle_wait_message(user_id, 10 - i)
+            await asyncio.sleep(1)
+
         await self.update_game_info(game_session, "status", self.START)
         left_score = 0
         right_score = 0
@@ -193,10 +199,15 @@ class GameService:
             await asyncio.sleep(1 / 60)  # 1/60초 대기
 
         # 게임 정보 업데이트 추가 -> 게임의 타입에 따라 결정
+        await self.update_game_info(game_session, "winner", "left_user" if left_score > right_score else "right_user")
+        await self.update_game_info(game_session, "status", self.END)
+        for user_id in users_id:
+            await self.handle_info_message(user_id, game_session)
         for user_id in users_id:  # 게임 정리
             await self.set_user_in_game(user_id, False)
             await self.delete_user_game_session(user_id, game_session)
         await self.delete_game_info(game_session)
+        await asyncio.sleep(3)
 
     async def is_user_in_game(self, user_id):
         in_game = await self._redis.get(f"user:{user_id}:in_game")
@@ -268,4 +279,12 @@ class GameService:
                 "right_score": game_info.get("right_score"),
                 "status": game_info.get("status"),
                 "winner": game_info.get("winner"),
+            })
+
+    async def handle_wait_message(self, user_id, time):
+
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "wait.game",
+                "time": time,
             })

@@ -5,3 +5,4 @@ class GameMessageType:
 
     UPDATE_GAME = "update_game"
     INFO_GAME = "info_game"
+    WAIT_GAME = "wait_game"
