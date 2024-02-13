@@ -21,6 +21,7 @@ class GameService:
     END = "end"
 
     MULTIPLAYER_QUEUE_KEY = "multiplayer_queue"
+    MULTIPLAYER_QUEUE_SET_KEY = "multiplayer_queue_set"
 
     def __init__(self):
         raise RuntimeError("Call get_instance() instead")
@@ -83,29 +84,35 @@ class GameService:
     async def multi_game(self, users_id: list):
         game_session = str(uuid.uuid4())
         await self.set_game_info(users_id[0], users_id[1], self.MULTI_GAME, game_session)
-
         for user_id in users_id:
             await self.set_user_in_game(user_id)
             await self.set_user_game_session(user_id, game_session)
             await self.handle_info_message(user_id, game_session)
-
         await self.game_start(users_id, game_session)
-
         # 게임 결과 저장
-
         for user_id in users_id:
             await self.set_user_in_game(user_id, False)
             await self.delete_user_game_session(user_id, game_session)
         await self.delete_game_info(game_session)
 
     async def multi_queue(self, user_id):
-        if not await self.is_user_in_game(user_id):
+        # l = await self._redis.llen(self.MULTIPLAYER_QUEUE_KEY)
+        # print(l)
+        # print("??/")
+
+        if await self.is_user_in_game(user_id):
+            return
+        already_queue = await self._redis.sismember(self.MULTIPLAYER_QUEUE_SET_KEY, str(user_id))
+
+        if already_queue:
             return
         await self._redis.rpush(self.MULTIPLAYER_QUEUE_KEY, user_id)
+        await self._redis.sadd(self.MULTIPLAYER_QUEUE_SET_KEY, str(user_id))
         queue_length = await self._redis.llen(self.MULTIPLAYER_QUEUE_KEY)
         if queue_length >= 2:
             user_1 = await self._redis.lpop(self.MULTIPLAYER_QUEUE_KEY)
             user_2 = await self._redis.lpop(self.MULTIPLAYER_QUEUE_KEY)
+            await self._redis.srem(self.MULTIPLAYER_QUEUE_SET_KEY, user_1, user_2)
             asyncio.create_task(self.multi_game([user_1, user_2]))
 
     async def game_start(self, users_id: list, game_session):

@@ -6,4 +6,6 @@ from . import views
 
 urlpatterns = [
     path("single-game/", views.single_game, name="single-game"),
+    path("multi-game/", views.multi_game, name="multi-game"),
+
 ]
