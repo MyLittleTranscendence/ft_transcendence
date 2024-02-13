@@ -6,6 +6,7 @@ import SideBar from "../components/Lobby/SideBar.js";
 import fetchMyInfo from "../api/user/fetchMyInfo.js";
 import showToast from "../utils/showToast.js";
 import getRouter from "../core/router.js";
+import initChatSocket from "../socket/chatSocket.js";
 
 export default class LobbyPage extends Component {
   template() {
@@ -31,6 +32,8 @@ export default class LobbyPage extends Component {
     matchContainer.render();
     globalChatContainer.render();
     sideBar.render();
+
+    initChatSocket();
   }
 
   validateSessionOnSignIn() {
