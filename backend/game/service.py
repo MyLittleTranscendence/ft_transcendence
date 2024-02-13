@@ -36,16 +36,16 @@ class GameService:
         self._redis = redis_connection.redis
 
     async def start_single_pingpong_game(self, user_id):
-        # if await self.is_user_in_game(user_id):
-        #     print(f"User {user_id}은(는) 이미 게임 중입니다.")
-        #     return
+        if await self.is_user_in_game(user_id):
+            print(f"User {user_id}은(는) 이미 게임 중입니다.")
+            return
         await self.set_user_in_game(user_id)
         print(f"User {user_id} 게임 시작")
         game_session = str(uuid.uuid4())  # 게임 세션 생성
         await self.set_user_game_session(user_id, game_session)  # 유저 게임 세션 넣기
         await self.set_game_info(user_id, user_id, self.SINGLE_GAME, game_session)  # 게임 데이터 넣기
         await self.handle_info_message(user_id, game_session)  # 게임 정보 보내주기
-        asyncio.create_task(self.game_start([user_id], game_session))  # 게임 돌리기
+        asyncio.create_task(self.single_game(user_id, game_session))  # 게임 돌리기
 
     async def move_bar(self, user_id, command):
         if not await self.is_user_in_game(user_id):
@@ -71,6 +71,12 @@ class GameService:
                 await self.update_game_info(game_session, "left_bar_mv", command)
             elif game_info.get("right_user_id") == str(user_id):
                 await self.update_game_info(game_session, "right_bar_mv", command)
+
+    async def single_game(self, user_id, game_session):
+        await self.game_start([user_id], game_session)
+        await self.set_user_in_game(user_id, False)
+        await self.delete_user_game_session(user_id, game_session)
+        await self.delete_game_info(game_session)
 
     async def game_start(self, users_id: list, game_session):
         for i in range(11):
@@ -203,11 +209,6 @@ class GameService:
         await self.update_game_info(game_session, "status", self.END)
         for user_id in users_id:
             await self.handle_info_message(user_id, game_session)
-        for user_id in users_id:  # 게임 정리
-            await self.set_user_in_game(user_id, False)
-            await self.delete_user_game_session(user_id, game_session)
-        await self.delete_game_info(game_session)
-        await asyncio.sleep(3)
 
     async def is_user_in_game(self, user_id):
         in_game = await self._redis.get(f"user:{user_id}:in_game")
