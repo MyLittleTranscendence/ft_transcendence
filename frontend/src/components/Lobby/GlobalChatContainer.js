@@ -27,8 +27,9 @@ export default class GlobalChatContainer extends Component {
           align-items-center
           border border-white border-5
           p-2
+          g-deep-blue-background
           "
-        style="background-color: #0049D8; height: 35rem;"
+        style="height: 35rem;"
       >
         <h3 class="text-white">
           Chat (Global)
