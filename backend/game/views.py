@@ -7,3 +7,7 @@ def single_game(request):
 
 def multi_game(request):
     return render(request, "game/multi_game.html")
+
+
+def tournament_game(request):
+    return render(request, "game/tournament_game.html")
