@@ -60,3 +60,16 @@ class UserCheckSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['exists']
+
+
+class UserGameSerializer(serializers.ModelSerializer):
+    # profile_image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'nickname', 'profile_image']
+    #
+    # def get_profile_image_url(self, obj):
+    #     request = self.context.get('request')
+    #     profile_image_url = obj.profile_image.url
+    #     return request.build_absolute_uri(profile_image_url) if request else profile_image_url

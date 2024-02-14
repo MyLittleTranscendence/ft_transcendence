@@ -2,9 +2,12 @@ import asyncio
 import uuid
 from datetime import datetime, timedelta
 
+from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 
 from backend.redis import RedisConnection
+from game.models import Game
+from user.models import User
 
 
 class GameService:
@@ -184,12 +187,29 @@ class GameService:
         await self._redis.set(f"user:{user_id}:queue_session:{text_data_json.get('session_id')}", "true")
         await self._redis.expire(f"user:{user_id}:queue_session:{text_data_json.get('session_id')}", 20)
 
+    @database_sync_to_async
+    def save_game_result(self, game_info):
+        left_user = User.objects.get(pk=game_info.get("left_user_id"))
+        right_user = User.objects.get(pk=game_info.get("right_user_id"))
+        winner_user = User.objects.get(pk=game_info.get("winner"))
+        game = Game(
+            left_user=left_user,
+            right_user=right_user,
+            winner=winner_user,
+            left_score=game_info.get("left_score"),
+            right_score=game_info.get("right_score"),
+            game_type=game_info.get("game_type"),
+        )
+        game.save()
+        return game
+
     async def multi_game(self, users_id: list):
         await self.set_users_in_game(users_id, True)
         if not await self.accept_queue_request(users_id, self.MULTI_GAME):
             return
         game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.MULTI_GAME)
-        # 게임 결과 저장
+        game_info = await self.get_game_info(game_session)
+        await self.save_game_result(game_info)
         await self.delete_game_session_logic(users_id, game_session)
         await self.set_users_in_game(users_id, False)
 
@@ -202,19 +222,19 @@ class GameService:
         game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.TOURNAMENT_GAME)
         game_info = await self.get_game_info(game_session)
         winner1 = game_info.get("winner")
-        # 게임 결과 저장
+        await self.save_game_result(game_info)
         await self.delete_game_session_logic(users_id, game_session)
 
         await self.handle_next_game_message(winner1)
         game_session = await self.new_game_session_logic(users_id, users_id[2], users_id[3], self.TOURNAMENT_GAME)
         game_info = await self.get_game_info(game_session)
         winner2 = game_info.get("winner")
-        # 게임 결과 저장
+        await self.save_game_result(game_info)
         await self.delete_game_session_logic(users_id, game_session)
 
         game_session = await self.new_game_session_logic(users_id, winner1, winner2, self.TOURNAMENT_GAME)
         game_info = await self.get_game_info(game_session)
-        # 게임 결과 저장
+        await self.save_game_result(game_info)
         await self.delete_game_session_logic(users_id, game_session)
         await self.set_users_in_game(users_id, False)
 
