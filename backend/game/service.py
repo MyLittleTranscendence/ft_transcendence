@@ -71,10 +71,13 @@ class GameService:
             return
         asyncio.create_task(self.single_game([user_id]))
 
-    async def join_multi_queue(self, user_id):
+    async def join_multi_queue(self, user_id, r_push=True):
         if await self.already_game(user_id):
             return
-        await self._redis.rpush(self.MULTIPLAYER_QUEUE_KEY, user_id)
+        if r_push:
+            await self._redis.rpush(self.MULTIPLAYER_QUEUE_KEY, user_id)
+        else:
+            await self._redis.lpush(self.MULTIPLAYER_QUEUE_KEY, user_id)
         await self._redis.sadd(self.MULTIPLAYER_QUEUE_SET_KEY, str(user_id))
         queue_length = await self._redis.llen(self.MULTIPLAYER_QUEUE_KEY)
         if queue_length >= 2:
@@ -83,10 +86,13 @@ class GameService:
             await self._redis.srem(self.MULTIPLAYER_QUEUE_SET_KEY, user_1, user_2)
             asyncio.create_task(self.multi_game([user_1, user_2]))
 
-    async def join_tournament_queue(self, user_id):
+    async def join_tournament_queue(self, user_id, r_push=True):
         if await self.already_game(user_id):
             return
-        await self._redis.rpush(self.TOURNAMENT_QUEUE_KEY, user_id)
+        if r_push:
+            await self._redis.rpush(self.TOURNAMENT_QUEUE_KEY, user_id)
+        else:
+            await self._redis.lpush(self.TOURNAMENT_QUEUE_KEY, user_id)
         await self._redis.sadd(self.TOURNAMENT_QUEUE_SET_KEY, str(user_id))
         queue_length = await self._redis.llen(self.TOURNAMENT_QUEUE_KEY)
         if queue_length >= 4:
@@ -107,8 +113,47 @@ class GameService:
         await self.delete_game_session_logic(users_id, game_session)
         await self.set_users_in_game(users_id, False)
 
+    async def accept_queue(self, users_id: list, game_type):
+        queue_session = str(uuid.uuid4())
+        # for user_id in users_id:
+            # 큐 수락 메시지 전송
+
+        await asyncio.sleep(12)
+
+        accept_users = []
+        reject_users = []
+        for user_id in users_id:
+            accept = await self._redis.get(f"user:{user_id}:queue_session:{queue_session}")
+            if accept is None:
+                reject_users.append(user_id)
+            else:
+                accept_users.append(user_id)
+
+        # if not reject_users:
+        #     for user_id in users_id:
+        #         # 큐 매칭 성공 메시지
+        #     return True
+
+        # for user_id in accept_users:
+        #     # 큐 매칭 실패 메시지
+
+        # for user_id in reject_users:
+        #     # 1분 패널티 메시지
+
+        for user_id in accept_users:
+            if game_type == self.MULTI_GAME:
+                await self.join_multi_queue(user_id, False)
+            elif game_type == self.TOURNAMENT_GAME:
+                await self.join_tournament_queue(user_id, False)
+        # for user_id in reject_users:
+        #     # 패널티 적용
+        return False
+
     async def multi_game(self, users_id: list):
         await self.set_users_in_game(users_id, True)
+        if not await self.accept_queue(users_id):
+            await self.set_users_in_game(users_id, False)
+            return
         game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.MULTI_GAME)
         # 게임 결과 저장
         await self.delete_game_session_logic(users_id, game_session)
@@ -116,7 +161,9 @@ class GameService:
 
     async def tournament_game(self, users_id: list):
         await self.set_users_in_game(users_id, True)
-
+        if not await self.accept_queue(users_id):
+            await self.set_users_in_game(users_id, False)
+            return
         await self.handle_next_game_message(users_id[2])
         await self.handle_next_game_message(users_id[3])
         game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.TOURNAMENT_GAME)
