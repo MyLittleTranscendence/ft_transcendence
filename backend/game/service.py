@@ -28,6 +28,12 @@ class GameService:
     TOURNAMENT_QUEUE_KEY = "tournament_queue"
     TOURNAMENT_QUEUE_SET_KEY = "tournament_queue_set"
 
+    SCREEN_WIDTH = 800
+    SCREEN_HEIGHT = 600
+    BAR_WIDTH = 18
+    BAR_HEIGHT = 100
+    CIRCLE_RADIUS = 9
+
     def __init__(self):
         raise RuntimeError("Call get_instance() instead")
 
@@ -304,23 +310,17 @@ class GameService:
             "winner": "NONE"
         })
 
-    async def handle_update_message(self, user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y,
-                                    bar_width, bar_height, circle_radius, screen_height, screen_width):
+    async def handle_update_message(self, user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y):
 
         await self._channel_layer.group_send(
             str(user_id), {
-                "type": "update.game",  # 처리할 메시지 타입
+                "type": "update.game",
                 "bar_x": bar_x,
                 "bar_y": bar_y,
                 "bar_right_x": bar_right_x,
                 "bar_right_y": bar_right_y,
                 "circle_x": circle_x,
                 "circle_y": circle_y,
-                # "bar_width": bar_width,
-                # "bar_height": bar_height,
-                # "circle_radius": circle_radius,
-                # "screen_height": screen_height,
-                # "screen_width": screen_width,
             })
 
     async def handle_info_message(self, user_id, game_session):
@@ -336,6 +336,11 @@ class GameService:
                 "right_score": game_info.get("right_score"),
                 "status": game_info.get("status"),
                 "winner": game_info.get("winner"),
+                "screen_width": self.SCREEN_WIDTH,
+                "screen_height": self.SCREEN_HEIGHT,
+                "bar_width": self.BAR_WIDTH,
+                "bar_height": self.BAR_HEIGHT,
+                "circle_radius": self.CIRCLE_RADIUS,
             })
 
     async def handle_wait_message(self, user_id, time):
@@ -370,12 +375,12 @@ class GameService:
         right_score = 0
 
         ## 게임판 크기
-        screen_width = 800
-        screen_height = 600
+        screen_width = self.SCREEN_WIDTH
+        screen_height = self.SCREEN_HEIGHT
 
         ## 탁구채 크기 (width, height)
-        bar_width = 18
-        bar_height = 100
+        bar_width = self.BAR_WIDTH
+        bar_height = self.BAR_HEIGHT
 
         ## 탁구채의 시작점 (x,y), 좌측 맨끝 중앙
         bar_x = bar_start_x = 0
@@ -385,7 +390,7 @@ class GameService:
         bar_right_y = (screen_height - bar_height) / 2
 
         ## 탁구공 크기 (반지름)
-        circle_radius = 9
+        circle_radius = self.CIRCLE_RADIUS
         circle_diameter = circle_radius * 2
 
         ## 탁구공 시작점 (x, y), 우측 맨끝 중앙
@@ -479,8 +484,7 @@ class GameService:
                 circle_y = screen_height - circle_diameter
 
             for user_id in users_id:
-                await self.handle_update_message(user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y,
-                                                 bar_width, bar_height, circle_radius, screen_height, screen_width)
+                await self.handle_update_message(user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y)
             start_time = current_time
             await asyncio.sleep(1 / 60)  # 1/60초 대기
 

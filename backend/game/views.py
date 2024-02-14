@@ -30,9 +30,10 @@ class GameListView(ListAPIView):
         user_id = self.request.query_params.get('user_id', None)
         if user_id is not None:
             user = User.objects.get(pk=user_id)
-            return Game.objects.filter(Q(left_user=user) | Q(right_user=user)).order_by("-id")
+            return Game.objects.filter(Q(left_user=user) | Q(right_user=user)).select_related('left_user', 'right_user',
+                                                                                              'winner').order_by("-id")
         else:
-            return Game.objects.all().order_by("id").order_by("-id")
+            return Game.objects.all().select_related('left_user', 'right_user', 'winner').order_by("-id")
 
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter('user_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER)
