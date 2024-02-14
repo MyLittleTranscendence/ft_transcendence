@@ -71,7 +71,7 @@ class GameService:
             return
         asyncio.create_task(self.single_game([user_id]))
 
-    async def multi_queue(self, user_id):
+    async def join_multi_queue(self, user_id):
         if await self.already_game(user_id):
             return
         await self._redis.rpush(self.MULTIPLAYER_QUEUE_KEY, user_id)
@@ -83,7 +83,7 @@ class GameService:
             await self._redis.srem(self.MULTIPLAYER_QUEUE_SET_KEY, user_1, user_2)
             asyncio.create_task(self.multi_game([user_1, user_2]))
 
-    async def tournament_queue(self, user_id):
+    async def join_tournament_queue(self, user_id):
         if await self.already_game(user_id):
             return
         await self._redis.rpush(self.TOURNAMENT_QUEUE_KEY, user_id)
@@ -96,6 +96,10 @@ class GameService:
             user_4 = await self._redis.lpop(self.TOURNAMENT_QUEUE_KEY)
             await self._redis.srem(self.TOURNAMENT_QUEUE_SET_KEY, user_1, user_2, user_3, user_4)
             asyncio.create_task(self.tournament_game([user_1, user_2, user_3, user_4]))
+
+    async def delete_from_queue(self, user_id, queue_key, queue_set_key):
+        await self._redis.lrem(queue_key, 1, user_id)
+        await self._redis.srem(queue_set_key, user_id)
 
     async def single_game(self, users_id: list):
         await self.set_users_in_game(users_id, True)

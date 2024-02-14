@@ -1,8 +1,10 @@
 class GameMessageType:
     LOGIN_GROUP = "login_group"
     SINGLE_GAME_CREATE = "single_game_create"
-    MULTI_GAME_QUEUE = "multi_game_queue"
-    TOURNAMENT_GAME_QUEUE = "tournament_game_queue"
+    JOIN_MULTI_GAME_QUEUE = "join_multi_game_queue"
+    JOIN_TOURNAMENT_GAME_QUEUE = "join_tournament_game_queue"
+    DELETE_MULTI_GAME_QUEUE = "delete_multi_game_queue"
+    DELETE_TOURNAMENT_GAME_QUEUE = "delete_tournament_game_queue"
     MOVE_BAR = "move_bar"
 
     UPDATE_GAME = "update_game"
