@@ -72,7 +72,6 @@ class GameService:
         asyncio.create_task(self.single_game([user_id]))
 
     async def multi_queue(self, user_id):
-        print(user_id)
         if await self.already_game(user_id):
             return
         await self._redis.rpush(self.MULTIPLAYER_QUEUE_KEY, user_id)
@@ -81,7 +80,6 @@ class GameService:
         if queue_length >= 2:
             user_1 = await self._redis.lpop(self.MULTIPLAYER_QUEUE_KEY)
             user_2 = await self._redis.lpop(self.MULTIPLAYER_QUEUE_KEY)
-            print(user_1, user_2)
             await self._redis.srem(self.MULTIPLAYER_QUEUE_SET_KEY, user_1, user_2)
             asyncio.create_task(self.multi_game([user_1, user_2]))
 
@@ -154,7 +152,6 @@ class GameService:
         in_game = await self.is_user_in_game(user_id)
         already_multi_queue = await self._redis.sismember(self.MULTIPLAYER_QUEUE_SET_KEY, str(user_id))
         already_tournament_queue = await self._redis.sismember(self.TOURNAMENT_QUEUE_SET_KEY, str(user_id))
-        print(in_game, already_multi_queue, already_tournament_queue)
         return in_game or already_multi_queue or already_tournament_queue
 
     async def is_user_in_game(self, user_id):
