@@ -54,11 +54,6 @@ class GameConsumer(DefaultConsumer):
             "bar_right_y": event["bar_right_y"],
             "circle_x": event["circle_x"],
             "circle_y": event["circle_y"],
-            # "bar_width": event["bar_width"],
-            # "bar_height": event["bar_height"],
-            # "circle_radius": event["circle_radius"],
-            # "screen_height": event["screen_height"],
-            # "screen_width": event["screen_width"],
         }))
 
     async def info_game(self, event):
@@ -71,6 +66,11 @@ class GameConsumer(DefaultConsumer):
             "right_score": event["right_score"],
             "status": event["status"],
             "winner": event["winner"],
+            "bar_width": event["bar_width"],
+            "bar_height": event["bar_height"],
+            "circle_radius": event["circle_radius"],
+            "screen_height": event["screen_height"],
+            "screen_width": event["screen_width"],
         }))
 
     async def wait_game(self, event):
