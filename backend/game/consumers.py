@@ -28,12 +28,20 @@ class GameConsumer(DefaultConsumer):
         message_type = text_data_json.get('type')
         if message_type == GameMessageType.SINGLE_GAME_CREATE:
             await self.game_service.start_single_pingpong_game(self.scope['user'].id)
-        if message_type == GameMessageType.MOVE_BAR:
+        elif message_type == GameMessageType.MOVE_BAR:
             await self.game_service.move_bar(self.scope['user'].id, text_data_json.get("command"))
-        if message_type == GameMessageType.MULTI_GAME_QUEUE:
-            await self.game_service.multi_queue(self.scope['user'].id)
-        if message_type == GameMessageType.TOURNAMENT_GAME_QUEUE:
-            await self.game_service.tournament_queue(self.scope['user'].id)
+        elif message_type == GameMessageType.JOIN_MULTI_GAME_QUEUE:
+            await self.game_service.join_multi_queue(self.scope['user'].id)
+        elif message_type == GameMessageType.JOIN_TOURNAMENT_GAME_QUEUE:
+            await self.game_service.join_tournament_queue(self.scope['user'].id)
+        elif message_type == GameMessageType.DELETE_MULTI_GAME_QUEUE:
+            await self.game_service.delete_from_queue(self.scope['user'].id,
+                                                      GameService.MULTIPLAYER_QUEUE_KEY,
+                                                      GameService.MULTIPLAYER_QUEUE_SET_KEY)
+        elif message_type == GameMessageType.DELETE_TOURNAMENT_GAME_QUEUE:
+            await self.game_service.delete_from_queue(self.scope['user'].id,
+                                                      GameService.TOURNAMENT_QUEUE_KEY,
+                                                      GameService.TOURNAMENT_QUEUE_SET_KEY)
 
     async def update_game(self, event):
         await self.send(text_data=json.dumps({
