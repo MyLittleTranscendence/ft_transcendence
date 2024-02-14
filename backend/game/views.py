@@ -1,5 +1,7 @@
 from django.db.models import Q
 from django.shortcuts import render
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -32,3 +34,8 @@ class GameListView(ListAPIView):
         else:
             return Game.objects.all().order_by("id").order_by("-id")
 
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('user_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER)
+    ])
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
