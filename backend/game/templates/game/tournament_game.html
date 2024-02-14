@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title>Multi Game</title>
+    <title>Tournament Game</title>
     <style>
         body {
             display: flex;
@@ -38,8 +38,6 @@
     <p id="scores">Scores: </p>
     <p id="gameStatus">Status: </p>
     <p id="winnerInfo">Winner: </p>
-    <p id="leftUser">LeftUser: </p>
-    <p id="rightUser">RightUser: </p>
 
 </div>
 <!-- 게임 상태를 그릴 캔버스 추가 -->
@@ -63,6 +61,8 @@
             document.getElementById('winnerInfo').textContent = `Winner: ${winnerText}`;
         } else if (data.type === 'wait_game') {
             displayCountdown(data.time);
+        } else if (data.type === 'next_game') {
+            alert(`${data.message}`);
         } else {
             document.querySelector('#chat-log').value += (data.message + '\n');
         }
@@ -86,19 +86,19 @@
     }
 
     function displayCountdown(time) {
-    const canvas = document.getElementById('gameCanvas');
-    if (canvas.getContext) {
-        const ctx = canvas.getContext('2d');
-        // 캔버스 클리어
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // 카운트다운 텍스트 설정
-        ctx.font = '48px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = 'black';
-        // 캔버스 중앙에 시간 표시
-        ctx.fillText(time, canvas.width / 2, canvas.height / 2);
+        const canvas = document.getElementById('gameCanvas');
+        if (canvas.getContext) {
+            const ctx = canvas.getContext('2d');
+            // 캔버스 클리어
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // 카운트다운 텍스트 설정
+            ctx.font = '48px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = 'black';
+            // 캔버스 중앙에 시간 표시
+            ctx.fillText(time, canvas.width / 2, canvas.height / 2);
+        }
     }
-}
 
     gameSocket.onclose = function (e) {
         console.error('Chat socket closed unexpectedly');
@@ -106,7 +106,7 @@
 
     document.querySelector('#chat-message-submit').onclick = function (e) {
         gameSocket.send(JSON.stringify({
-            'type': 'multi_game_queue',
+            'type': 'tournament_game_queue',
         }));
     };
 
