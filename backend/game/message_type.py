@@ -10,6 +10,8 @@ class GameMessageType:
     RESPONSE_ACCEPT_QUEUE = "response_accept_queue"
 
     MATCH_SUCCESS = "match_success"
+    MATCH_FAIL = "match_fail"
+    PENALTY_WAIT = "penalty_wait"
 
     MOVE_BAR = "move_bar"
 

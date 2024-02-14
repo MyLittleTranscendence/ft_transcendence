@@ -1,6 +1,6 @@
 import asyncio
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from channels.layers import get_channel_layer
 
@@ -126,10 +126,23 @@ class GameService:
                 "type": "match.success",
             })
 
+    async def handle_match_fail_message(self, user_id):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "match.fail",
+            })
+
+    async def handle_penalty_message(self, user_id, penalty_time):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "penalty.wait",
+                "penalty_time": penalty_time
+            })
+
     async def accept_queue_request(self, users_id: list, game_type):
         queue_session = str(uuid.uuid4())
         for user_id in users_id:
-            await self.handle_accept_queue_request_message(user_id, queue_session) #큐 수락 요청 메시지 전송
+            await self.handle_accept_queue_request_message(user_id, queue_session)
 
         await asyncio.sleep(12)
 
@@ -147,15 +160,16 @@ class GameService:
                 await self.handle_match_success_message(user_id)
             return True
 
+        for user_id in accept_users:
+            await self.handle_match_fail_message(user_id)
 
-        # for user_id in accept_users:
-        #     # 큐 매칭 실패 메시지
+        penalty_time = (datetime.now() + timedelta(seconds=60)).strftime('%Y-%m-%d %H:%M:%S')
+        for user_id in reject_users:
+            await self._redis.set(f"user:{user_id}:penalty", penalty_time)
+            await self._redis.expire(f"user:{user_id}:penalty", 60)
+        for user_id in reject_users:
+            await self.handle_penalty_message(user_id, penalty_time)
 
-        # for user_id in reject_users:
-        #     # 1분 패널티 메시지
-
-        # for user_id in reject_users:
-        #     # 패널티 적용
         await self.set_users_in_game(users_id, False)
 
         for user_id in accept_users:
@@ -219,6 +233,10 @@ class GameService:
             await self.delete_user_game_session(user_id)
 
     async def already_game(self, user_id):
+        penalty_time = await self._redis.get(f"user:{user_id}:penalty")
+        if penalty_time:
+            await self.handle_penalty_message(user_id, penalty_time)
+            return True
         in_game = await self.is_user_in_game(user_id)
         already_multi_queue = await self._redis.sismember(self.MULTIPLAYER_QUEUE_SET_KEY, str(user_id))
         already_tournament_queue = await self._redis.sismember(self.TOURNAMENT_QUEUE_SET_KEY, str(user_id))

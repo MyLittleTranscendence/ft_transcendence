@@ -54,9 +54,56 @@
             border: 1px solid #ddd;
             background-color: #f0f0f0;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+
     </style>
 </head>
 <body>
+<div id="queueModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Do you want to accept the game queue?</p>
+        <button id="acceptBtn">Accept</button>
+        <button id="declineBtn">Decline</button>
+    </div>
+</div>
+
 <canvas id="gameCanvas" width="800" height="600"></canvas>
 <textarea id="chat-log" cols="100" rows="3"></textarea><br>
 <div class="button-container">
@@ -95,6 +142,24 @@
             displayCountdown(data.time);
         } else if (data.type === 'next_game') {
             alert(`${data.message}`);
+        } else if (data.type === 'match_success') {
+            alert(`${data.message}`);
+        } else if (data.type === 'match_fail') {
+            alert(`${data.message}`);
+        } else if (data.type === 'penalty_wait') {
+            alert(`게임을 거절해 해당 시간까지 패널티가 적용됩니다: ${data.penalty_time}`);
+        } else if (data.type === 'request_accept_queue') {
+            openModal();
+            document.getElementById('acceptBtn').onclick = function () {
+                gameSocket.send(JSON.stringify({
+                    'type': 'response_accept_queue',
+                    'session_id': data.session_id,
+                }));
+                closeModal();
+            };
+            document.getElementById('declineBtn').onclick = function () {
+                closeModal();
+            };
         } else {
             document.querySelector('#chat-log').value += (data.message + '\n');
         }
@@ -176,6 +241,22 @@
             }));
         }
     });
+
+    // 모달 열기 함수
+    function openModal() {
+        document.getElementById('queueModal').style.display = 'block';
+    }
+
+    // 모달 닫기 함수
+    function closeModal() {
+        document.getElementById('queueModal').style.display = 'none';
+    }
+
+    // 모달 닫기 이벤트 리스너
+    document.getElementsByClassName('close')[0].onclick = function () {
+        closeModal();
+    }
+
 </script>
 </body>
 </html>

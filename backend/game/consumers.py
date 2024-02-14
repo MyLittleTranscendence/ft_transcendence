@@ -96,3 +96,15 @@ class GameConsumer(DefaultConsumer):
             "type": GameMessageType.MATCH_SUCCESS,
             "message": "매칭이 성공되었습니다!",
         }))
+
+    async def match_fail(self, event):
+        await self.send(text_data=json.dumps({
+            "type": GameMessageType.MATCH_FAIL,
+            "message": "매칭이 실패하였습니다!",
+        }))
+
+    async def penalty_wait(self, event):
+        await self.send(text_data=json.dumps({
+            "type": GameMessageType.PENALTY_WAIT,
+            "penalty_time": event['penalty_time'],
+        }))

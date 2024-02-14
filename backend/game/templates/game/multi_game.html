@@ -117,8 +117,6 @@
     <p id="scores">Scores: </p>
     <p id="gameStatus">Status: </p>
     <p id="winnerInfo">Winner: </p>
-    <p id="leftUser">LeftUser: </p>
-    <p id="rightUser">RightUser: </p>
 
 </div>
 <!-- 게임 상태를 그릴 캔버스 추가 -->
@@ -146,6 +144,10 @@
             alert(`${data.message}`);
         } else if (data.type === 'match_success') {
             alert(`${data.message}`);
+        } else if (data.type === 'match_fail') {
+            alert(`${data.message}`);
+        } else if (data.type === 'penalty_wait') {
+            alert(`게임을 거절해 해당 시간까지 패널티가 적용됩니다: ${data.penalty_time}`);
         } else if (data.type === 'request_accept_queue') {
             openModal();
             document.getElementById('acceptBtn').onclick = function () {
