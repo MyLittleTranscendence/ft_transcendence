@@ -23,6 +23,9 @@ class GameService:
     MULTIPLAYER_QUEUE_KEY = "multiplayer_queue"
     MULTIPLAYER_QUEUE_SET_KEY = "multiplayer_queue_set"
 
+    TOURNAMENT_QUEUE_KEY = "multiplayer_queue_set"
+    TOURNAMENT_QUEUE_SET_KEY = "multiplayer_queue_set"
+
     def __init__(self):
         raise RuntimeError("Call get_instance() instead")
 
@@ -39,14 +42,9 @@ class GameService:
         self._redis = redis_connection.redis
 
     async def start_single_pingpong_game(self, user_id):
-        # if await self.is_user_in_game(user_id):
-        #     return
-        await self.set_user_in_game(user_id)
-        game_session = str(uuid.uuid4())  # 게임 세션 생성
-        await self.set_user_game_session(user_id, game_session)  # 유저 게임 세션 넣기
-        await self.set_game_info(user_id, user_id, self.SINGLE_GAME, game_session)  # 게임 데이터 넣기
-        await self.handle_info_message(user_id, game_session)  # 게임 정보 보내주기
-        asyncio.create_task(self.single_game(user_id, game_session))  # 게임 돌리기
+        if await self.already_game(user_id):
+            return
+        asyncio.create_task(self.single_game([user_id]))  # 게임 돌리기
 
     async def move_bar(self, user_id, command):
         if not await self.is_user_in_game(user_id):
@@ -73,32 +71,8 @@ class GameService:
             elif game_info.get("right_user_id") == str(user_id):
                 await self.update_game_info(game_session, "right_bar_mv", command)
 
-    async def single_game(self, user_id, game_session):
-        await self.game_start([user_id], game_session)
-        await self.set_user_in_game(user_id, False)
-        await self.delete_user_game_session(user_id, game_session)
-        await self.delete_game_info(game_session)
-
-    async def multi_game(self, users_id: list):
-        game_session = str(uuid.uuid4())
-        await self.set_game_info(users_id[0], users_id[1], self.MULTI_GAME, game_session)
-        for user_id in users_id:
-            await self.set_user_in_game(user_id)
-            await self.set_user_game_session(user_id, game_session)
-            await self.handle_info_message(user_id, game_session)
-        await self.game_start(users_id, game_session)
-        # 게임 결과 저장 로직 작성
-        for user_id in users_id:
-            await self.set_user_in_game(user_id, False)
-            await self.delete_user_game_session(user_id, game_session)
-        await self.delete_game_info(game_session)
-
     async def multi_queue(self, user_id):
-        if await self.is_user_in_game(user_id):
-            return
-        already_queue = await self._redis.sismember(self.MULTIPLAYER_QUEUE_SET_KEY, str(user_id))
-
-        if already_queue:
+        if await self.already_game(user_id):
             return
         await self._redis.rpush(self.MULTIPLAYER_QUEUE_KEY, user_id)
         await self._redis.sadd(self.MULTIPLAYER_QUEUE_SET_KEY, str(user_id))
@@ -108,6 +82,75 @@ class GameService:
             user_2 = await self._redis.lpop(self.MULTIPLAYER_QUEUE_KEY)
             await self._redis.srem(self.MULTIPLAYER_QUEUE_SET_KEY, user_1, user_2)
             asyncio.create_task(self.multi_game([user_1, user_2]))
+
+    async def tournament_queue(self, user_id):
+        if await self.already_game(user_id):
+            return
+        await self._redis.rpush(self.TOURNAMENT_QUEUE_KEY, user_id)
+        await self._redis.sadd(self.TOURNAMENT_QUEUE_SET_KEY, str(user_id))
+        queue_length = await self._redis.llen(self.TOURNAMENT_QUEUE_KEY)
+        if queue_length >= 4:
+            user_1 = await self._redis.lpop(self.TOURNAMENT_QUEUE_KEY)
+            user_2 = await self._redis.lpop(self.TOURNAMENT_QUEUE_KEY)
+            user_3 = await self._redis.lpop(self.TOURNAMENT_QUEUE_KEY)
+            user_4 = await self._redis.lpop(self.TOURNAMENT_QUEUE_KEY)
+            await self._redis.srem(self.TOURNAMENT_QUEUE_SET_KEY, user_1, user_2, user_3, user_4)
+            asyncio.create_task(self.tournament_game([user_1, user_2, user_3, user_4]))
+
+    async def new_game_session_logic(self, users_id, left_player, right_player, game_type):
+        game_session = str(uuid.uuid4())
+        await self.set_game_info(left_player, right_player, game_type, game_session)
+        for user_id in users_id:
+            await self.set_user_game_session(user_id, game_session)
+            await self.handle_info_message(user_id, game_session)
+        await self.game_start(users_id, game_session)
+        return game_session
+
+    async def delete_game_session_logic(self, users_id, game_session):
+        await self.delete_game_info(game_session)
+        for user_id in users_id:
+            await self.delete_user_game_session(user_id)
+
+    async def set_users_in_game(self, users_id, true_or_false: bool):
+        for user_id in users_id:
+            await self.set_user_in_game(user_id, true_or_false)
+
+    async def single_game(self, users_id: list):
+        await self.set_users_in_game(users_id, True)
+        game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[0], self.SINGLE_GAME)
+        await self.delete_game_session_logic(users_id, game_session)
+        await self.set_users_in_game(users_id, False)
+
+    async def multi_game(self, users_id: list):
+        await self.set_users_in_game(users_id, True)
+        game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.MULTI_GAME)
+        # 게임 결과 저장 로직 작성
+        await self.delete_game_session_logic(users_id, game_session)
+        await self.set_users_in_game(users_id, False)
+
+    async def tournament_game(self, users_id: list):
+        await self.set_users_in_game(users_id, True)
+        game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.TOURNAMENT_GAME)
+        # 1번 게임 승자 저장
+        # 게임 결과 저장 로직 작성
+        await self.delete_game_session_logic(users_id, game_session)
+
+        game_session = await self.new_game_session_logic(users_id, users_id[1], users_id[2], self.TOURNAMENT_GAME)
+        # 2번 게임 승자 저장
+        # 게임 결과 저장 로직 작성
+        await self.delete_game_session_logic(users_id, game_session)
+
+        # game_session = await self.new_game_session_logic(users_id, 승자1, 승자2, self.TOURNAMENT_GAME)
+        # 3번 게임 승자 저장
+        # 게임 결과 저장 로직 작성
+        await self.delete_game_session_logic(users_id, game_session)
+        await self.set_users_in_game(users_id, False)
+
+    async def already_game(self, user_id):
+        in_game = await self.is_user_in_game(user_id)
+        already_multi_queue = await self._redis.sismember(self.MULTIPLAYER_QUEUE_SET_KEY, str(user_id))
+        already_tournament_queue = await self._redis.sismember(self.TOURNAMENT_QUEUE_SET_KEY, str(user_id))
+        return in_game or already_multi_queue or already_tournament_queue
 
     async def is_user_in_game(self, user_id):
         in_game = await self._redis.get(f"user:{user_id}:in_game")
@@ -119,8 +162,8 @@ class GameService:
     async def set_user_game_session(self, user_id, game_session):
         await self._redis.set(f"user:{user_id}:game_session", game_session)
 
-    async def delete_user_game_session(self, user_id, game_session):
-        await self._redis.delete(f"user:{user_id}:game_session", game_session)
+    async def delete_user_game_session(self, user_id):
+        await self._redis.delete(f"user:{user_id}:game_session")
 
     async def get_user_game_session(self, user_id):
         return await self._redis.get(f"user:{user_id}:game_session")

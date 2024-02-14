@@ -32,6 +32,8 @@ class GameConsumer(DefaultConsumer):
             await self.game_service.move_bar(self.scope['user'].id, text_data_json.get("command"))
         if message_type == GameMessageType.MULTI_GAME_QUEUE:
             await self.game_service.multi_queue(self.scope['user'].id)
+        if message_type == GameMessageType.TOURNAMENT_GAME_QUEUE:
+            await self.game_service.tournament_queue(self.scope['user'].id)
 
     async def update_game(self, event):
         await self.send(text_data=json.dumps({
