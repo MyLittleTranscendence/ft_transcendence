@@ -11,6 +11,7 @@ from chat.views import TotalMessage, SingleMessage, LoginMessage
 from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairView, MFACodeGenerateView, \
     MFATokenGenerateView, MFAEnableView, MFADisableView
 from friend.views import FriendPostView, FriendDeleteView, FriendListView
+from game.views import GameListView
 from user import views
 from user.views import UserProfileUpdateView, MyProfileGetView
 
@@ -66,10 +67,13 @@ urlpatterns = [
     path('api/users/<int:user_id>/friends/<int:friend_id>/', FriendDeleteView.as_view(), name='user-friend-delete'),
     path('api/friends/', FriendListView.as_view(), name='user-friend-list'),
 
-    # game
+    # chat
     path("api/socket/game/single_message/", SingleMessage.as_view(), name="total"),
     path("api/socket/game/total_message/", TotalMessage.as_view(), name="total"),
     path("api/socket/game/login_message/", LoginMessage.as_view(), name="total"),
+
+    #game
+    path('api/games/', GameListView.as_view(), name='game-list'),
 
 ]
 
