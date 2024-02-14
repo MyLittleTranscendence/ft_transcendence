@@ -68,3 +68,9 @@ class GameConsumer(DefaultConsumer):
             "type": GameMessageType.WAIT_GAME,
             "time": event['time'],
         }))
+
+    async def next_game(self, event):
+        await self.send(text_data=json.dumps({
+            "type": GameMessageType.NEXT_GAME,
+            "message": event['message'],
+        }))
