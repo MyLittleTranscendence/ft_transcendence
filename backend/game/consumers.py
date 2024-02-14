@@ -42,6 +42,8 @@ class GameConsumer(DefaultConsumer):
             await self.game_service.delete_from_queue(self.scope['user'].id,
                                                       GameService.TOURNAMENT_QUEUE_KEY,
                                                       GameService.TOURNAMENT_QUEUE_SET_KEY)
+        elif message_type == GameMessageType.RESPONSE_ACCEPT_QUEUE:
+            await self.game_service.accept_queue_response(self.scope['user'].id, text_data_json)
 
     async def update_game(self, event):
         await self.send(text_data=json.dumps({
@@ -81,4 +83,28 @@ class GameConsumer(DefaultConsumer):
         await self.send(text_data=json.dumps({
             "type": GameMessageType.NEXT_GAME,
             "message": event['message'],
+        }))
+
+    async def accept_queue_request(self, event):
+        await self.send(text_data=json.dumps({
+            "type": GameMessageType.REQUEST_ACCEPT_QUEUE,
+            "session_id": event['session_id'],
+        }))
+
+    async def match_success(self, event):
+        await self.send(text_data=json.dumps({
+            "type": GameMessageType.MATCH_SUCCESS,
+            "message": "매칭이 성공되었습니다!",
+        }))
+
+    async def match_fail(self, event):
+        await self.send(text_data=json.dumps({
+            "type": GameMessageType.MATCH_FAIL,
+            "message": "매칭이 실패하였습니다!",
+        }))
+
+    async def penalty_wait(self, event):
+        await self.send(text_data=json.dumps({
+            "type": GameMessageType.PENALTY_WAIT,
+            "penalty_time": event['penalty_time'],
         }))

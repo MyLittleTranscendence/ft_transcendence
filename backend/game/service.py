@@ -1,6 +1,6 @@
 import asyncio
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from channels.layers import get_channel_layer
 
@@ -71,10 +71,13 @@ class GameService:
             return
         asyncio.create_task(self.single_game([user_id]))
 
-    async def join_multi_queue(self, user_id):
+    async def join_multi_queue(self, user_id, r_push=True):
         if await self.already_game(user_id):
             return
-        await self._redis.rpush(self.MULTIPLAYER_QUEUE_KEY, user_id)
+        if r_push:
+            await self._redis.rpush(self.MULTIPLAYER_QUEUE_KEY, user_id)
+        else:
+            await self._redis.lpush(self.MULTIPLAYER_QUEUE_KEY, user_id)
         await self._redis.sadd(self.MULTIPLAYER_QUEUE_SET_KEY, str(user_id))
         queue_length = await self._redis.llen(self.MULTIPLAYER_QUEUE_KEY)
         if queue_length >= 2:
@@ -83,10 +86,13 @@ class GameService:
             await self._redis.srem(self.MULTIPLAYER_QUEUE_SET_KEY, user_1, user_2)
             asyncio.create_task(self.multi_game([user_1, user_2]))
 
-    async def join_tournament_queue(self, user_id):
+    async def join_tournament_queue(self, user_id, r_push=True):
         if await self.already_game(user_id):
             return
-        await self._redis.rpush(self.TOURNAMENT_QUEUE_KEY, user_id)
+        if r_push:
+            await self._redis.rpush(self.TOURNAMENT_QUEUE_KEY, user_id)
+        else:
+            await self._redis.lpush(self.TOURNAMENT_QUEUE_KEY, user_id)
         await self._redis.sadd(self.TOURNAMENT_QUEUE_SET_KEY, str(user_id))
         queue_length = await self._redis.llen(self.TOURNAMENT_QUEUE_KEY)
         if queue_length >= 4:
@@ -107,8 +113,81 @@ class GameService:
         await self.delete_game_session_logic(users_id, game_session)
         await self.set_users_in_game(users_id, False)
 
+    async def handle_accept_queue_request_message(self, user_id, queue_session):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "accept.queue.request",
+                "session_id": queue_session
+            })
+
+    async def handle_match_success_message(self, user_id):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "match.success",
+            })
+
+    async def handle_match_fail_message(self, user_id):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "match.fail",
+            })
+
+    async def handle_penalty_message(self, user_id, penalty_time):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "penalty.wait",
+                "penalty_time": penalty_time
+            })
+
+    async def accept_queue_request(self, users_id: list, game_type):
+        queue_session = str(uuid.uuid4())
+        for user_id in users_id:
+            await self.handle_accept_queue_request_message(user_id, queue_session)
+
+        await asyncio.sleep(12)
+
+        accept_users = []
+        reject_users = []
+        for user_id in users_id:
+            accept = await self._redis.get(f"user:{user_id}:queue_session:{queue_session}")
+            if accept is None:
+                reject_users.append(user_id)
+            else:
+                accept_users.append(user_id)
+
+        if not reject_users:
+            for user_id in users_id:
+                await self.handle_match_success_message(user_id)
+            return True
+
+        for user_id in accept_users:
+            await self.handle_match_fail_message(user_id)
+
+        penalty_time = (datetime.now() + timedelta(seconds=60)).strftime('%Y-%m-%d %H:%M:%S')
+        for user_id in reject_users:
+            await self._redis.set(f"user:{user_id}:penalty", penalty_time)
+            await self._redis.expire(f"user:{user_id}:penalty", 60)
+        for user_id in reject_users:
+            await self.handle_penalty_message(user_id, penalty_time)
+
+        await self.set_users_in_game(users_id, False)
+
+        for user_id in accept_users:
+            if game_type == self.MULTI_GAME:
+                await self.join_multi_queue(user_id, False)
+            elif game_type == self.TOURNAMENT_GAME:
+                await self.join_tournament_queue(user_id, False)
+
+        return False
+
+    async def accept_queue_response(self, user_id, text_data_json):
+        await self._redis.set(f"user:{user_id}:queue_session:{text_data_json.get('session_id')}", "true")
+        await self._redis.expire(f"user:{user_id}:queue_session:{text_data_json.get('session_id')}", 20)
+
     async def multi_game(self, users_id: list):
         await self.set_users_in_game(users_id, True)
+        if not await self.accept_queue_request(users_id, self.MULTI_GAME):
+            return
         game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.MULTI_GAME)
         # 게임 결과 저장
         await self.delete_game_session_logic(users_id, game_session)
@@ -116,7 +195,8 @@ class GameService:
 
     async def tournament_game(self, users_id: list):
         await self.set_users_in_game(users_id, True)
-
+        if not await self.accept_queue_request(users_id, self.TOURNAMENT_GAME):
+            return
         await self.handle_next_game_message(users_id[2])
         await self.handle_next_game_message(users_id[3])
         game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.TOURNAMENT_GAME)
@@ -153,6 +233,10 @@ class GameService:
             await self.delete_user_game_session(user_id)
 
     async def already_game(self, user_id):
+        penalty_time = await self._redis.get(f"user:{user_id}:penalty")
+        if penalty_time:
+            await self.handle_penalty_message(user_id, penalty_time)
+            return True
         in_game = await self.is_user_in_game(user_id)
         already_multi_queue = await self._redis.sismember(self.MULTIPLAYER_QUEUE_SET_KEY, str(user_id))
         already_tournament_queue = await self._redis.sismember(self.TOURNAMENT_QUEUE_SET_KEY, str(user_id))
