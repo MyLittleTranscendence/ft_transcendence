@@ -222,19 +222,19 @@ class GameService:
         game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.TOURNAMENT_GAME)
         game_info = await self.get_game_info(game_session)
         winner1 = game_info.get("winner")
-        # 게임 결과 저장
+        await self.save_game_result(game_info)
         await self.delete_game_session_logic(users_id, game_session)
 
         await self.handle_next_game_message(winner1)
         game_session = await self.new_game_session_logic(users_id, users_id[2], users_id[3], self.TOURNAMENT_GAME)
         game_info = await self.get_game_info(game_session)
         winner2 = game_info.get("winner")
-        # 게임 결과 저장
+        await self.save_game_result(game_info)
         await self.delete_game_session_logic(users_id, game_session)
 
         game_session = await self.new_game_session_logic(users_id, winner1, winner2, self.TOURNAMENT_GAME)
         game_info = await self.get_game_info(game_session)
-        # 게임 결과 저장
+        await self.save_game_result(game_info)
         await self.delete_game_session_logic(users_id, game_session)
         await self.set_users_in_game(users_id, False)
 
