@@ -188,6 +188,27 @@ class InfoGame(APIView):
         return Response({"message": "Success"})
 
 
+class UpdateGame(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "참여중인 게임 움직임(바, 공) 위치 정보, 프레임마다 전송, 소수점 존재",
+        responses={
+            200: openapi.Response('수신할 데이터', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['update_game']),
+                    'bar_x': openapi.Schema(type=openapi.TYPE_NUMBER, description="왼쪽 바 중앙 x 좌표"),
+                    'bar_y': openapi.Schema(type=openapi.TYPE_NUMBER, description="왼쪽 바 중앙 y 좌표"),
+                    'bar_right_x': openapi.Schema(type=openapi.TYPE_NUMBER, description="오른쪽 바 중앙 x 좌표"),
+                    'bar_right_y': openapi.Schema(type=openapi.TYPE_NUMBER, description="오른쪽 바 중앙 y 좌표"),
+                    'circle_x': openapi.Schema(type=openapi.TYPE_NUMBER, description="공 중앙 x 좌표"),
+                    'circle_y': openapi.Schema(type=openapi.TYPE_NUMBER, description="공 중앙 y 좌표"),
+                }
+            )),
+        })
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
 class GameListView(ListAPIView):
     serializer_class = GameListSerializer
     permission_classes = [IsAuthenticated]
