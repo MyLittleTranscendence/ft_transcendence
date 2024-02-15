@@ -7,10 +7,14 @@ export default class PlayerOverviews extends Component {
     return `
       <div class="d-flex flex-column align-items-center m-4 text-white">
         ${type === "tournament" ? `<h4>${matchOrder}st match</h4>` : ""}
-        <div
-          id="player-overview-container-${matchOrder}"
+        <div 
+          id="player-${matchOrder}-overview-container"
           class="d-flex align-items-center"
-        ></div>
+        >
+          <div id="player-${matchOrder}-1-overview"></div>
+          <h2 class="text-white fw-bold mx-3">vs</h2>
+          <div id="player-${matchOrder}-2-overview"></div>
+        </div>
       </div>
     `;
   }
@@ -18,18 +22,19 @@ export default class PlayerOverviews extends Component {
   mounted() {
     const { matchOrder, player1, player2 } = this.props;
     const $container = this.$target.querySelector(
-      `#player-overview-container-${matchOrder}`
+      `#player-${matchOrder}-overview-container`
     );
-    const player1Overview = new PlayerOverview($container, player1);
-    const player2Overview = new PlayerOverview($container, player2);
+
+    const player1Overview = new PlayerOverview(
+      $container.querySelector(`#player-${matchOrder}-1-overview`),
+      player1
+    );
+    const player2Overview = new PlayerOverview(
+      $container.querySelector(`#player-${matchOrder}-2-overview`),
+      player2
+    );
 
     player1Overview.render();
-
-    const $h2 = document.createElement("h2");
-    $h2.className = "text-white fw-bold mx-3";
-    $h2.textContent = "vs";
-    $container.appendChild($h2);
-
     player2Overview.render();
   }
 }
