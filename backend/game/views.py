@@ -313,6 +313,26 @@ class PenaltyWait(APIView):
         return Response({"message": "Success"})
 
 
+class TournamentBegin(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "토너먼트 시작전 유저 정보 전달",
+        responses={
+            200: openapi.Response('수신할 데이터', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['tournament_begin']),
+                    'game1_left_user_id': openapi.Schema(type=openapi.TYPE_INTEGER, description="첫번째 게임 왼쪽 유저 id"),
+                    'game1_right_user_id': openapi.Schema(type=openapi.TYPE_INTEGER, description="첫번째 게임 왼쪽 유저 id"),
+                    'game2_left_user_id': openapi.Schema(type=openapi.TYPE_INTEGER, description="두번째 게임 왼쪽 유저 id"),
+                    'game2_right_user_id': openapi.Schema(type=openapi.TYPE_INTEGER, description="두번째 게임 왼쪽 유저 id"),
+                }
+            )),
+        })
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
 class GameListView(ListAPIView):
     serializer_class = GameListSerializer
     permission_classes = [IsAuthenticated]
