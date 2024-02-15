@@ -15,7 +15,7 @@ def room(request, room_name):
 
 class TotalMessage(APIView):
     @swagger_auto_schema(
-        operation_description="ws://localhost:8000/ws/game/ \n"
+        operation_description="ws://localhost:8000/ws/chat/ \n"
                               "전체 채팅 메시지 수신",
         responses={
             200: openapi.Response('수신할 데이터', schema=openapi.Schema(
@@ -33,7 +33,7 @@ class TotalMessage(APIView):
         return Response({"message": "Success"})
 
     @swagger_auto_schema(
-        operation_description="ws://localhost:8000/ws/game/ \n"
+        operation_description="ws://localhost:8000/ws/chat/ \n"
                               "전체 채팅 메시지 전송",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
@@ -52,7 +52,7 @@ class TotalMessage(APIView):
 
 class SingleMessage(APIView):
     @swagger_auto_schema(
-        operation_description="ws://localhost:8000/ws/game/ \n"
+        operation_description="ws://localhost:8000/ws/chat/ \n"
                               "개인 채팅 메시지 수신",
         responses={
             200: openapi.Response('수신할 데이터', schema=openapi.Schema(
@@ -70,7 +70,7 @@ class SingleMessage(APIView):
         return Response({"message": "Success"})
 
     @swagger_auto_schema(
-        operation_description="ws://localhost:8000/ws/game/ \n"
+        operation_description="ws://localhost:8000/ws/chat/ \n"
                               "개인 채팅 메시지 전송",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
@@ -90,7 +90,7 @@ class SingleMessage(APIView):
 
 class LoginMessage(APIView):
     @swagger_auto_schema(
-        operation_description="ws://localhost:8000/ws/game/ \n"
+        operation_description="ws://localhost:8000/ws/chat/ \n"
                               "친구의 온라인 상태 메시지 수신.",
         responses={
             200: openapi.Response(

@@ -68,9 +68,9 @@ urlpatterns = [
     path('api/friends/', FriendListView.as_view(), name='user-friend-list'),
 
     # chat
-    path("api/socket/game/single_message/", SingleMessage.as_view(), name="total"),
-    path("api/socket/game/total_message/", TotalMessage.as_view(), name="total"),
-    path("api/socket/game/login_message/", LoginMessage.as_view(), name="total"),
+    path("api/socket/chat/single_message/", SingleMessage.as_view(), name="total"),
+    path("api/socket/chat/total_message/", TotalMessage.as_view(), name="total"),
+    path("api/socket/chat/login_message/", LoginMessage.as_view(), name="total"),
 
     #game
     path('api/games/', GameListView.as_view(), name='game-list'),
