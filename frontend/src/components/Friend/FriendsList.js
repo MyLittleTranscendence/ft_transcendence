@@ -111,25 +111,33 @@ export default class FriendsList extends Component {
       <div
         class="list-group list-group-flush"
       >
-        <div id="friends-list-holder">
         ${friends.map(
           (friend) => `
             <div
-              class="list-group-item"
+              id="chat-trigger"
+              data-friend-${friend.user_id}
+              class="list-group-item d-flex align-items-center"
+              style="min-width: 20rem;"
             >
-              <div>
+              <div
+                class="overflow-hidden rounded-circle"
+                style="width: 4rem; height: 4rem;"
+              >
                 <img
                   src=${friend.profile_image}
-                  class="img-fluid rounded-circle"
+                  class="img-fluid"
                   alt="default"
                 >
               </div>
-              <span>
-                <button class="btn">${friend.nickname}</button>
+              <span
+                class="mx-3"
+              >
+                <h5 class="mb-1">${friend.nickname}</h5>
+                <small class="g-light-grey">click here to send message</small>
               </span>
-            </div>`
+            </div>
+          `
         )}
-        </div>
       </div>
     `;
   }
