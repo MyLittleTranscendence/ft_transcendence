@@ -5,26 +5,17 @@ import ProfileImage from "../UI/Profile/ProfileImage.js";
 export default class SideBar extends Component {
   template() {
     return `
+      <a 
+        id="sidebar-my-profile-link"
+        href="/my-page"
+      ></a>
       <div
+        id="friends-icon-holder"
         class="
-          col col-lg-2
-          d-flex flex-column align-items-center
-          ms-4 gap-3
+          position-relative
+          d-flex justify-content-center
         "
-        style="max-width: 4rem;"
       >
-        <a 
-          id="sidebar-my-profile-link"
-          href="/my-page"
-        ></a>
-        <div
-          id="friends-icon-holder"
-          class="
-            position-relative
-            d-flex justify-content-center
-          "
-        >
-        </div>
       </div>
     `;
   }

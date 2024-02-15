@@ -15,6 +15,40 @@ export default class LobbyPage extends Component {
       id="lobby-page-content"
       class="row"
     >
+      <div id="match-container"
+        class="
+          col-md-auto
+          d-flex
+          flex-column
+          align-items-center
+          justify-content-between
+          p-5 me-4
+          border border-white border-5
+          position-relative"
+        style="min-height: 30rem;"
+      ></div>
+      <div
+        id="global-chat-container"
+        class="
+        position-relative
+        col
+        d-flex
+        flex-column
+        align-items-center
+        border border-white border-5
+        p-2
+        g-deep-blue-background
+        "
+        style="height: 35rem;"
+      ></div>
+      <div id="sidebar"
+        class="
+          col col-lg-2
+          d-flex flex-column align-items-center
+          ms-4 gap-3
+        "
+        style="max-width: 4rem;"
+      ></div>
     </div>
     `;
   }
@@ -24,9 +58,14 @@ export default class LobbyPage extends Component {
 
     const $pageContent = this.$target.querySelector("#lobby-page-content");
     const pageContainer = new PageContainerWithLogo(this.$target, $pageContent);
-    const matchContainer = new MatchContainer($pageContent);
-    const globalChatContainer = new GlobalChatContainer($pageContent);
-    const sideBar = new SideBar($pageContent);
+
+    const matchContainer = new MatchContainer(
+      $pageContent.querySelector("#match-container")
+    );
+    const globalChatContainer = new GlobalChatContainer(
+      $pageContent.querySelector("#global-chat-container")
+    );
+    const sideBar = new SideBar($pageContent.querySelector("#sidebar"));
 
     pageContainer.render();
     matchContainer.render();

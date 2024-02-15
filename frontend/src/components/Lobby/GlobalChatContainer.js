@@ -17,46 +17,32 @@ export default class GlobalChatContainer extends Component {
 
   template() {
     return `
+      <h3 class="text-white">
+        Chat (Global)
+      </h2>
       <div
-        id="global-chat-container"
-        class="
-          position-relative
-          col
-          d-flex
-          flex-column
-          align-items-center
-          border border-white border-5
-          p-2
-          g-deep-blue-background
-          "
-        style="height: 35rem;"
+        class="border border-1"
+        style="width: 90%;"
+      ></div>
+      <div
+        id="global-chat-message-container"
+        class="w-100 mh-100 overflow-auto mt-1"
+        style="margin-bottom: 2rem;"
       >
-        <h3 class="text-white">
-          Chat (Global)
-        </h2>
-        <div
-          class="border border-1"
-          style="width: 90%;"
-        ></div>
-        <div
-          id="global-chat-message-container"
-          class="w-100 mh-100 overflow-auto mt-1"
-          style="margin-bottom: 2rem;"
-        >
-          <ul
-            id="global-chat-message-ul"
-            class="list-unstyled"
-          ></ul>
-        </div>
-        <div
-          id="global-chat-input-holder"
-          class="
-            position-absolute bottom-0
-            traslate-middle
-            p-2
-            w-100
-          "></div>
+        <ul
+          id="global-chat-message-ul"
+          class="list-unstyled"
+        ></ul>
       </div>
+      <div
+        id="global-chat-input-holder"
+        class="
+          position-absolute bottom-0
+          traslate-middle
+          p-2
+          w-100
+        "
+      ></div>
     `;
   }
 

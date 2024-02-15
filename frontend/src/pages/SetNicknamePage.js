@@ -28,6 +28,8 @@ export default class SetNicknamePage extends Component {
             align-items-center
           "
         >
+          <div id="nickname-input-holder" class="mb-3"></div>
+          <div id="nickname-submit-btn-holder"></div>
         </form>
       </div>
     `;
@@ -51,19 +53,25 @@ export default class SetNicknamePage extends Component {
       required: true,
     };
 
-    const nicknameInputGroup = new InputGroup($nicknameForm, {
-      labelText: "Nickname",
-      inputProps: nicknameInputProps,
-      holderId: "nickname-input-holder",
-    });
+    const nicknameInputGroup = new InputGroup(
+      $nicknameForm.querySelector("#nickname-input-holder"),
+      {
+        labelText: "Nickname",
+        inputProps: nicknameInputProps,
+        holderId: "nickname-input-holder",
+      }
+    );
 
-    const setNicknameButton = new Button($nicknameForm, {
-      id: "nickname-submit-btn",
-      type: "submit",
-      disabled: false,
-      content: "Set Nickname",
-      attributes: 'style="min-width: 10rem"',
-    });
+    const setNicknameButton = new Button(
+      $nicknameForm.querySelector("#nickname-submit-btn-holder"),
+      {
+        id: "nickname-submit-btn",
+        type: "submit",
+        disabled: false,
+        content: "Set Nickname",
+        attributes: 'style="min-width: 10rem"',
+      }
+    );
 
     pageContainer.render();
     nicknameInputGroup.render();

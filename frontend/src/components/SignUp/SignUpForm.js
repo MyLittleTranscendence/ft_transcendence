@@ -14,18 +14,18 @@ export default class SignUpForm extends Component {
       id="sign-up-form"
       class="d-flex flex-column align-items-center"
     >
-      <div id="input-group-container"></div>
-      <div id="sign-up-btn-holder"></div>
+      <div id="id-input-group-holder" class="mt-3"></div>
+      <div id="nickname-input-group-holder"></div>
+      <div id="pw-input-group-holder"></div>
+      <div id="verify-pw-input-group-holder"></div>
+      <div id="email-input-group-holder"></div>
+      <div id="sign-up-btn-holder" class="mt-3"></div>
     </form>
     `;
   }
 
   mounted() {
     const $signUpForm = this.$target.querySelector("#sign-up-form");
-    const $inputGroupContainer = $signUpForm.querySelector(
-      "#input-group-container"
-    );
-    const $signUpBtnHolder = $signUpForm.querySelector("#sign-up-btn-holder");
 
     const idInputProps = {
       type: "text",
@@ -73,42 +73,60 @@ export default class SignUpForm extends Component {
       required: true,
     };
 
-    const idInputGroup = new InputGroup($inputGroupContainer, {
-      labelText: "ID",
-      warningText: "",
-      inputProps: idInputProps,
-      holderId: "id-input-holder",
-    });
-    const nicknameInputGroup = new InputGroup($inputGroupContainer, {
-      labelText: "Nickname",
-      warningText: "",
-      inputProps: nicknameInputProps,
-      holderId: "nickname-input-holder",
-    });
-    const pwInputGroup = new InputGroup($inputGroupContainer, {
-      labelText: "Password",
-      warningText: "",
-      inputProps: pwInputProps,
-      holderId: "pw-input-holder",
-    });
-    const pwVerifyInputGroup = new InputGroup($inputGroupContainer, {
-      labelText: "Verify Password",
-      warningText: "",
-      inputProps: pwVerifyInputProps,
-      holderId: "pw-verify-input-holder",
-    });
-    const emailInputGroup = new InputGroup($inputGroupContainer, {
-      labelText: "E-mail",
-      warningText: "",
-      inputProps: emailInputProps,
-      holderId: "email-input-holder",
-    });
-    const signUpButton = new Button($signUpBtnHolder, {
-      type: "submit",
-      disabled: false,
-      content: "Sign Up",
-      attributes: 'style="min-width: 10rem"',
-    });
+    const idInputGroup = new InputGroup(
+      $signUpForm.querySelector("#id-input-group-holder"),
+      {
+        labelText: "ID",
+        warningText: "",
+        inputProps: idInputProps,
+        holderId: "id-input-holder",
+      }
+    );
+    const nicknameInputGroup = new InputGroup(
+      $signUpForm.querySelector("#nickname-input-group-holder"),
+      {
+        labelText: "Nickname",
+        warningText: "",
+        inputProps: nicknameInputProps,
+        holderId: "nickname-input-holder",
+      }
+    );
+    const pwInputGroup = new InputGroup(
+      $signUpForm.querySelector("#pw-input-group-holder"),
+      {
+        labelText: "Password",
+        warningText: "",
+        inputProps: pwInputProps,
+        holderId: "pw-input-holder",
+      }
+    );
+    const pwVerifyInputGroup = new InputGroup(
+      $signUpForm.querySelector("#verify-pw-input-group-holder"),
+      {
+        labelText: "Verify Password",
+        warningText: "",
+        inputProps: pwVerifyInputProps,
+        holderId: "pw-verify-input-holder",
+      }
+    );
+    const emailInputGroup = new InputGroup(
+      $signUpForm.querySelector("#email-input-group-holder"),
+      {
+        labelText: "E-mail",
+        warningText: "",
+        inputProps: emailInputProps,
+        holderId: "email-input-holder",
+      }
+    );
+    const signUpButton = new Button(
+      $signUpForm.querySelector("#sign-up-btn-holder"),
+      {
+        type: "submit",
+        disabled: false,
+        content: "Sign Up",
+        attributes: 'style="min-width: 10rem"',
+      }
+    );
 
     idInputGroup.render();
     nicknameInputGroup.render();

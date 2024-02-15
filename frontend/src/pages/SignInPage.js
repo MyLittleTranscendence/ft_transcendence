@@ -13,15 +13,18 @@ export default class SignInPage extends Component {
         <div>
           <img src="asset/logo-medium.png" class="img-fluid">
         </div>
+        <div id="signin-form-container"></div>
       </div>
     `;
   }
 
   mounted() {
-    const $SignInContent = this.$target.querySelector("#signin-page-content");
+    const $signInContent = this.$target.querySelector("#signin-page-content");
 
-    const pageContainer = new PageContainer(this.$target, $SignInContent);
-    const signInForm = new SigninForm($SignInContent);
+    const pageContainer = new PageContainer(this.$target, $signInContent);
+    const signInForm = new SigninForm(
+      $signInContent.querySelector("#signin-form-container")
+    );
 
     pageContainer.render();
     signInForm.render();

@@ -13,7 +13,7 @@ export default class InputGroup extends Component {
       d-flex
       align-items-center
       justify-content-center
-      my-3
+      my-2
     ">
       <label 
         for="${inputProps.id}"
@@ -28,7 +28,7 @@ export default class InputGroup extends Component {
         input-group-right
         position-absolute
       ">
-        ${warningText ? warningText : ""}
+        ${warningText || ""}
       </span>
     </div>`;
   }

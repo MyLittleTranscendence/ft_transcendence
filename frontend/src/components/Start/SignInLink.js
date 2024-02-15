@@ -10,7 +10,7 @@ export default class SignInLink extends Component {
     return `
       <a
         href="${path}"
-        class="btn btn-lg bg-white rounded-pill sign-in-link" 
+        class="btn btn-lg bg-white rounded-pill sign-in-link w-100"  
         ${type === "default-sign-in" ? "data-link" : ""}
       >
         ${content}

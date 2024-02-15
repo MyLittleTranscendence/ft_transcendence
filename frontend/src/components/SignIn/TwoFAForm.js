@@ -8,6 +8,11 @@ export default class TwoFAForm extends Component {
   constructor($target, props, state) {
     super($target, props, state);
     this.timerInterval = null;
+    this.isFirstRender = true;
+  }
+
+  setup() {
+    this.state = { notifyText: "" };
   }
 
   setEvent() {
@@ -28,7 +33,9 @@ export default class TwoFAForm extends Component {
         "
         data-form-type=${this.props.type}
       >
-        <p id="code-sent-notification" style="color:#c2c2c2;"></p>
+        <p id="code-sent-notification" style="color:#c2c2c2;">
+          ${this.state.notifyText}
+        </p>
         <div
           id="two-fa-group-container"
           class="
@@ -54,12 +61,15 @@ export default class TwoFAForm extends Component {
           >
             03:00
           </span>
+          <div id="code-input-holder"></div>
+          <div id="send-code-btn-holder"></div>
         </div>
         <span
           id="two-fa-warning"
           class="mt-1 fw-bold"
           style="color: #FF9D9D;"
         >Wrong verification code</span>
+        <div id="confirm-btn-holder"></div>
       </form>
 		`;
   }
@@ -70,43 +80,55 @@ export default class TwoFAForm extends Component {
     const $container = this.$target.querySelector("#two-fa-group-container");
     const $form = this.$target.querySelector("#two-fa-form");
 
-    const codeInput = new Input($container, {
-      type: "text",
-      id: "two-fa-code-input",
-      name: "two-fa-code",
-      placeholder: "Your code",
-      autocomplete: false,
-      required: true,
-      className: "mx-2",
-    });
-    const sendCodeButton = new Button($container, {
-      small: true,
-      id: "send-code-btn",
-      name: "send-code-btn",
-      content: "Send again",
-      className: "position-absolute input-group-right",
-      attributes: `style="color: white !important"`,
-    });
-    const confirmButton = new Button($form, {
-      id: `two-fa-${type}`,
-      name: `two-fa-${type}-confirm`,
-      content: type === "signin" ? "Confirm" : "Enable 2FA",
-      small: type === "enable",
-      type: "submit",
-      className: "mt-2",
-      attributes: `style="min-width: 10rem;"`,
-    });
+    const codeInput = new Input(
+      $container.querySelector("#code-input-holder"),
+      {
+        type: "text",
+        id: "two-fa-code-input",
+        name: "two-fa-code",
+        placeholder: "Your code",
+        autocomplete: false,
+        required: true,
+        className: "mx-2",
+      }
+    );
+    const sendCodeButton = new Button(
+      $container.querySelector("#send-code-btn-holder"),
+      {
+        small: true,
+        id: "send-code-btn",
+        name: "send-code-btn",
+        content: "Send again",
+        className: "position-absolute input-group-right",
+        attributes: `style="color: white !important"`,
+      }
+    );
+    const confirmButton = new Button(
+      $form.querySelector("#confirm-btn-holder"),
+      {
+        id: `two-fa-${type}`,
+        name: `two-fa-${type}-confirm`,
+        content: type === "signin" ? "Confirm" : "Enable 2FA",
+        small: type === "enable",
+        type: "submit",
+        className: "mt-2",
+        attributes: `style="min-width: 10rem;"`,
+      }
+    );
 
     codeInput.render();
     sendCodeButton.render();
     confirmButton.render();
 
-    fetchSendCode((email) => this.onCodeSendSuccess(email));
+    if (this.isFirstRender) {
+      fetchSendCode((email) => this.onCodeSendSuccess(email));
+      this.isFirstRender = false;
+    }
   }
 
   onCodeSendSuccess(email) {
+    this.setState({ notifyText: `Verification code has sent to ${email}` });
     this.startTimer(179, this.$target.querySelector("#two-fa-timer"));
-    this.notifyUserCodeHasSent(email);
   }
 
   startTimer(duration, $timerElement) {
