@@ -13,3 +13,11 @@
   background-color: #c1c1c1;
   cursor: not-allowed;
 }
+
+.cancle-button {
+  background-color: #c1c1c1;
+}
+
+.cancle-button:hover {
+  background-color: #767676;
+}

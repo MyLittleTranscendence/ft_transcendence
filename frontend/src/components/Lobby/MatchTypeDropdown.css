@@ -1,0 +1,15 @@
+.match-type-dropdown-ul {
+  width: 15rem;
+  border-radius: 1rem;
+}
+
+.match-type-dropdown-li {
+  width: 100%;
+  border-radius: 1rem;
+  padding: 0.5rem 0 0.5rem 0;
+  cursor: pointer;
+}
+
+.match-type-dropdown-li:hover {
+  background-color: #ededed;
+}
