@@ -247,6 +247,8 @@ class GameService:
             })
 
     async def invite_user(self, user_id, text_data_json):
+        if int(user_id) == int(text_data_json.get('invited_user_id')):
+            return
         if await self.is_penalty(user_id):
             return
         if await self.already_game(user_id):
