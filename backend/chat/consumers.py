@@ -6,6 +6,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.db.models import Q
 from django.utils.timezone import now
 
+from backend import settings
 from backend.redis import RedisConnection
 from block.models import BlockUser
 from friend.models import Friend
@@ -53,6 +54,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "message": message,
                 "sender_id": self.scope['user'].id,
                 "sender_nickname": self.scope['user'].nickname,
+                "sender_profile_image": f"{settings.BASE_URL}{self.scope['user'].profile_image.url}",
                 "datetime": str(now())
             })
 
@@ -70,6 +72,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "message": message,
                 "sender_id": self.scope['user'].id,
                 "sender_nickname": self.scope['user'].nickname,
+                "sender_profile_image": f"{settings.BASE_URL}{self.scope['user'].profile_image.url}",
                 "datetime": str(now())
             })
 
@@ -93,6 +96,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "message": event["message"],
             "sender_id": event["sender_id"],
             "sender_nickname": event["sender_nickname"],
+            "sender_profile_image": event["sender_profile_image"],
             "datetime": event["datetime"]
         }))
 
@@ -102,6 +106,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "message": event["message"],
             "sender_id": event["sender_id"],
             "sender_nickname": event["sender_nickname"],
+            "sender_profile_image": event["sender_profile_image"],
             "datetime": event["datetime"]
         }))
 
