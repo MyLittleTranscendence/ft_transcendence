@@ -2,8 +2,10 @@ from django.db.models import Q
 from django.shortcuts import render
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from requests import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
 from game.models import Game
 from game.serializers import GameListSerializer
@@ -20,6 +22,24 @@ def multi_game(request):
 
 def tournament_game(request):
     return render(request, "game/tournament_game.html")
+
+
+class SingleGameCreate(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "싱글 게임 생성",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['single_game_create']),
+            },
+        ),
+        responses={
+            200: openapi.Response(description="성공"),
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
 
 
 class GameListView(ListAPIView):
