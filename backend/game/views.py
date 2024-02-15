@@ -100,6 +100,43 @@ class JoinTournamentGameQueue(APIView):
         return Response({"message": "Success"})
 
 
+class DeleteMultiGameQueue(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "멀티 게임 큐 취소",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형',
+                                       enum=['delete_multi_game_queue']),
+            },
+        ),
+        responses={
+            200: openapi.Response(description="성공"),
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
+class DeleteTournamentGameQueue(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "토너먼트 게임 큐 취소",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형',
+                                       enum=['delete_tournament_game_queue']),
+            },
+        ),
+        responses={
+            200: openapi.Response(description="성공"),
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
 class GameListView(ListAPIView):
     serializer_class = GameListSerializer
     permission_classes = [IsAuthenticated]

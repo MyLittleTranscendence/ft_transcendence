@@ -11,7 +11,8 @@ from chat.views import TotalMessage, SingleMessage, LoginMessage
 from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairView, MFACodeGenerateView, \
     MFATokenGenerateView, MFAEnableView, MFADisableView
 from friend.views import FriendPostView, FriendDeleteView, FriendListView
-from game.views import GameListView, SingleGameCreate, MoveBar, JoinMultiGameQueue, JoinTournamentGameQueue
+from game.views import GameListView, SingleGameCreate, MoveBar, JoinMultiGameQueue, JoinTournamentGameQueue, \
+    DeleteMultiGameQueue, DeleteTournamentGameQueue
 from user import views
 from user.views import UserProfileUpdateView, MyProfileGetView
 
@@ -78,8 +79,11 @@ urlpatterns = [
     path("api/socket/game/single_game_create/", SingleGameCreate.as_view(), name="game-single-game-create"),
     path("api/socket/game/move_bar/", MoveBar.as_view(), name="move_bar"),
     path("api/socket/game/join_multi_game_queue/", JoinMultiGameQueue.as_view(), name="join_multi_game_queue"),
+    path("api/socket/game/delete_multi_game_queue/", DeleteMultiGameQueue.as_view(), name="delete_multi_game_queue"),
     path("api/socket/game/join_tournament_game_queue/", JoinTournamentGameQueue.as_view(),
          name="join_tournament_game_queue"),
+    path("api/socket/game/delete_tournament_game_queue/", DeleteTournamentGameQueue.as_view(),
+         name="delete_tournament_game_queue"),
 ]
 
 # urlpatterns += router.urls
