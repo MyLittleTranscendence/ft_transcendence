@@ -42,6 +42,27 @@ class SingleGameCreate(APIView):
         return Response({"message": "Success"})
 
 
+class MoveBar(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "바 움직임 요청을 전송. cli의 경우도 해당 api로 요청\n"
+                              "싱글게임: W, S, U, D\n"
+                              "멀티 게임: U, D",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['move_bar']),
+                'command': openapi.Schema(type=openapi.TYPE_STRING, description='움직임 유형', enum=['W', 'S', 'U', 'D']),
+            },
+        ),
+        responses={
+            200: openapi.Response(description="성공"),
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
 class GameListView(ListAPIView):
     serializer_class = GameListSerializer
     permission_classes = [IsAuthenticated]

@@ -11,7 +11,7 @@ from chat.views import TotalMessage, SingleMessage, LoginMessage
 from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairView, MFACodeGenerateView, \
     MFATokenGenerateView, MFAEnableView, MFADisableView
 from friend.views import FriendPostView, FriendDeleteView, FriendListView
-from game.views import GameListView, SingleGameCreate
+from game.views import GameListView, SingleGameCreate, MoveBar
 from user import views
 from user.views import UserProfileUpdateView, MyProfileGetView
 
@@ -76,6 +76,7 @@ urlpatterns = [
     path('api/games/', GameListView.as_view(), name='game-list'),
 
     path("api/socket/game/single_game_create/", SingleGameCreate.as_view(), name="game-single-game-create"),
+    path("api/socket/game/move_bar/", MoveBar.as_view(), name="move_bar"),
 ]
 
 # urlpatterns += router.urls
