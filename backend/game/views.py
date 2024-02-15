@@ -244,6 +244,58 @@ class NextGame(APIView):
         return Response({"message": "Success"})
 
 
+class RequestAcceptQueue(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "게임이 매칭 후 참가 요청을 보냄 10초 안에 응답해야 참가",
+        responses={
+            200: openapi.Response('수신할 데이터', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형',
+                                           enum=['request_accept_queue']),
+                    'session_id': openapi.Schema(type=openapi.TYPE_STRING, description="세션 id"),
+                }
+            )),
+        })
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
+class MatchSuccess(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "매칭 성공 알림",
+        responses={
+            200: openapi.Response('수신할 데이터', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['match_success']),
+                    'message': openapi.Schema(type=openapi.TYPE_STRING, description="메시지"),
+                }
+            )),
+        })
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
+class MatchFail(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "매칭 실패 알림",
+        responses={
+            200: openapi.Response('수신할 데이터', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['match_fail']),
+                    'message': openapi.Schema(type=openapi.TYPE_STRING, description="메시지"),
+                }
+            )),
+        })
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
 class GameListView(ListAPIView):
     serializer_class = GameListSerializer
     permission_classes = [IsAuthenticated]
