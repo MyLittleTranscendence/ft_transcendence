@@ -175,7 +175,7 @@ class InfoGame(APIView):
                     'status': openapi.Schema(type=openapi.TYPE_STRING, description="게임 상태",
                                              enum=['before', 'start', 'end']),
                     'winner': openapi.Schema(type=openapi.TYPE_STRING,
-                                                  description="우승자, None 이거나 결과 나오면 id 를 string으로 전송"),
+                                             description="우승자, None 이거나 결과 나오면 id 를 string으로 전송"),
                     'bar_width': openapi.Schema(type=openapi.TYPE_INTEGER, description="바 너비"),
                     'bar_height': openapi.Schema(type=openapi.TYPE_INTEGER, description="바 높이"),
                     'circle_radius': openapi.Schema(type=openapi.TYPE_INTEGER, description="공 반지름"),
@@ -208,6 +208,41 @@ class UpdateGame(APIView):
         })
     def get(self, request, *args, **kwargs):
         return Response({"message": "Success"})
+
+
+class WaitGame(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "게임 시작 전 카운트 다운 메시지",
+        responses={
+            200: openapi.Response('수신할 데이터', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['wait_game']),
+                    'time': openapi.Schema(type=openapi.TYPE_INTEGER, description="카운트 다운"),
+                }
+            )),
+        })
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
+class NextGame(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "다음에 진행되는 게임에 참가됨을 알림",
+        responses={
+            200: openapi.Response('수신할 데이터', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['next_game']),
+                    'message': openapi.Schema(type=openapi.TYPE_STRING, description="메시지"),
+                }
+            )),
+        })
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
 
 class GameListView(ListAPIView):
     serializer_class = GameListSerializer
