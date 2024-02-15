@@ -241,7 +241,6 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', "dummy")
 
 EMAIL_USE_TLS = True
 
-
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
         'Bearer': {
@@ -280,3 +279,5 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+BASE_URL = 'http://localhost:8000'

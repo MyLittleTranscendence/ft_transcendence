@@ -25,6 +25,7 @@ class TotalMessage(APIView):
                     'message': openapi.Schema(type=openapi.TYPE_STRING, description="메시지 내용"),
                     'sender_id': openapi.Schema(type=openapi.TYPE_INTEGER, description="발신자 ID"),
                     'sender_nickname': openapi.Schema(type=openapi.TYPE_STRING, description="발신자 닉네임"),
+                    'sender_profile_image': openapi.Schema(type=openapi.TYPE_STRING, description="발신자 프로필 주소"),
                     'datetime': openapi.Schema(type=openapi.TYPE_STRING, description="시간"),
                 }
             )),
@@ -62,6 +63,7 @@ class SingleMessage(APIView):
                     'message': openapi.Schema(type=openapi.TYPE_STRING, description="메시지 내용"),
                     'sender_id': openapi.Schema(type=openapi.TYPE_INTEGER, description="발신자 ID"),
                     'sender_nickname': openapi.Schema(type=openapi.TYPE_STRING, description="발신자 닉네임"),
+                    'sender_profile_image': openapi.Schema(type=openapi.TYPE_STRING, description="발신자 프로필 주소"),
                     'datetime': openapi.Schema(type=openapi.TYPE_STRING, description="시간"),
                 }
             )),
