@@ -108,3 +108,12 @@ class GameConsumer(DefaultConsumer):
             "type": GameMessageType.PENALTY_WAIT,
             "penalty_time": event['penalty_time'],
         }))
+
+    async def tournament_begin(self, event):
+        await self.send(text_data=json.dumps({
+            "type": GameMessageType.TOURNAMENT_BEGIN,
+            "game1_left_user_id": event['game1_left_user_id'],
+            "game1_right_user_id": event['game1_right_user_id'],
+            "game2_left_user_id": event['game2_left_user_id'],
+            "game2_right_user_id": event['game2_right_user_id'],
+        }))
