@@ -137,6 +137,26 @@ class DeleteTournamentGameQueue(APIView):
     def post(self, request, *args, **kwargs):
         return Response({"message": "Success"})
 
+
+class ResponseAcceptQueue(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "매칭된 큐를 수락.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['response_accept_queue']),
+                'session_id': openapi.Schema(type=openapi.TYPE_STRING, description='세션 id'),
+            },
+        ),
+        responses={
+            200: openapi.Response(description="성공"),
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
 class GameListView(ListAPIView):
     serializer_class = GameListSerializer
     permission_classes = [IsAuthenticated]

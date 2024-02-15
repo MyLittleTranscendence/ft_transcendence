@@ -12,7 +12,7 @@ from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairVie
     MFATokenGenerateView, MFAEnableView, MFADisableView
 from friend.views import FriendPostView, FriendDeleteView, FriendListView
 from game.views import GameListView, SingleGameCreate, MoveBar, JoinMultiGameQueue, JoinTournamentGameQueue, \
-    DeleteMultiGameQueue, DeleteTournamentGameQueue
+    DeleteMultiGameQueue, DeleteTournamentGameQueue, ResponseAcceptQueue
 from user import views
 from user.views import UserProfileUpdateView, MyProfileGetView
 
@@ -84,6 +84,8 @@ urlpatterns = [
          name="join_tournament_game_queue"),
     path("api/socket/game/delete_tournament_game_queue/", DeleteTournamentGameQueue.as_view(),
          name="delete_tournament_game_queue"),
+    path("api/socket/game/response_accept_queue/", ResponseAcceptQueue.as_view(), name="response_accept_queue"),
+
 ]
 
 # urlpatterns += router.urls
