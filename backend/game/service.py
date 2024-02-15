@@ -329,8 +329,8 @@ class GameService:
         await self._channel_layer.group_send(
             str(user_id), {
                 "type": "info.game",
-                "left_user_id": game_info.get("left_user_id"),
-                "right_user_id": game_info.get("right_user_id"),
+                "left_user_id": int(game_info.get("left_user_id")),
+                "right_user_id": int(game_info.get("right_user_id")),
                 "game_type": game_info.get("game_type"),
                 "left_score": game_info.get("left_score"),
                 "right_score": game_info.get("right_score"),

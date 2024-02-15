@@ -11,7 +11,9 @@ from chat.views import TotalMessage, SingleMessage, LoginMessage
 from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairView, MFACodeGenerateView, \
     MFATokenGenerateView, MFAEnableView, MFADisableView
 from friend.views import FriendPostView, FriendDeleteView, FriendListView
-from game.views import GameListView
+from game.views import GameListView, SingleGameCreate, MoveBar, JoinMultiGameQueue, JoinTournamentGameQueue, \
+    DeleteMultiGameQueue, DeleteTournamentGameQueue, ResponseAcceptQueue, InfoGame, UpdateGame, NextGame, WaitGame, \
+    RequestAcceptQueue, MatchSuccess, MatchFail, PenaltyWait
 from user import views
 from user.views import UserProfileUpdateView, MyProfileGetView
 
@@ -68,12 +70,30 @@ urlpatterns = [
     path('api/friends/', FriendListView.as_view(), name='user-friend-list'),
 
     # chat
-    path("api/socket/game/single_message/", SingleMessage.as_view(), name="total"),
-    path("api/socket/game/total_message/", TotalMessage.as_view(), name="total"),
-    path("api/socket/game/login_message/", LoginMessage.as_view(), name="total"),
+    path("api/socket/chat/single_message/", SingleMessage.as_view(), name="chat-single"),
+    path("api/socket/chat/total_message/", TotalMessage.as_view(), name="chat-total"),
+    path("api/socket/chat/login_message/", LoginMessage.as_view(), name="chat-login"),
 
-    #game
+    # game
     path('api/games/', GameListView.as_view(), name='game-list'),
+
+    path("api/socket/game/single_game_create/", SingleGameCreate.as_view(), name="game-single-game-create"),
+    path("api/socket/game/move_bar/", MoveBar.as_view(), name="move_bar"),
+    path("api/socket/game/join_multi_game_queue/", JoinMultiGameQueue.as_view(), name="join_multi_game_queue"),
+    path("api/socket/game/delete_multi_game_queue/", DeleteMultiGameQueue.as_view(), name="delete_multi_game_queue"),
+    path("api/socket/game/join_tournament_game_queue/", JoinTournamentGameQueue.as_view(),
+         name="join_tournament_game_queue"),
+    path("api/socket/game/delete_tournament_game_queue/", DeleteTournamentGameQueue.as_view(),
+         name="delete_tournament_game_queue"),
+    path("api/socket/game/response_accept_queue/", ResponseAcceptQueue.as_view(), name="response_accept_queue"),
+    path("api/socket/game/info_game/", InfoGame.as_view(), name="info_game"),
+    path("api/socket/game/update_game/", UpdateGame.as_view(), name="update_game"),
+    path("api/socket/game/wait_game/", WaitGame.as_view(), name="next_game"),
+    path("api/socket/game/next_game/", NextGame.as_view(), name="next_game"),
+    path("api/socket/game/request_accept_queue/", RequestAcceptQueue.as_view(), name="request_accept_queue"),
+    path("api/socket/game/match_success/", MatchSuccess.as_view(), name="match_success"),
+    path("api/socket/game/match_fail/", MatchFail.as_view(), name="match_fail"),
+    path("api/socket/game/penalty_wait/", PenaltyWait.as_view(), name="penalty_wait"),
 
 ]
 
