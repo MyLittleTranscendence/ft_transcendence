@@ -1,5 +1,6 @@
 import fetchAPI from "../../utils/fetchAPI.js";
 import showToast from "../../utils/showToast.js";
+import { myInfoStore } from "../../store/initialStates.js";
 
 const fetchEnableTwoFA = (code) => {
   fetchAPI
@@ -7,7 +8,7 @@ const fetchEnableTwoFA = (code) => {
       mfa_code: code,
     })
     .then(() => {
-      sessionStorage.setItem("mfa_require", true);
+      myInfoStore.setState({ mfa_require: true });
       showToast("2FA enabled successfully");
     })
     .catch(() => showToast("Failed to enable 2FA"));
