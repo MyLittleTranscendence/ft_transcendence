@@ -13,7 +13,7 @@ from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairVie
 from friend.views import FriendPostView, FriendDeleteView, FriendListView
 from game.views import GameListView, SingleGameCreate, MoveBar, JoinMultiGameQueue, JoinTournamentGameQueue, \
     DeleteMultiGameQueue, DeleteTournamentGameQueue, ResponseAcceptQueue, InfoGame, UpdateGame, NextGame, WaitGame, \
-    RequestAcceptQueue, MatchSuccess, MatchFail
+    RequestAcceptQueue, MatchSuccess, MatchFail, PenaltyWait
 from user import views
 from user.views import UserProfileUpdateView, MyProfileGetView
 
@@ -92,7 +92,8 @@ urlpatterns = [
     path("api/socket/game/next_game/", NextGame.as_view(), name="next_game"),
     path("api/socket/game/request_accept_queue/", RequestAcceptQueue.as_view(), name="request_accept_queue"),
     path("api/socket/game/match_success/", MatchSuccess.as_view(), name="match_success"),
-    path("api/socket/game/match_success/", MatchFail.as_view(), name="match_fail"),
+    path("api/socket/game/match_fail/", MatchFail.as_view(), name="match_fail"),
+    path("api/socket/game/penalty_wait/", PenaltyWait.as_view(), name="penalty_wait"),
 
 ]
 

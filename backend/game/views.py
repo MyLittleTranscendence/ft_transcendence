@@ -296,6 +296,23 @@ class MatchFail(APIView):
         return Response({"message": "Success"})
 
 
+class PenaltyWait(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "매칭을 거부한 유저에게 패널티가 부여됬음을 알림",
+        responses={
+            200: openapi.Response('수신할 데이터', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['penalty_wait']),
+                    'penalty_time': openapi.Schema(type=openapi.TYPE_STRING, description="패널티 만료 기간"),
+                }
+            )),
+        })
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
 class GameListView(ListAPIView):
     serializer_class = GameListSerializer
     permission_classes = [IsAuthenticated]
