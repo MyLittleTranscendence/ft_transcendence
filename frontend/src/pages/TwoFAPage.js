@@ -13,6 +13,7 @@ export default class TwoFAPage extends Component {
         <div class="mb-5">
           <img src="asset/logo-medium.png" class="img-fluid">
         </div>
+        <div id="two-fa-form-container"></div>
       </div>
     `;
   }
@@ -21,7 +22,10 @@ export default class TwoFAPage extends Component {
     const $signInContent = this.$target.querySelector("#signin-page-content");
 
     const pageContainer = new PageContainer(this.$target, $signInContent);
-    const twoFAForm = new TwoFAForm($signInContent, { type: "signin" });
+    const twoFAForm = new TwoFAForm(
+      $signInContent.querySelector("#two-fa-form-container"),
+      { type: "signin" }
+    );
 
     pageContainer.render();
     twoFAForm.render();

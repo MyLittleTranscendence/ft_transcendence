@@ -13,19 +13,20 @@ export default class SignUpPage extends Component {
         <div>
           <img src="asset/logo-medium.png" class="img-fluid">
         </div>
+        <div id="signup-form-container"></div>
       </div>
     `;
   }
 
   mounted() {
-    const $SignUpContent = this.$target.querySelector(
-      "#signup-page-content"
+    const $signUpContent = this.$target.querySelector("#signup-page-content");
+
+    const pageContainer = new PageContainer(this.$target, $signUpContent);
+    const signUpForm = new SignUpForm(
+      $signUpContent.querySelector("#signup-form-container")
     );
-  
-    const pageContainer = new PageContainer(this.$target, $SignUpContent);
-    const signUpForm = new SignUpForm($SignUpContent);
 
     pageContainer.render();
-    signUpForm.render();  
+    signUpForm.render();
   }
 }

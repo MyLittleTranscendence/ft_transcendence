@@ -7,6 +7,7 @@ export default class PvPReady extends Component {
     return `
       <div id="pvp-ready-content" class="d-flex flex-column align-items-center">
         <h1 class="text-white fw-bold">1 vs 1</h1>
+        <div id="player-overviews-holder"></div>
       </div>
     `;
   }
@@ -20,7 +21,7 @@ export default class PvPReady extends Component {
     pageContainer.render();
 
     const playerOverviews = new PlayerOverviews(
-      this.$target.querySelector("#pvp-ready-content"),
+      this.$target.querySelector("#player-overviews-holder"),
       {
         player1: this.props.player1,
         player2: this.props.player2,

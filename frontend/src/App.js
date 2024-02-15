@@ -33,9 +33,11 @@ export default class App extends Component {
           }
         })
         .catch((e) => {
-          sessionStorage.clear();
-          navigate("/start");
-          showToast(e);
+          if (e.status && e.status === 401) {
+            sessionStorage.clear();
+            navigate("/start");
+            showToast(e);
+          }
         });
     };
 

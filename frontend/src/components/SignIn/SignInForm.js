@@ -18,7 +18,8 @@ export default class SigninForm extends Component {
       id="sign-in-form"
       class="d-flex flex-column align-items-center"
     >
-      <div id="input-group-container"></div>
+      <div id="id-input-group"></div>
+      <div id="pw-input-group"></div>
       <div
         id="sign-in-warningtext"
         style="
@@ -27,23 +28,20 @@ export default class SigninForm extends Component {
         font-size: 0.2rem; color: #ff9d9d;
         ">
       </div>
-      <div id="sign-in-btn-holder"></div>
+      <div id="signin-btn-holder"></div>
       <text
         class="fw-bold mt-5 mb-2"
         style="color: #b2b2b2"
       >
         Are you not registered?
       </text>
+      <div id="signup-link-holder"></div>
     </form>
     `;
   }
 
   mounted() {
     const $signInForm = this.$target.querySelector("#sign-in-form");
-    const $inputGroupContainer = $signInForm.querySelector(
-      "#input-group-container"
-    );
-    const $signInBtnHolder = $signInForm.querySelector("#sign-in-btn-holder");
 
     const idInputProps = {
       type: "text",
@@ -64,27 +62,39 @@ export default class SigninForm extends Component {
       required: true,
     };
 
-    const idInputGroup = new InputGroup($inputGroupContainer, {
-      labelText: "ID",
-      inputProps: idInputProps,
-      holderId: "id-input-holder",
-    });
-    const pwInputGroup = new InputGroup($inputGroupContainer, {
-      labelText: "Password",
-      inputProps: pwInputProps,
-      holderId: "pw-input-holder",
-    });
-    const signInButton = new Button($signInBtnHolder, {
-      type: "submit",
-      content: "Sign In",
-      disabled: false,
-      attributes: `style="min-width: 10rem"`,
-    });
-    const signUpButton = new Link(this.$target, {
-      content: "Sign Up",
-      href: "/sign-up",
-      attributes: `style="min-width: 10rem"`,
-    });
+    const idInputGroup = new InputGroup(
+      $signInForm.querySelector("#id-input-group"),
+      {
+        labelText: "ID",
+        inputProps: idInputProps,
+        holderId: "id-input-holder",
+      }
+    );
+    const pwInputGroup = new InputGroup(
+      $signInForm.querySelector("#pw-input-group"),
+      {
+        labelText: "Password",
+        inputProps: pwInputProps,
+        holderId: "pw-input-holder",
+      }
+    );
+    const signInButton = new Button(
+      $signInForm.querySelector("#signin-btn-holder"),
+      {
+        type: "submit",
+        content: "Sign In",
+        disabled: false,
+        attributes: `style="min-width: 10rem"`,
+      }
+    );
+    const signUpButton = new Link(
+      $signInForm.querySelector("#signup-link-holder"),
+      {
+        content: "Sign Up",
+        href: "/sign-up",
+        attributes: `style="min-width: 10rem"`,
+      }
+    );
 
     idInputGroup.render();
     pwInputGroup.render();

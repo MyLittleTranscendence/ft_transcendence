@@ -17,7 +17,9 @@ export default class StartPage extends Component {
             src="asset/logo-large.png"
             class="img-fluid"
           />
-          <div id="start-page-link-container" class="d-grid gap-3 mx-auto mt-3">
+          <div class="d-grid gap-3 mx-auto mt-3">
+            <div id="default-signin-link"></div>
+            <div id="oauth-signin-link"></div>
           </div>
         </div>
       </div>
@@ -30,19 +32,21 @@ export default class StartPage extends Component {
     const pageContainer = new PageContainer(this.$target, $pageContent);
     pageContainer.render();
 
-    const $buttonContainer = this.$target.querySelector(
-      "#start-page-link-container"
+    const signInLink = new SignInLink(
+      $pageContent.querySelector("#default-signin-link"),
+      {
+        content: "Sign In",
+        path: "/sign-in",
+        type: "default-sign-in",
+      }
     );
-
-    const signInLink = new SignInLink($buttonContainer, {
-      content: "Sign In",
-      path: "/sign-in",
-      type: "default-sign-in",
-    });
-    const signInWith42Link = new SignInLink($buttonContainer, {
-      content: `Sign In with <img src="asset/42logo.png" style="max-width: 2rem;" />`,
-      path: "http://localhost:8000/api/login/oauth2/42api",
-    });
+    const signInWith42Link = new SignInLink(
+      $pageContent.querySelector("#oauth-signin-link"),
+      {
+        content: `Sign In with <img src="asset/42logo.png" style="max-width: 2rem;" />`,
+        path: "http://localhost:8000/api/login/oauth2/42api",
+      }
+    );
 
     signInLink.render();
     signInWith42Link.render();
