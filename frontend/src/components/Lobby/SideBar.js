@@ -9,14 +9,15 @@ export default class SideBar extends Component {
         id="sidebar-my-profile-link"
         href="/my-page"
       ></a>
-      <div
+      <a
         id="friends-icon-holder"
         class="
           position-relative
           d-flex justify-content-center
         "
+        href="/friend"
       >
-      </div>
+      </a>
     `;
   }
 
