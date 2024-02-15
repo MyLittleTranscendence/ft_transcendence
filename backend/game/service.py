@@ -76,11 +76,15 @@ class GameService:
                 await self.update_game_info(game_session, "right_bar_mv", command)
 
     async def start_single_pingpong_game(self, user_id):
+        if await self.is_penalty(user_id):
+            return
         if await self.already_game(user_id):
             return
         asyncio.create_task(self.single_game([user_id]))
 
     async def join_multi_queue(self, user_id, r_push=True):
+        if await self.is_penalty(user_id):
+            return
         if await self.already_game(user_id):
             return
         if r_push:
@@ -96,6 +100,8 @@ class GameService:
             asyncio.create_task(self.multi_game([user_1, user_2]))
 
     async def join_tournament_queue(self, user_id, r_push=True):
+        if await self.is_penalty(user_id):
+            return
         if await self.already_game(user_id):
             return
         if r_push:
@@ -219,6 +225,48 @@ class GameService:
         await self.delete_game_session_logic(users_id, game_session)
         await self.set_users_in_game(users_id, False)
 
+    async def invite_game(self, users_id: list):
+        await self.set_users_in_game(users_id, True)
+        game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.MULTI_GAME)
+        game_info = await self.get_game_info(game_session)
+        await self.save_game_result(game_info)
+        await self.delete_game_session_logic(users_id, game_session)
+        await self.set_users_in_game(users_id, False)
+
+    async def handle_accept_invite_request_message(self, user_id, inviter_user_id):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "accept.invite.request",
+                "inviter_user_id": inviter_user_id
+            })
+
+    async def handle_invite_impossible_message(self, user_id):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "invite.impossible",
+            })
+
+    async def invite_user(self, user_id, text_data_json):
+        if await self.is_penalty(user_id):
+            return
+        if await self.already_game(user_id):
+            return
+        if await self.already_game(text_data_json.get('invited_user_id')):
+            await self.handle_invite_impossible_message(user_id)
+            return
+        await self._redis.set(f"user:{user_id}:invite", text_data_json.get('invited_user_id'))
+        await self._redis.expire(f"user:{user_id}:invite", 10)
+        await self.handle_accept_invite_request_message(int(text_data_json.get('invited_user_id')), user_id)
+
+    async def accept_invite(self, user_id, text_data_json):
+        if await self.already_game(user_id):
+            return
+        if await self.is_penalty(user_id):
+            return
+        invited_user_id = await self._redis.get(f"user:{text_data_json.get('inviter_user_id')}:invite")
+        if (invited_user_id is not None) and (int(user_id) == int(invited_user_id)):
+            asyncio.create_task(self.invite_game([int(text_data_json.get('inviter_user_id')), user_id]))
+
     async def tournament_game(self, users_id: list):
         await self.set_users_in_game(users_id, True)
         if not await self.accept_queue_request(users_id, self.TOURNAMENT_GAME):
@@ -261,15 +309,20 @@ class GameService:
         for user_id in users_id:
             await self.delete_user_game_session(user_id)
 
-    async def already_game(self, user_id):
+    async def is_penalty(self, user_id):
         penalty_time = await self._redis.get(f"user:{user_id}:penalty")
         if penalty_time:
             await self.handle_penalty_message(user_id, penalty_time)
             return True
+        return False
+
+    async def already_game(self, user_id):
+        penalty_time = await self._redis.get(f"user:{user_id}:penalty")
         in_game = await self.is_user_in_game(user_id)
         already_multi_queue = await self._redis.sismember(self.MULTIPLAYER_QUEUE_SET_KEY, str(user_id))
         already_tournament_queue = await self._redis.sismember(self.TOURNAMENT_QUEUE_SET_KEY, str(user_id))
-        return in_game or already_multi_queue or already_tournament_queue
+        inviter = await self._redis.get(f"user:{user_id}:invite")
+        return penalty_time or in_game or already_multi_queue or already_tournament_queue or inviter
 
     async def is_user_in_game(self, user_id):
         in_game = await self._redis.get(f"user:{user_id}:in_game")

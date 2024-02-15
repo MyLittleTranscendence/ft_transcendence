@@ -44,6 +44,10 @@ class GameConsumer(DefaultConsumer):
                                                       GameService.TOURNAMENT_QUEUE_SET_KEY)
         elif message_type == GameMessageType.RESPONSE_ACCEPT_QUEUE:
             await self.game_service.accept_queue_response(self.scope['user'].id, text_data_json)
+        elif message_type == GameMessageType.INVITE_USER:
+            await self.game_service.invite_user(self.scope['user'].id, text_data_json)
+        elif message_type == GameMessageType.RESPONSE_INVITE:
+            await self.game_service.accept_invite(self.scope['user'].id, text_data_json)
 
     async def update_game(self, event):
         await self.send(text_data=json.dumps({
@@ -116,4 +120,15 @@ class GameConsumer(DefaultConsumer):
             "game1_right_user_id": event['game1_right_user_id'],
             "game2_left_user_id": event['game2_left_user_id'],
             "game2_right_user_id": event['game2_right_user_id'],
+        }))
+
+    async def accept_invite_request(self, event):
+        await self.send(text_data=json.dumps({
+            "type": GameMessageType.REQUEST_INVITE,
+            "inviter_user_id": event['inviter_user_id'],
+        }))
+
+    async def invite_impossible(self, event):
+        await self.send(text_data=json.dumps({
+            "type": GameMessageType.INVITE_IMPOSSIBLE,
         }))
