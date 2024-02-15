@@ -16,10 +16,15 @@ export default class SideBar extends Component {
         href="/profile?user-id=${myInfoStore.getState().id}"
         data-link
       ></a>
-      <div
+      <a
         id="friends-icon-holder"
-        class="position-relative d-flex justify-content-center"
-      ></div>
+        class="
+          position-relative
+          d-flex justify-content-center
+        "
+        href="/friend"
+      >
+      </a>
     `;
   }
 

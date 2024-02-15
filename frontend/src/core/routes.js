@@ -8,6 +8,7 @@ import TwoFAPage from "../pages/TwoFAPage.js";
 import TournamentGamePage from "../pages/TournamentGamePage.js";
 import SetNicknamePage from "../pages/SetNicknamePage.js";
 import HyeonjunTestPage from "../pages/HyeonjunTestPage.js";
+import FriendsPage from "../pages/FriendsPage.js";
 
 const routes = {
   "/": ($element) => new LobbyPage($element),
@@ -19,6 +20,7 @@ const routes = {
   "/pvp": ($element) => new PvPGamePage($element),
   "/tournament": ($element) => new TournamentGamePage($element),
   "/profile": ($element) => new ProfilePage($element),
+  "/friend": ($element) => new FriendsPage($element),
   "/test-hyeonjun": ($element) => new HyeonjunTestPage($element),
 };
 
