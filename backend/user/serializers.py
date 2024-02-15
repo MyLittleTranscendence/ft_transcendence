@@ -6,10 +6,17 @@ class UserPatchSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     email = serializers.EmailField(required=True, max_length=100)
     nickname = serializers.CharField(required=True, min_length=4, max_length=100)
+    mfa_enable = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'nickname']
+        fields = ['id', 'email', 'nickname', 'mfa_enable']
+
+    def update(self, instance, validated_data):
+        if 'email' in validated_data and instance.email != validated_data.get('email'):
+            instance.mfa_enable = False
+            instance.save(update_fields=['mfa_enable'])
+        return super().update(instance, validated_data)
 
 
 class UserGetSerializer(serializers.ModelSerializer):
