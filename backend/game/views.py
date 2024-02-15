@@ -333,6 +333,78 @@ class TournamentBegin(APIView):
         return Response({"message": "Success"})
 
 
+class RequestInvite(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "게임 초대에 수락할 것을 요청",
+        responses={
+            200: openapi.Response('수신할 데이터', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['request_invite']),
+                    'inviter_user_id': openapi.Schema(type=openapi.TYPE_INTEGER, description="초대자 id"),
+                }
+            )),
+        })
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
+class InviteImpossible(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "해당 사용자 게임 초대가 불가능함을 알림",
+        responses={
+            200: openapi.Response('수신할 데이터', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['invite_impossible']),
+                }
+            )),
+        })
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
+class InviteUser(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "사용자를 게임에 초대.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['invite_user']),
+                'invited_user_id': openapi.Schema(type=openapi.TYPE_STRING, description='초대할 사용자 id'),
+            },
+        ),
+        responses={
+            200: openapi.Response(description="성공"),
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
+class ResponseInvite(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "게임 초대를 수락.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['response_invite']),
+                'inviter_user_id': openapi.Schema(type=openapi.TYPE_STRING,
+                                                  description='request_invite 에서 전달받은 초대한 사용자 id'),
+            },
+        ),
+        responses={
+            200: openapi.Response(description="성공"),
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
 class GameListView(ListAPIView):
     serializer_class = GameListSerializer
     permission_classes = [IsAuthenticated]

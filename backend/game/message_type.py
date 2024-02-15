@@ -20,3 +20,8 @@ class GameMessageType:
     INFO_GAME = "info_game"
     WAIT_GAME = "wait_game"
     NEXT_GAME = "next_game"
+
+    INVITE_USER = "invite_user"
+    REQUEST_INVITE = "request_invite"
+    RESPONSE_INVITE = "response_invite"
+    INVITE_IMPOSSIBLE = "invite_impossible"

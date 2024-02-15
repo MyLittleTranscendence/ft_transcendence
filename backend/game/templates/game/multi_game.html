@@ -119,6 +119,11 @@
     <p id="winnerInfo">Winner: </p>
 
 </div>
+<div class="invite-container" style="margin-bottom: 20px;">
+    <input id="user-id-input" type="text" placeholder="Enter user ID to invite"
+           style="padding: 10px; margin-right: 10px;">
+    <input id="invite-user-submit" type="button" value="Invite User">
+</div>
 <!-- 게임 상태를 그릴 캔버스 추가 -->
 
 <script>
@@ -160,10 +165,13 @@
             document.getElementById('declineBtn').onclick = function () {
                 closeModal();
             };
+        } else if (data.type === 'request_invite') {
+            showInviteModal(data.inviter_user_id);
         } else {
             document.querySelector('#chat-log').value += (data.message + '\n');
         }
-    };
+    }
+    ;
 
     function updateGameCanvas(data) {
         const canvas = document.getElementById('gameCanvas');
@@ -242,6 +250,28 @@
         }
     });
 
+    function showInviteModal(inviterId) {
+        const modal = document.getElementById('queueModal');
+        const modalContent = modal.querySelector('.modal-content p');
+        modalContent.textContent = `User ID ${inviterId} has invited you to a game. Do you want to accept?`;
+
+        // Accept 버튼 이벤트 리스너
+        document.getElementById('acceptBtn').onclick = function () {
+            gameSocket.send(JSON.stringify({
+                'type': 'response_invite',
+                'inviter_user_id': inviterId,
+            }));
+            closeModal();
+        };
+
+        // Decline 버튼 이벤트 리스너는 모달만 닫기
+        document.getElementById('declineBtn').onclick = function () {
+            closeModal();
+        };
+
+        openModal();
+    }
+
     // 모달 열기 함수
     function openModal() {
         document.getElementById('queueModal').style.display = 'block';
@@ -256,6 +286,19 @@
     document.getElementsByClassName('close')[0].onclick = function () {
         closeModal();
     }
+
+    document.querySelector('#invite-user-submit').onclick = function (e) {
+        const userId = document.querySelector('#user-id-input').value;
+        if (userId) { // 사용자 ID가 입력되었는지 확인
+            gameSocket.send(JSON.stringify({
+                'type': 'invite_user',
+                'invited_user_id': userId,
+            }));
+            document.querySelector('#user-id-input').value = ''; // 입력 상자 초기화
+        } else {
+            alert('Please enter a user ID to invite.');
+        }
+    };
 
 </script>
 </body>
