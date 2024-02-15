@@ -157,6 +157,37 @@ class ResponseAcceptQueue(APIView):
         return Response({"message": "Success"})
 
 
+class InfoGame(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "참여중인 게임 정보 메시지, 시작 전, 로그인 및 점수가 바뀔 때마다 전송",
+        responses={
+            200: openapi.Response('수신할 데이터', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['info_game']),
+                    'left_user_id': openapi.Schema(type=openapi.TYPE_INTEGER, description="왼쪽 유저 pk"),
+                    'right_user_id': openapi.Schema(type=openapi.TYPE_INTEGER, description="오른쪽 유저 pk"),
+                    'game_type': openapi.Schema(type=openapi.TYPE_STRING, description="게임 타입",
+                                                enum=['single_game', 'multi_game', 'tournament_game']),
+                    'left_score': openapi.Schema(type=openapi.TYPE_INTEGER, description="왼쪽 유저 스코어"),
+                    'right_score': openapi.Schema(type=openapi.TYPE_INTEGER, description="오른쪽 유저 스코어"),
+                    'status': openapi.Schema(type=openapi.TYPE_STRING, description="게임 상태",
+                                             enum=['before', 'start', 'end']),
+                    'winner': openapi.Schema(type=openapi.TYPE_STRING,
+                                                  description="우승자, None 이거나 결과 나오면 id 를 string으로 전송"),
+                    'bar_width': openapi.Schema(type=openapi.TYPE_INTEGER, description="바 너비"),
+                    'bar_height': openapi.Schema(type=openapi.TYPE_INTEGER, description="바 높이"),
+                    'circle_radius': openapi.Schema(type=openapi.TYPE_INTEGER, description="공 반지름"),
+                    'screen_height': openapi.Schema(type=openapi.TYPE_INTEGER, description="맵 높이"),
+                    'screen_width': openapi.Schema(type=openapi.TYPE_INTEGER, description="맵 너비"),
+                }
+            )),
+        })
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
 class GameListView(ListAPIView):
     serializer_class = GameListSerializer
     permission_classes = [IsAuthenticated]
