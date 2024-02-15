@@ -12,6 +12,7 @@ class GameMessageType:
     MATCH_SUCCESS = "match_success"
     MATCH_FAIL = "match_fail"
     PENALTY_WAIT = "penalty_wait"
+    TOURNAMENT_BEGIN = "tournament_begin"
 
     MOVE_BAR = "move_bar"
 

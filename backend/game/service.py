@@ -223,6 +223,9 @@ class GameService:
         await self.set_users_in_game(users_id, True)
         if not await self.accept_queue_request(users_id, self.TOURNAMENT_GAME):
             return
+        for user_id in users_id:
+            await self.handle_tournament_begin_message(user_id, users_id)
+        await asyncio.sleep(3)
         await self.handle_next_game_message(users_id[2])
         await self.handle_next_game_message(users_id[3])
         game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.TOURNAMENT_GAME)
@@ -343,6 +346,16 @@ class GameService:
                 "circle_radius": self.CIRCLE_RADIUS,
             })
 
+    async def handle_tournament_begin_message(self, user_id, users_id):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "tournament.begin",
+                "game1_left_user_id": int(users_id[0]),
+                "game1_right_user_id": int(users_id[1]),
+                "game2_left_user_id": int(users_id[2]),
+                "game2_right_user_id": int(users_id[3]),
+            })
+
     async def handle_wait_message(self, user_id, time):
 
         await self._channel_layer.group_send(
@@ -366,6 +379,8 @@ class GameService:
             await asyncio.sleep(1)
 
         await self.update_game_info(game_session, "status", self.START)
+        for user_id in users_id:
+            await self.handle_info_message(user_id, game_session)
 
         game_info = await self.get_game_info(game_session)
         left_user_id = game_info.get("left_user_id")
