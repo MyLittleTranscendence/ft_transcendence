@@ -14,7 +14,7 @@ from friend.views import FriendPostView, FriendDeleteView, FriendListView
 from game.views import GameListView, SingleGameCreate, MoveBar, JoinMultiGameQueue, JoinTournamentGameQueue, \
     DeleteMultiGameQueue, DeleteTournamentGameQueue, ResponseAcceptQueue, InfoGame, UpdateGame, NextGame, WaitGame, \
     RequestAcceptQueue, MatchSuccess, MatchFail, PenaltyWait, TournamentBegin, RequestInvite, InviteImpossible, \
-    InviteUser, ResponseInvite
+    InviteUser, ResponseInvite, UpdateQueue
 from user import views
 from user.views import UserProfileUpdateView, MyProfileGetView
 
@@ -100,7 +100,7 @@ urlpatterns = [
     path("api/socket/game/invite_impossible/", InviteImpossible.as_view(), name="invite_impossible"),
     path("api/socket/game/invite_user/", InviteUser.as_view(), name="invite_user"),
     path("api/socket/game/response_invite/", ResponseInvite.as_view(), name="response_invite"),
-
+    path("api/socket/game/queue_update/", UpdateQueue.as_view(), name="queue_update"),
 ]
 
 # urlpatterns += router.urls
