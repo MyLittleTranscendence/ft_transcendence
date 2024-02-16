@@ -1,35 +1,35 @@
 const initSocket = (path) => {
   let instance;
   let ws;
-  const listeners = {};
+  const observers = {};
 
   const createSocket = () => {
     ws = new WebSocket(`ws://localhost:8000/ws${path}`);
 
     ws.onmessage = (e) => {
       const message = JSON.parse(e.data);
-      if (message.type && listeners[message.type]) {
-        listeners[message.type].forEach((listener) => {
-          listener(message);
+      if (message.type && observers[message.type]) {
+        observers[message.type].forEach((observer) => {
+          observer(message);
         });
       }
     };
 
-    const removeListener = (type, listener) => {
-      if (listeners[type]) {
-        const index = listeners[type].indexOf(listener);
+    const removeobserver = (type, observer) => {
+      if (observers[type]) {
+        const index = observers[type].indexOf(observer);
         if (index !== -1) {
-          listeners[type].splice(index, 1);
+          observers[type].splice(index, 1);
         }
       }
     };
 
-    const addSocketListener = (type, listener) => {
-      if (!listeners[type]) {
-        listeners[type] = [];
+    const addSocketObserver = (type, observer) => {
+      if (!observers[type]) {
+        observers[type] = [];
       }
-      listeners[type].push(listener);
-      return () => removeListener(type, listener);
+      observers[type].push(observer);
+      return () => removeobserver(type, observer);
     };
 
     const sendSocket = (type, data) => {
@@ -37,7 +37,7 @@ const initSocket = (path) => {
       ws.send(message);
     };
 
-    return { addSocketListener, sendSocket };
+    return { addSocketObserver, sendSocket };
   };
 
   return () => {

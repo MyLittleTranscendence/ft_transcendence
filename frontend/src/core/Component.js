@@ -7,7 +7,7 @@ export default class Component {
 
   eventListeners = [];
 
-  removeSocketListeners = [];
+  removeObservers = [];
 
   children = [];
 
@@ -61,8 +61,8 @@ export default class Component {
     );
     this.eventListeners = [];
 
-    this.removeSocketListeners.forEach((removeListener) => removeListener());
-    this.removeSocketListeners = [];
+    this.removeObservers.forEach((removeObserver) => removeObserver());
+    this.removeObservers = [];
 
     this.children.forEach((child) => child.unmount());
     this.children = [];

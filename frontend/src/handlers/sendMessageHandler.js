@@ -1,14 +1,14 @@
-import getChatSocket from "../socket/chatSocket.js";
+import { chatSocket } from "../socket/socketManager.js";
 
 const sendMessageHandler = (e, type, receiverID = null) => {
   if ((e.key === "Enter" || e.keyCode === 13) && !e.isComposing) {
-    const { sendMessage } = getChatSocket();
+    const { sendSocket } = chatSocket();
     const message = e.target.value.trim();
     if (message !== "") {
       if (type === "total_message") {
-        sendMessage("total_message", { message });
+        sendSocket("total_message", { message });
       } else if (type === "single_message") {
-        sendMessage("single_message", {
+        sendSocket("single_message", {
           message,
           receiver_id: receiverID,
         });

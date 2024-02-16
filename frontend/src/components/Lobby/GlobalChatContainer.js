@@ -47,7 +47,7 @@ export default class GlobalChatContainer extends Component {
   }
 
   mounted() {
-    const { addSocketListener } = chatSocket();
+    const { addSocketObserver } = chatSocket();
 
     const chatInput = new ChatInput(
       this.$target.querySelector("#global-chat-input-holder"),
@@ -62,22 +62,19 @@ export default class GlobalChatContainer extends Component {
       "#global-chat-message-ul"
     );
 
-    const removeGlobalChatSocket = addSocketListener(
-      "total_message",
-      (message) => {
-        const $messageLI = document.createElement("li");
-        const globalMessage = new GlobalMessage($messageLI, {
-          nickname: message.sender_nickname,
-          content: message.message,
-          dateTime: message.datetime,
-          imageSrc: "asset/default.png",
-        });
-        globalMessage.render();
-        $messageLI.id = `global-${message.datetime}`;
-        $messageUL.appendChild($messageLI);
-        $messageContainer.scrollTop = $messageContainer.scrollHeight;
-      }
-    );
-    this.removeSocketListeners.push(removeGlobalChatSocket);
+    const removeObserver = addSocketObserver("total_message", (message) => {
+      const $messageLI = document.createElement("li");
+      const globalMessage = new GlobalMessage($messageLI, {
+        nickname: message.sender_nickname,
+        content: message.message,
+        dateTime: message.datetime,
+        imageSrc: "asset/default.png",
+      });
+      globalMessage.render();
+      $messageLI.id = `global-${message.datetime}`;
+      $messageUL.appendChild($messageLI);
+      $messageContainer.scrollTop = $messageContainer.scrollHeight;
+    });
+    this.removeObservers.push(removeObserver);
   }
 }
