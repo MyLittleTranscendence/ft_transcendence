@@ -58,7 +58,7 @@ class User(AbstractUser):
         return self
 
     def mfa_code_check(self, mfa_code):
-        utc_now = datetime.now(pytz.utc)
+        utc_now = datetime.now()
         if not self.mfa_enable:
             raise PermissionDenied('bad access, efa disabled')
         if utc_now - timedelta(minutes=settings.MFA_LIMIT_TIME) > self.mfa_generate_time:
@@ -73,7 +73,7 @@ class User(AbstractUser):
         self.save(update_fields=['mfa_enable'])
 
     def update_mfa_enable(self, mfa_code):
-        utc_now = datetime.now(pytz.utc)
+        utc_now = datetime.now()
         if self.mfa_enable:
             raise PermissionDenied('bad access, 2fa already enabled')
         if utc_now - timedelta(minutes=settings.MFA_LIMIT_TIME) > self.mfa_generate_time:
@@ -82,3 +82,11 @@ class User(AbstractUser):
             raise AuthenticationFailed("Code Invalid")
         self.mfa_enable = True
         self.save(update_fields=['mfa_enable'])
+
+    def increase_wins(self):
+        self.wins += 1
+        self.save()
+
+    def increase_losses(self):
+        self.losses += 1
+        self.save()
