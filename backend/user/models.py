@@ -1,13 +1,13 @@
 import uuid
 from datetime import datetime, timedelta
 
-import pytz
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser, User
 from django.db import models
 from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
 
 from backend import settings
+from backend.error_messages import Error
 
 
 class UserManager(BaseUserManager):
@@ -75,18 +75,18 @@ class User(AbstractUser):
         """
         utc_now = datetime.now()
         if not self.mfa_enable:
-            raise PermissionDenied('bad access, efa disabled')
+            raise PermissionDenied(Error.EFA_DISABLED)
         if utc_now - timedelta(minutes=settings.MFA_LIMIT_TIME) > self.mfa_generate_time:
-            raise AuthenticationFailed("Code Timeout")
+            raise AuthenticationFailed(Error.CODE_TIMEOUT)
         if self.mfa_code != mfa_code:
-            raise AuthenticationFailed("Code Invalid")
+            raise AuthenticationFailed(Error.CODE_INVALID)
 
     def update_mfa_disable(self):
         """
         mfa disable
         """
         if not self.mfa_enable:
-            raise PermissionDenied('bad access, 2fa already disabled')
+            raise PermissionDenied(Error.EFA_ALREADY_DISABLED)
         self.mfa_enable = False
         self.save(update_fields=['mfa_enable'])
 
@@ -96,11 +96,11 @@ class User(AbstractUser):
         """
         utc_now = datetime.now()
         if self.mfa_enable:
-            raise PermissionDenied('bad access, 2fa already enabled')
+            raise PermissionDenied(Error.EFA_ALREADY_ENABLED)
         if utc_now - timedelta(minutes=settings.MFA_LIMIT_TIME) > self.mfa_generate_time:
-            raise AuthenticationFailed("Code Timeout")
+            raise AuthenticationFailed(Error.CODE_TIMEOUT)
         if self.mfa_code != mfa_code:
-            raise AuthenticationFailed("Code Invalid")
+            raise AuthenticationFailed(Error.CODE_TIMEOUT)
         self.mfa_enable = True
         self.save(update_fields=['mfa_enable'])
 
