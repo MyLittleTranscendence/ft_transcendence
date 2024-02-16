@@ -23,7 +23,7 @@ export default class App extends Component {
     const validateSession = () => {
       fetchMyInfo()
         .then(() => {
-          sessionStorage.setItem("login", "true");
+          localStorage.setItem("login", "true");
           if (
             ["/start", "/sign-in", "/sign-up", "/mfa"].includes(currentPath)
           ) {
@@ -34,7 +34,7 @@ export default class App extends Component {
         })
         .catch((e) => {
           if (e.status && e.status === 401) {
-            sessionStorage.clear();
+            localStorage.clear();
             navigate("/start");
             showToast(e);
           }
@@ -42,7 +42,7 @@ export default class App extends Component {
     };
 
     if (
-      sessionStorage.getItem("login") === "true" ||
+      localStorage.getItem("login") === "true" ||
       searchParams.get("oauth_finish") === "true"
     ) {
       validateSession();
