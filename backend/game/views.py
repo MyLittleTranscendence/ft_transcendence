@@ -405,6 +405,23 @@ class ResponseInvite(APIView):
         return Response({"message": "Success"})
 
 
+class UpdateQueue(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "큐 인원수 알림",
+        responses={
+            200: openapi.Response('수신할 데이터', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['queue_update']),
+                    'cnt': openapi.Schema(type=openapi.TYPE_INTEGER, description='큐 참여한 인원수'),
+                }
+            )),
+        })
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
 class GameListView(ListAPIView):
     serializer_class = GameListSerializer
     permission_classes = [IsAuthenticated]

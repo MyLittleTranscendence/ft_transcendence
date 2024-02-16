@@ -27,7 +27,10 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dummy-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    os.environ.get('GLOBAL_HOST', 'localhost'),
+    "localhost"
+]
 
 # Application definition
 
@@ -211,12 +214,14 @@ CORS_ALLOW_HEADERS = [
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",
+#     "http://127.0.0.1:3000",
+#     "http://localhost:8000",
+#     "http://127.0.0.1:8000",
+# ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://\w+\.example\.com$",
@@ -240,6 +245,7 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', "dummy@happy.com")
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', "dummy")
 
 EMAIL_USE_TLS = True
+
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
@@ -280,4 +286,4 @@ CHANNEL_LAYERS = {
     },
 }
 
-BASE_URL = 'http://localhost:8000'
+BASE_URL = "http://" + os.environ.get('GLOBAL_HOST', 'localhost') + ":8000"
