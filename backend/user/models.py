@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime, timedelta
 
+import pytz
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser, User
 from django.db import models
@@ -73,7 +74,7 @@ class User(AbstractUser):
         """
         mfa 코드 검증
         """
-        utc_now = datetime.now()
+        utc_now = datetime.now(pytz.utc)
         if not self.mfa_enable:
             raise PermissionDenied(Error.EFA_DISABLED)
         if utc_now - timedelta(minutes=settings.MFA_LIMIT_TIME) > self.mfa_generate_time:
@@ -94,7 +95,7 @@ class User(AbstractUser):
         """
         mfa enable
         """
-        utc_now = datetime.now()
+        utc_now = datetime.now(pytz.utc)
         if self.mfa_enable:
             raise PermissionDenied(Error.EFA_ALREADY_ENABLED)
         if utc_now - timedelta(minutes=settings.MFA_LIMIT_TIME) > self.mfa_generate_time:

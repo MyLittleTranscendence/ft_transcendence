@@ -1,4 +1,7 @@
 class JWTAuthenticationMiddleware:
+    """
+    쿠키로 전달된 jwt를 authorization 헤더로 변환해서 전달
+    """
     def __init__(self, get_response):
         self.get_response = get_response
 
