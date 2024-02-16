@@ -65,10 +65,11 @@ export default class GlobalChatContainer extends Component {
     addMessageListener("total_message", (message) => {
       const $messageLI = document.createElement("li");
       const globalMessage = new GlobalMessage($messageLI, {
-        nickname: message.sender_nickname,
         content: message.message,
-        dateTime: message.datetime,
-        imageSrc: "asset/default.png",
+        senderId: message.sender_id,
+        senderNickname: message.sender_nickname,
+        senderProfileImage: message.sender_profile_image,
+        datetime: message.datetime,
       });
       globalMessage.render();
       $messageLI.id = `global-${message.datetime}`;
