@@ -16,6 +16,9 @@ class Friend(models.Model):
 
     @classmethod
     def add_friend(cls, relate_user, friend_user):
+        """
+        친구 추가
+        """
         if relate_user == friend_user:
             raise ValidationError(detail={"detail": Error.CANNOT_FRIEND_SELF})
         if cls.objects.filter(relate_user=relate_user, friend_user=friend_user).exists():
