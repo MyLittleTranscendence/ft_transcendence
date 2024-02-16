@@ -23,7 +23,9 @@ export default class SignUpPage extends Component {
 
     const pageContainer = new PageContainer(this.$target, $signUpContent);
     const signUpForm = new SignUpForm(
-      $signUpContent.querySelector("#signup-form-container")
+      $signUpContent.querySelector("#signup-form-container"),
+      {},
+      this
     );
 
     pageContainer.render();

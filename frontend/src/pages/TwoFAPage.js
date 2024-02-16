@@ -24,7 +24,8 @@ export default class TwoFAPage extends Component {
     const pageContainer = new PageContainer(this.$target, $signInContent);
     const twoFAForm = new TwoFAForm(
       $signInContent.querySelector("#two-fa-form-container"),
-      { type: "signin" }
+      { type: "signin" },
+      this
     );
 
     pageContainer.render();

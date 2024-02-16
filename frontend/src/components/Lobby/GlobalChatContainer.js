@@ -1,7 +1,7 @@
 import Component from "../../core/Component.js";
 import ChatInput from "./ChatInput.js";
 import sendMessageHandler from "../../handlers/sendMessageHandler.js";
-import getChatSocket from "../../socket/chatSocket.js";
+import { chatSocket } from "../../socket/socketManager.js";
 import GlobalMessage from "./GlobalMessage.js";
 
 export default class GlobalChatContainer extends Component {
@@ -47,7 +47,7 @@ export default class GlobalChatContainer extends Component {
   }
 
   mounted() {
-    const { addMessageListener } = getChatSocket();
+    const { addSocketObserver } = chatSocket();
 
     const chatInput = new ChatInput(
       this.$target.querySelector("#global-chat-input-holder"),
@@ -62,7 +62,7 @@ export default class GlobalChatContainer extends Component {
       "#global-chat-message-ul"
     );
 
-    addMessageListener("total_message", (message) => {
+    const removeObserver = addSocketObserver("total_message", (message) => {
       const $messageLI = document.createElement("li");
       const globalMessage = new GlobalMessage($messageLI, {
         content: message.message,
@@ -76,5 +76,6 @@ export default class GlobalChatContainer extends Component {
       $messageUL.appendChild($messageLI);
       $messageContainer.scrollTop = $messageContainer.scrollHeight;
     });
+    this.removeObservers.push(removeObserver);
   }
 }

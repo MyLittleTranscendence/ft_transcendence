@@ -1,8 +1,8 @@
-import createObserver from "./observer.js";
+import createObserver from "./storeObserver.js";
 
 const createStore = (initialState) => {
   let state = initialState;
-  const { subscribe, unsubscribe, notify } = createObserver();
+  const { subscribe, notify } = createObserver();
 
   const getState = () => state;
 
@@ -15,7 +15,6 @@ const createStore = (initialState) => {
     getState,
     setState,
     subscribe,
-    unsubscribe,
   };
 };
 

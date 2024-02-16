@@ -1,12 +1,13 @@
 const createObserver = () => {
   let observers = [];
 
-  const subscribe = (component) => {
-    observers.push(component);
-  };
-
   const unsubscribe = (component) => {
     observers = observers.filter((subscriber) => subscriber !== component);
+  };
+
+  const subscribe = (component) => {
+    observers.push(component);
+    return () => unsubscribe(component);
   };
 
   const notify = () => {
@@ -15,7 +16,6 @@ const createObserver = () => {
 
   return {
     subscribe,
-    unsubscribe,
     notify,
   };
 };

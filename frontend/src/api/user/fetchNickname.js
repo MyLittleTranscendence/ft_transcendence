@@ -1,11 +1,11 @@
 import fetchAPI from "../../utils/fetchAPI.js";
 import getRouter from "../../core/router.js";
 import showToast from "../../utils/showToast.js";
+import { myInfoStore } from "../../store/initialStates.js";
 
 const fetchNickname = (body) => {
   const searchParams = new URLSearchParams(window.location.search);
-  const userId =
-    searchParams.get("user_id") || sessionStorage.getItem("user_id");
+  const userId = searchParams.get("user_id") || myInfoStore.getState().id;
 
   if (!userId) {
     showToast("No user ID found.");
