@@ -12,6 +12,9 @@ from backend import settings
 
 class UserManager(BaseUserManager):
     def create_user(self, username, email, nickname, password=None):
+        """
+        사용자 회원가입
+        """
         user = self.model(
             username=username,
             email=self.normalize_email(email),
@@ -26,6 +29,9 @@ class UserManager(BaseUserManager):
         return user
 
     def create_oauth_user(self, email):
+        """
+        oauth 유저 회원가입
+        """
         username = f'user_{uuid.uuid4()}'
         email = self.normalize_email(email)
         nickname = f'pingpong_{uuid.uuid4()}'
@@ -34,6 +40,9 @@ class UserManager(BaseUserManager):
 
 
 def upload_to(instance, filename):
+    """
+    이미지 저장 경로 결정
+    """
     ext = filename.split('.')[-1]
     filename = f'{uuid.uuid4()}.{ext}'
     return f'profile_images/{filename}'
@@ -51,6 +60,9 @@ class User(AbstractUser):
     objects = UserManager()
 
     def update_mfa_code(self):
+        """
+        mfa code 발급 정보 저장
+        """
         code = str(uuid.uuid4())
         self.mfa_code = code
         self.mfa_generate_time = datetime.now()
@@ -58,6 +70,9 @@ class User(AbstractUser):
         return self
 
     def mfa_code_check(self, mfa_code):
+        """
+        mfa 코드 검증
+        """
         utc_now = datetime.now()
         if not self.mfa_enable:
             raise PermissionDenied('bad access, efa disabled')
@@ -67,12 +82,18 @@ class User(AbstractUser):
             raise AuthenticationFailed("Code Invalid")
 
     def update_mfa_disable(self):
+        """
+        mfa disable
+        """
         if not self.mfa_enable:
             raise PermissionDenied('bad access, 2fa already disabled')
         self.mfa_enable = False
         self.save(update_fields=['mfa_enable'])
 
     def update_mfa_enable(self, mfa_code):
+        """
+        mfa enable
+        """
         utc_now = datetime.now()
         if self.mfa_enable:
             raise PermissionDenied('bad access, 2fa already enabled')
@@ -84,9 +105,15 @@ class User(AbstractUser):
         self.save(update_fields=['mfa_enable'])
 
     def increase_wins(self):
+        """
+        승리 카운트 증가
+        """
         self.wins += 1
         self.save()
 
     def increase_losses(self):
+        """
+        패배 카운트 증가
+        """
         self.losses += 1
         self.save()
