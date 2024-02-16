@@ -50,7 +50,7 @@ const initRouter = () => {
     };
 
     const navigate = (url) => {
-      const newUrl = new URL(url);
+      const newUrl = new URL(url, window.location.origin);
       const currentUrl = window.location;
 
       if (newUrl.href !== currentUrl.href) {
