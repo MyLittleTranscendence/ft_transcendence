@@ -1,6 +1,7 @@
 from django.db import models
 from rest_framework.exceptions import ValidationError
 
+from backend.error_messages import Error
 from user.models import User
 
 
@@ -15,10 +16,13 @@ class BlockUser(models.Model):
 
     @classmethod
     def block(cls, blocker, blocking):
+        """
+        사용자를 차단
+        """
         if blocker == blocking:
-            raise ValidationError(detail={"detail": "자기 자신을 차단할 수 없습니다!"})
+            raise ValidationError({"detail": Error.CANNOT_BLOCK_SELF})
         if cls.objects.filter(blocker=blocker, blocking=blocking).exists():
-            raise ValidationError(detail={"detail": "이미 차단한 유저입니다!"})
+            raise ValidationError({"detail": Error.ALREADY_BLOCK_USER})
         return cls.objects.create(blocker=blocker, blocking=blocking)
 
 

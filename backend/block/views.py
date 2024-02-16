@@ -19,6 +19,9 @@ class BlockUserPost(APIView):
     )
     @transaction.atomic
     def post(self, request, user_id):
+        """
+        차단할 사용자 등록
+        """
         blocker = request.user
         blocking = get_object_or_404(User, pk=user_id)
         block_user = BlockUser.block(blocker, blocking)
@@ -31,6 +34,9 @@ class BlockUserDelete(APIView):
 
     @transaction.atomic
     def delete(self, request, user_id, block_id):
+        """
+        차단 해제
+        """
         blocker = request.user
         block_user = get_object_or_404(BlockUser, pk=block_id, blocker=blocker, blocking=user_id)
         block_user.delete()
@@ -38,6 +44,9 @@ class BlockUserDelete(APIView):
 
 
 class BlockUserListView(ListAPIView):
+    """
+    자신이 차단한 사용자 조회
+    """
     serializer_class = BlockedUserSerializer
     permission_classes = [IsAuthenticated]
 
