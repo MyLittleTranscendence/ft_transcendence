@@ -19,6 +19,9 @@ class FriendPostView(APIView):
     )
     @transaction.atomic
     def post(self, request, user_id):
+        """
+        친구 추가
+        """
         relate_user = request.user
         friend_user = get_object_or_404(User, pk=user_id)
         friend = Friend.add_friend(relate_user, friend_user)
@@ -31,6 +34,9 @@ class FriendDeleteView(APIView):
 
     @transaction.atomic
     def delete(self, request, user_id, friend_id):
+        """
+        친구 삭제
+        """
         relate_user = request.user
         friend = get_object_or_404(Friend, pk=friend_id, relate_user=relate_user, friend_user=user_id)
         friend.delete()
@@ -42,4 +48,7 @@ class FriendListView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        """
+        자신의 친구 목록 조회
+        """
         return Friend.objects.filter(relate_user=self.request.user)
