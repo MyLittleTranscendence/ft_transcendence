@@ -82,6 +82,13 @@ class GameService:
             return
         asyncio.create_task(self.single_game([user_id]))
 
+    async def handle_queue_update_message(self, user_id, cnt):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "queue.update",
+                'cnt': cnt
+            })
+
     async def join_multi_queue(self, user_id, r_push=True):
         if await self.is_penalty(user_id):
             return
@@ -92,6 +99,10 @@ class GameService:
         else:
             await self._redis.lpush(self.MULTIPLAYER_QUEUE_KEY, user_id)
         await self._redis.sadd(self.MULTIPLAYER_QUEUE_SET_KEY, str(user_id))
+
+        queue_users_id = await self._redis.lrange(self.MULTIPLAYER_QUEUE_KEY, 0, -1)
+        for queue_user_id in queue_users_id:
+            await self.handle_queue_update_message(queue_user_id, len(queue_users_id))
         queue_length = await self._redis.llen(self.MULTIPLAYER_QUEUE_KEY)
         if queue_length >= 2:
             user_1 = await self._redis.lpop(self.MULTIPLAYER_QUEUE_KEY)
@@ -109,6 +120,10 @@ class GameService:
         else:
             await self._redis.lpush(self.TOURNAMENT_QUEUE_KEY, user_id)
         await self._redis.sadd(self.TOURNAMENT_QUEUE_SET_KEY, str(user_id))
+        queue_users_id = await self._redis.lrange(self.TOURNAMENT_QUEUE_KEY, 0, -1)
+        for queue_user_id in queue_users_id:
+            await self.handle_queue_update_message(queue_user_id, len(queue_users_id))
+
         queue_length = await self._redis.llen(self.TOURNAMENT_QUEUE_KEY)
         if queue_length >= 4:
             user_1 = await self._redis.lpop(self.TOURNAMENT_QUEUE_KEY)
@@ -121,6 +136,9 @@ class GameService:
     async def delete_from_queue(self, user_id, queue_key, queue_set_key):
         await self._redis.lrem(queue_key, 1, user_id)
         await self._redis.srem(queue_set_key, user_id)
+        queue_users_id = await self._redis.lrange(queue_key, 0, -1)
+        for queue_user_id in queue_users_id:
+            await self.handle_queue_update_message(queue_user_id, len(queue_users_id))
 
     async def single_game(self, users_id: list):
         await self.set_users_in_game(users_id, True)

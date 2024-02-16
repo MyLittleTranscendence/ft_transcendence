@@ -25,3 +25,4 @@ class GameMessageType:
     REQUEST_INVITE = "request_invite"
     RESPONSE_INVITE = "response_invite"
     INVITE_IMPOSSIBLE = "invite_impossible"
+    QUEUE_UPDATE = "queue_update"
