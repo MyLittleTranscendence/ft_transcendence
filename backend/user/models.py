@@ -100,7 +100,7 @@ class User(AbstractUser):
         if utc_now - timedelta(minutes=settings.MFA_LIMIT_TIME) > self.mfa_generate_time:
             raise AuthenticationFailed(Error.CODE_TIMEOUT)
         if self.mfa_code != mfa_code:
-            raise AuthenticationFailed(Error.CODE_TIMEOUT)
+            raise AuthenticationFailed(Error.CODE_INVALID)
         self.mfa_enable = True
         self.save(update_fields=['mfa_enable'])
 
