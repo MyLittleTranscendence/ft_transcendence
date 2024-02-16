@@ -81,8 +81,6 @@ export default class Settings extends Component {
 
     const $twofaHolder = this.$target.querySelector("#two-fa-form-holder");
 
-    console.log(myInfoStore.getState());
-
     if (myInfoStore.getState().mfa_enable === false) {
       if (!isEditingTwoFA) {
         const twoFAEnableButton = new Button($twofaHolder, {
