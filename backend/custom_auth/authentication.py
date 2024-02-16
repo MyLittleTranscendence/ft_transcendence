@@ -1,5 +1,7 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework_simplejwt.exceptions import InvalidToken, AuthenticationFailed
+from rest_framework_simplejwt.exceptions import AuthenticationFailed
+
+from backend.error_messages import Error
 
 
 class CustomJWTAuthentication(JWTAuthentication):
@@ -10,5 +12,5 @@ class CustomJWTAuthentication(JWTAuthentication):
         validated_token = super().get_validated_token(raw_token)
         mfa_require = validated_token.payload.get('mfa_require')
         if mfa_require is None or mfa_require:
-            raise AuthenticationFailed('MFA authentication required')
+            raise AuthenticationFailed(Error.MFA_REQUIRED)
         return validated_token
