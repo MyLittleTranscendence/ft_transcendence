@@ -17,7 +17,8 @@ export default class PageContainerWithLogo extends Component {
           position-relative
         "
       >
-        <div
+        <a
+          href="/"
           class="
             position-absolute
             top-0 start-50
@@ -31,7 +32,7 @@ export default class PageContainerWithLogo extends Component {
             src="asset/logo-medium.png"
             class="img-fluid"
           />
-        </div>
+        </a>
       </div>
     `;
   }
