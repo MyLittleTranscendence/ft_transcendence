@@ -1,6 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import serializers, viewsets
 from django.db import transaction
+from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from custom_auth.models import Oauth42User
@@ -17,6 +17,9 @@ class Oauth42UserPostSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def get_or_create_user(self, validated_data):
+        """
+        신규 가입 시 oauth, user를 생성, 존재한다면 반환
+        """
         login = validated_data.get("login")
         email = validated_data.get("email")
         try:
