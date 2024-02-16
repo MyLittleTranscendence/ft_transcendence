@@ -219,19 +219,7 @@ class GameService:
 
     @database_sync_to_async
     def save_game_result(self, game_info):
-        left_user = User.objects.get(pk=game_info.get("left_user_id"))
-        right_user = User.objects.get(pk=game_info.get("right_user_id"))
-        winner_user = User.objects.get(pk=game_info.get("winner"))
-        game = Game(
-            left_user=left_user,
-            right_user=right_user,
-            winner=winner_user,
-            left_score=game_info.get("left_score"),
-            right_score=game_info.get("right_score"),
-            game_type=game_info.get("game_type"),
-        )
-        game.save()
-        return game
+        Game.create_new_game_and_update_score(game_info)
 
     async def multi_game(self, users_id: list):
         await self.set_users_in_game(users_id, True)

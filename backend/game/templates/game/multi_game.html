@@ -128,13 +128,21 @@
 
 <script>
     const gameSocket = new WebSocket('ws://' + window.location.host + '/ws/game/');
+    let count = 0;
+    setInterval(() => {
+        console.log(count);
+        count = 0;
+    }, 1000)
 
     gameSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
         if (data.type === 'update_game') {
-            const formattedMessage = `[탁구공 위치] X: ${data.circle_x.toFixed(2)}, Y: ${data.circle_y.toFixed(2)} | [탁구채 위치] X: ${data.bar_x.toFixed(2)}, Y: ${data.bar_y.toFixed(2)}\n`;
-            document.querySelector('#chat-log').value += formattedMessage;
-            updateGameCanvas(data);
+            gameData = data;
+            {#const formattedMessage = `[탁구공 위치] X: ${data.circle_x.toFixed(2)}, Y: ${data.circle_y.toFixed(2)} | [탁구채 위치] X: ${data.bar_x.toFixed(2)}, Y: ${data.bar_y.toFixed(2)}\n`;#}
+            {#document.querySelector('#chat-log').value += formattedMessage;#}
+            {#updateGameCanvas(data);#}
+            count++;
+            requestAnimationFrame(updateGameCanvas);
         } else if (data.type === 'info_game') {
             // 게임 정보 업데이트 로직
             document.getElementById('gameType').textContent = `Game Type: ${data.game_type}`;
@@ -173,19 +181,20 @@
     }
     ;
 
-    function updateGameCanvas(data) {
+    function updateGameCanvas() {
         const canvas = document.getElementById('gameCanvas');
-        if (canvas.getContext) {
+        if (canvas.getContext && gameData) {
             const ctx = canvas.getContext('2d');
-            // 캔버스 클리어
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // 캔버스 클리어
+
             // 탁구채 그리기
             ctx.fillStyle = 'black';
-            ctx.fillRect(data.bar_x, data.bar_y, 18, 100);
-            ctx.fillRect(data.bar_right_x, data.bar_right_y, 18, 100);
+            ctx.fillRect(gameData.bar_x, gameData.bar_y, 18, 100);
+            ctx.fillRect(gameData.bar_right_x, gameData.bar_right_y, 18, 100);
+
             // 탁구공 그리기
             ctx.beginPath();
-            ctx.arc(data.circle_x, data.circle_y, 9, 0, Math.PI * 2, true);
+            ctx.arc(gameData.circle_x, gameData.circle_y, 9, 0, Math.PI * 2, true);
             ctx.fill();
         }
     }
