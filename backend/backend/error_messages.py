@@ -14,3 +14,7 @@ class Error:
     # BLOCK
     CANNOT_BLOCK_SELF = "자기 자신을 차단할 수 없습니다!"
     ALREADY_BLOCK_USER = "이미 차단한 유저입니다!"
+
+    # Friend
+    CANNOT_FRIEND_SELF = "자기 자신을 친구로 추가할 수 없습니다!"
+    ALREADY_FRIEND = "이미 친구로 추가한 유저입니다!"
