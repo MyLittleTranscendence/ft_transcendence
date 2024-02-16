@@ -6,6 +6,7 @@ import handleSubmitNickname from "../handlers/setNicknameHandler.js";
 
 export default class SetNicknamePage extends Component {
   setEvent() {
+    // todo: nickname form 분리해야 함...
     this.addEvent("submit", "#nickname-form", handleSubmitNickname);
   }
 
