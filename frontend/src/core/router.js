@@ -36,7 +36,7 @@ const initRouter = () => {
         }
       }
 
-      if (currentComponent && currentComponent.unmount) {
+      if (currentComponent) {
         currentComponent.unmount();
       }
 
