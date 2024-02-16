@@ -6,54 +6,53 @@ appendCSSLink("src/components/Profile/MatchHistoryCard.css");
 
 export default class MatchHistoryCard extends Component {
   template() {
-    const { matchtype, win, username, opponent, score } = this.props;
+    const { props } = this.props;
 
     return `
       <div class="card match-history-card">
         <div class="card-header card-header-custom">
-          ${matchtype}
+          ${props.game_type}
         </div>
         <div class="card-body card-body-custom">
             <div
-              class="${win ? "match-history-win" : "match-history-lost"}
+              class="${props.isWin ? "match-history-win" : "match-history-lost"}
               match-history-blank">
-              ${win ? "Win" : "Lost"}
+              ${props.isWin ? "Win" : "Lost"}
             </div>
-            <div id="user-profile-image" class="match-history-image"></div>
-            <div class="match-history-username">${username}</div>
+            <div id="left-profile-image" class="match-history-image"></div>
+            <div class="match-history-username">${props.left_user.nickname}</div>
             <div class="match-history-versus">vs</div>
-            <div class="match-history-username">${opponent}</div>
-            <div id="opponent-profile-image" class="match-history-image"></div>
+            <div class="match-history-username">${props.right_user_nickname}</div>
+            <div id="right-profile-image" class="match-history-image"></div>
             <div class="match-history-blank"></div>
         </div>
         <div class="card-footer card-footer-custom">
-          ${score}
+          ${props.left_score} : ${props.right_score}
         </div>
       </div>
     `;
   }
 
   mounted() {
-    const $userProfileImageContent = this.$target.querySelector(
-      "#user-profile-image"
+    const $leftProfileImageContent = this.$target.querySelector(
+      "#left-profile-image"
     );
-    const $opponentProfileImageContent = this.$target.querySelector(
-      "#opponent-profile-image"
+    const $rightProfileImageContent = this.$target.querySelector(
+      "#right-profile-image"
     );
-    const userProfileImage = new ProfileImage($userProfileImageContent, {
+
+    const leftProfileImage = new ProfileImage($leftProfileImageContent, {
       imageSize: "image-sm",
-      imageSrc: "asset/default.png",
-      alt: "my profile",
+      imageSrc: `${this.props.left_user.profile_image}`,
+      alt: `${this.props.left_user.nickname}`,
     });
-    const opponentProfileImage = new ProfileImage(
-      $opponentProfileImageContent,
-      {
-        imageSize: "image-sm",
-        imageSrc: "asset/default.png",
-        alt: "my profile",
-      }
-    );
-    userProfileImage.render();
-    opponentProfileImage.render();
+    const rightProfileImage = new ProfileImage($rightProfileImageContent, {
+      imageSize: "image-sm",
+      imageSrc: `${this.props.right_user.profile_image}`,
+      alt: `${this.props.right_user.nickname}`,
+    });
+
+    leftProfileImage.render();
+    rightProfileImage.render();
   }
 }

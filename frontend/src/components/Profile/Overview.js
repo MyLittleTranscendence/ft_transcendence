@@ -11,12 +11,12 @@ export default class Overview extends Component {
 		<div
 			class="d-flex flex-column align-items-center"
 		>
-			<h3
+			<h4
 				class="text-white"
 				style="font-weight: bold;"
 			>
 				Overview
-			</h3>
+			</h4>
 			<div class="record">Win 
 				<span
 					class="record-value">
@@ -32,7 +32,7 @@ export default class Overview extends Component {
 			<div class="record">Win Rate 
 				<span
 					class="record-value" style="margin-left: 1rem;">
-					${(wins / (wins + losses)) * 100}%
+					${wins === 0 && losses === 0 ? "-" : `${(wins / (wins + losses)) * 100}%`}
 				</span>
 			</div>
 		</div>
