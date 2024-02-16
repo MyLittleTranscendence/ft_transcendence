@@ -104,19 +104,19 @@ class LoginMessage(APIView):
                     }
                 },
                 schema=openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['login_message']),
-                    'friends_status': openapi.Schema(
-                        type=openapi.TYPE_OBJECT,
-                        additional_properties=openapi.Schema(
-                            type=openapi.TYPE_BOOLEAN,
-                            description="친구의 온라인 상태 (true: 온라인, false: 오프라인)",
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['login_message']),
+                        'friends_status': openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            additional_properties=openapi.Schema(
+                                type=openapi.TYPE_BOOLEAN,
+                                description="친구의 온라인 상태 (true: 온라인, false: 오프라인)",
+                            ),
+                            description="친구 ID를 키로 하고, 해당 친구의 온라인 상태를 값으로 하는 객체"
                         ),
-                        description="친구 ID를 키로 하고, 해당 친구의 온라인 상태를 값으로 하는 객체"
-                    ),
-                },
-            )),
+                    },
+                )),
         }
     )
     def get(self, request, *args, **kwargs):

@@ -9,16 +9,17 @@ from game.service import GameService
 
 class GameConsumer(DefaultConsumer):
     game_service = None
+    LOGIN_GROUP = "game_login_group"
 
     async def connect(self):
         await super(GameConsumer, self).connect()
         if not isinstance(self.scope['user'], AnonymousUser):
+            await self.channel_layer.group_add(str(self.scope['user'].id), self.channel_name)
             self.game_service = await GameService.get_instance()
-
-        user_id = self.scope['user'].id
-        if await self.game_service.is_user_in_game(user_id):
-            game_session = await self.game_service.get_user_game_session(user_id)
-            await self.game_service.handle_info_message(user_id, game_session)
+            user_id = self.scope['user'].id
+            if await self.game_service.is_user_in_game(user_id):
+                game_session = await self.game_service.get_user_game_session(user_id)
+                await self.game_service.handle_info_message(user_id, game_session)
 
     async def disconnect(self, close_code):
         await super(GameConsumer, self).disconnect(close_code)
