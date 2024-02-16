@@ -1,22 +1,25 @@
 import Component from "../../core/Component.js";
 import FriendsIcon from "../UI/Icon/FriendsIcon.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
+import { myInfoStore } from "../../store/initialStates.js";
 
 export default class SideBar extends Component {
+  setup() {
+    const unsubscribeStore = myInfoStore.subscribe(this);
+    this.removeObservers.push(unsubscribeStore);
+  }
+
   template() {
     return `
       <a 
         id="sidebar-my-profile-link"
         href="/my-page"
+        data-link
       ></a>
       <div
         id="friends-icon-holder"
-        class="
-          position-relative
-          d-flex justify-content-center
-        "
-      >
-      </div>
+        class="position-relative d-flex justify-content-center"
+      ></div>
     `;
   }
 
@@ -25,7 +28,7 @@ export default class SideBar extends Component {
       this.$target.querySelector("#sidebar-my-profile-link"),
       {
         imageSize: "image-sm",
-        imageSrc: "asset/default.png",
+        imageSrc: myInfoStore.getState().profile_image,
         alt: "my profile",
       }
     );
