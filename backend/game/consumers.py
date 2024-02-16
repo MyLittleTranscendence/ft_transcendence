@@ -132,3 +132,9 @@ class GameConsumer(DefaultConsumer):
         await self.send(text_data=json.dumps({
             "type": GameMessageType.INVITE_IMPOSSIBLE,
         }))
+
+    async def queue_update(self, event):
+        await self.send(text_data=json.dumps({
+            "type": GameMessageType.QUEUE_UPDATE,
+            "cnt": event['cnt']
+        }))
