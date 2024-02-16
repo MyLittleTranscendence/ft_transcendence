@@ -2,7 +2,6 @@ import fetchMyInfo from "./api/user/fetchMyInfo.js";
 import Component from "./core/Component.js";
 import getRouter from "./core/router.js";
 import routes from "./core/routes.js";
-import showToast from "./utils/showToast.js";
 
 export default class App extends Component {
   template() {
@@ -36,7 +35,6 @@ export default class App extends Component {
           if (e.status && e.status === 401) {
             localStorage.clear();
             navigate("/start");
-            showToast(e);
           }
         });
     };
