@@ -23,7 +23,9 @@ export default class SignInPage extends Component {
 
     const pageContainer = new PageContainer(this.$target, $signInContent);
     const signInForm = new SigninForm(
-      $signInContent.querySelector("#signin-form-container")
+      $signInContent.querySelector("#signin-form-container"),
+      {},
+      this
     );
 
     pageContainer.render();

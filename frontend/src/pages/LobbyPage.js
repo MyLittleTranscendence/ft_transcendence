@@ -6,7 +6,7 @@ import SideBar from "../components/Lobby/SideBar.js";
 import fetchMyInfo from "../api/user/fetchMyInfo.js";
 import showToast from "../utils/showToast.js";
 import getRouter from "../core/router.js";
-import initChatSocket from "../socket/chatSocket.js";
+import { chatSocket, gameSocket } from "../socket/socketManager.js";
 
 export default class LobbyPage extends Component {
   template() {
@@ -60,19 +60,28 @@ export default class LobbyPage extends Component {
     const pageContainer = new PageContainerWithLogo(this.$target, $pageContent);
 
     const matchContainer = new MatchContainer(
-      $pageContent.querySelector("#match-container")
+      $pageContent.querySelector("#match-container"),
+      {},
+      this
     );
     const globalChatContainer = new GlobalChatContainer(
-      $pageContent.querySelector("#global-chat-container")
+      $pageContent.querySelector("#global-chat-container"),
+      {},
+      this
     );
-    const sideBar = new SideBar($pageContent.querySelector("#sidebar"));
+    const sideBar = new SideBar(
+      $pageContent.querySelector("#sidebar"),
+      {},
+      this
+    );
 
     pageContainer.render();
     matchContainer.render();
     globalChatContainer.render();
     sideBar.render();
 
-    initChatSocket();
+    chatSocket();
+    gameSocket();
   }
 
   validateSessionOnSignIn() {
@@ -81,7 +90,7 @@ export default class LobbyPage extends Component {
     if (searchParams.get("login") === "true") {
       fetchMyInfo()
         .then((data) => {
-          sessionStorage.setItem("login", "true");
+          localStorage.setItem("login", "true");
           showToast(`Welcome, ${data.nickname}!`);
           window.history.replaceState(null, "", "/");
         })
