@@ -20,6 +20,16 @@ const fetchRequest = async (url, requestOptions) => {
   return {};
 };
 
+const prepareBody = (body) => {
+  if (body instanceof FormData) {
+    return { body };
+  }
+  return {
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  };
+};
+
 const get = async (url) => {
   const requestOptions = {
     method: "GET",
@@ -30,8 +40,7 @@ const get = async (url) => {
 const post = async (url, body) => {
   const requestOptions = {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    ...prepareBody(body),
   };
   return fetchRequest(url, requestOptions);
 };
@@ -39,8 +48,7 @@ const post = async (url, body) => {
 const put = async (url, body) => {
   const requestOptions = {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    ...prepareBody(body),
   };
   return fetchRequest(url, requestOptions);
 };
@@ -48,8 +56,7 @@ const put = async (url, body) => {
 const patch = async (url, body) => {
   const requestOptions = {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    ...prepareBody(body),
   };
   return fetchRequest(url, requestOptions);
 };
