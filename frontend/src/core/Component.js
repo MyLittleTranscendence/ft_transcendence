@@ -5,14 +5,23 @@ export default class Component {
 
   state;
 
-  constructor($target, props) {
+  eventListeners = [];
+
+  removeSocketListeners = [];
+
+  children = [];
+
+  constructor($target, props, parent) {
     this.$target = $target;
     this.props = props;
+    if (parent) {
+      parent.addChild(this);
+    }
     this.setup();
     this.setEvent();
   }
 
-  setup() {} // 컴포넌트 state 설정
+  setup() {}
 
   mounted() {}
 
@@ -25,7 +34,7 @@ export default class Component {
     this.mounted();
   }
 
-  setEvent() {} // 컴포넌트에서 필요한 이벤트 설정
+  setEvent() {}
 
   setState(newState) {
     this.state = { ...this.state, ...newState };
@@ -33,10 +42,29 @@ export default class Component {
   }
 
   addEvent(eventType, selector, callback) {
-    this.$target.addEventListener(eventType, (event) => {
+    const callbackMemo = (event) => {
       if (event.target.closest(selector)) {
         callback(event);
       }
-    });
+    };
+    this.$target.addEventListener(eventType, callbackMemo);
+    this.eventListeners.push({ eventType, callbackMemo });
+  }
+
+  addChild(childComponent) {
+    this.children.push(childComponent);
+  }
+
+  unmount() {
+    this.eventListeners.forEach(({ eventType, callback }) =>
+      this.$target.removeEventListener(eventType, callback)
+    );
+    this.eventListeners = [];
+
+    this.removeSocketListeners.forEach((removeListener) => removeListener());
+    this.removeSocketListeners = [];
+
+    this.children.forEach((child) => child.unmount());
+    this.children = [];
   }
 }

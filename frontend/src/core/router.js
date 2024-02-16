@@ -6,6 +6,7 @@ const initRouter = () => {
 
   const createRouter = () => {
     const $app = document.getElementById("app");
+    let currentComponent = null;
 
     const handleRouteChange = () => {
       const path = window.location.pathname;
@@ -35,12 +36,16 @@ const initRouter = () => {
         }
       }
 
+      if (currentComponent && currentComponent.unmount) {
+        currentComponent.unmount();
+      }
+
       if (createComponent && path !== "/mfa" && path !== "/set-nickname") {
-        const component = createComponent($app);
-        component.render();
+        currentComponent = createComponent($app);
+        currentComponent.render();
       } else {
-        const notFound = new NotFoundPage($app);
-        notFound.render();
+        currentComponent = new NotFoundPage($app);
+        currentComponent.render();
       }
     };
 
@@ -52,9 +57,10 @@ const initRouter = () => {
     };
 
     const handleLinkClick = (e) => {
-      if (e.target.matches("[data-link]")) {
+      const link = e.target.closest("[data-link]");
+      if (link) {
         e.preventDefault();
-        const clickedURL = e.target.href;
+        const clickedURL = link.href;
         if (clickedURL !== window.location.href) {
           const path = new URL(clickedURL).pathname;
           navigate(path);
