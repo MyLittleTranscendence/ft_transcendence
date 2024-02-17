@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'block',
     'friend',
     'game',
+    'backend.apps.BackendAppConfig',
 ]
 
 MIDDLEWARE = [
