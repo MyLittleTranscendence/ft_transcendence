@@ -7,7 +7,6 @@ from channels.layers import get_channel_layer
 
 from backend.redis import RedisConnection
 from game.models import Game
-from user.models import User
 
 
 class GameService:
@@ -15,19 +14,23 @@ class GameService:
     _redis = None
     _channel_layer = None
 
+    # GAME_TYPE
     SINGLE_GAME = "single_game"
     MULTI_GAME = "multi_game"
     TOURNAMENT_GAME = "tournament_game"
 
+    # GAME_STATUS
     BEFORE = "before"
     START = "start"
     END = "end"
 
+    # QUEUE_KEY
     MULTIPLAYER_QUEUE_KEY = "multiplayer_queue"
     MULTIPLAYER_QUEUE_SET_KEY = "multiplayer_queue_set"
     TOURNAMENT_QUEUE_KEY = "tournament_queue"
     TOURNAMENT_QUEUE_SET_KEY = "tournament_queue_set"
 
+    # GAME_DEFAULT_SIZE
     SCREEN_WIDTH = 800
     SCREEN_HEIGHT = 600
     BAR_WIDTH = 18
@@ -49,45 +52,19 @@ class GameService:
         redis_connection = await RedisConnection.get_instance()
         self._redis = redis_connection.redis
 
-    async def move_bar(self, user_id, command):
-        if not await self.is_user_in_game(user_id):
-            return
 
-        game_session = await self.get_user_game_session(user_id)
-        if game_session is None:
-            return
 
-        game_info = await self.get_game_info(game_session)
-        if game_info is None:
-            return
 
-        if game_info.get("status") != self.START:
-            return
 
-        if game_info.get("game_type") == self.SINGLE_GAME:
-            if command in ["U", "D"]:
-                await self.update_game_info(game_session, "right_bar_mv", command)
-            if command in ["W", "S"]:
-                await self.update_game_info(game_session, "left_bar_mv", "U" if command == "W" else "D")
-        else:
-            if game_info.get("left_user_id") == str(user_id):
-                await self.update_game_info(game_session, "left_bar_mv", command)
-            elif game_info.get("right_user_id") == str(user_id):
-                await self.update_game_info(game_session, "right_bar_mv", command)
 
+
+    # GAME_MATCH, SAVE
     async def start_single_pingpong_game(self, user_id):
         if await self.is_penalty(user_id):
             return
         if await self.already_game(user_id):
             return
         asyncio.create_task(self.single_game([user_id]))
-
-    async def handle_queue_update_message(self, user_id, cnt):
-        await self._channel_layer.group_send(
-            str(user_id), {
-                "type": "queue.update",
-                'cnt': cnt
-            })
 
     async def join_multi_queue(self, user_id, r_push=True):
         if await self.is_penalty(user_id):
@@ -140,44 +117,11 @@ class GameService:
         for queue_user_id in queue_users_id:
             await self.handle_queue_update_message(queue_user_id, len(queue_users_id))
 
-    async def single_game(self, users_id: list):
-        await self.set_users_in_game(users_id, True)
-        game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[0], self.SINGLE_GAME)
-        await self.delete_game_session_logic(users_id, game_session)
-        await self.set_users_in_game(users_id, False)
-
-    async def handle_accept_queue_request_message(self, user_id, queue_session):
-        await self._channel_layer.group_send(
-            str(user_id), {
-                "type": "accept.queue.request",
-                "session_id": queue_session
-            })
-
-    async def handle_match_success_message(self, user_id):
-        await self._channel_layer.group_send(
-            str(user_id), {
-                "type": "match.success",
-            })
-
-    async def handle_match_fail_message(self, user_id):
-        await self._channel_layer.group_send(
-            str(user_id), {
-                "type": "match.fail",
-            })
-
-    async def handle_penalty_message(self, user_id, penalty_time):
-        await self._channel_layer.group_send(
-            str(user_id), {
-                "type": "penalty.wait",
-                "penalty_time": penalty_time
-            })
-
     async def accept_queue_request(self, users_id: list, game_type):
         queue_session = str(uuid.uuid4())
         for user_id in users_id:
             await self.handle_accept_queue_request_message(user_id, queue_session)
-
-        await asyncio.sleep(12)
+        await asyncio.sleep(11)
 
         accept_users = []
         reject_users = []
@@ -217,41 +161,6 @@ class GameService:
         await self._redis.set(f"user:{user_id}:queue_session:{text_data_json.get('session_id')}", "true")
         await self._redis.expire(f"user:{user_id}:queue_session:{text_data_json.get('session_id')}", 20)
 
-    @database_sync_to_async
-    def save_game_result(self, game_info):
-        Game.create_new_game_and_update_score(game_info)
-
-    async def multi_game(self, users_id: list):
-        await self.set_users_in_game(users_id, True)
-        if not await self.accept_queue_request(users_id, self.MULTI_GAME):
-            return
-        game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.MULTI_GAME)
-        game_info = await self.get_game_info(game_session)
-        await self.save_game_result(game_info)
-        await self.delete_game_session_logic(users_id, game_session)
-        await self.set_users_in_game(users_id, False)
-
-    async def invite_game(self, users_id: list):
-        await self.set_users_in_game(users_id, True)
-        game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.MULTI_GAME)
-        game_info = await self.get_game_info(game_session)
-        await self.save_game_result(game_info)
-        await self.delete_game_session_logic(users_id, game_session)
-        await self.set_users_in_game(users_id, False)
-
-    async def handle_accept_invite_request_message(self, user_id, inviter_user_id):
-        await self._channel_layer.group_send(
-            str(user_id), {
-                "type": "accept.invite.request",
-                "inviter_user_id": inviter_user_id
-            })
-
-    async def handle_invite_impossible_message(self, user_id):
-        await self._channel_layer.group_send(
-            str(user_id), {
-                "type": "invite.impossible",
-            })
-
     async def invite_user(self, user_id, text_data_json):
         if int(user_id) == int(text_data_json.get('invited_user_id')):
             return
@@ -274,6 +183,22 @@ class GameService:
         invited_user_id = await self._redis.get(f"user:{text_data_json.get('inviter_user_id')}:invite")
         if (invited_user_id is not None) and (int(user_id) == int(invited_user_id)):
             asyncio.create_task(self.invite_game([int(text_data_json.get('inviter_user_id')), user_id]))
+
+    async def single_game(self, users_id: list):
+        await self.set_users_in_game(users_id, True)
+        game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[0], self.SINGLE_GAME)
+        await self.delete_game_session_logic(users_id, game_session)
+        await self.set_users_in_game(users_id, False)
+
+    async def multi_game(self, users_id: list):
+        await self.set_users_in_game(users_id, True)
+        if not await self.accept_queue_request(users_id, self.MULTI_GAME):
+            return
+        game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.MULTI_GAME)
+        game_info = await self.get_game_info(game_session)
+        await self.save_game_result(game_info)
+        await self.delete_game_session_logic(users_id, game_session)
+        await self.set_users_in_game(users_id, False)
 
     async def tournament_game(self, users_id: list):
         await self.set_users_in_game(users_id, True)
@@ -303,19 +228,13 @@ class GameService:
         await self.delete_game_session_logic(users_id, game_session)
         await self.set_users_in_game(users_id, False)
 
-    async def new_game_session_logic(self, users_id, left_player, right_player, game_type):
-        game_session = str(uuid.uuid4())
-        await self.set_game_info(left_player, right_player, game_type, game_session)
-        for user_id in users_id:
-            await self.set_user_game_session(user_id, game_session)
-            await self.handle_info_message(user_id, game_session)
-        await self.game_start(users_id, game_session)
-        return game_session
-
-    async def delete_game_session_logic(self, users_id, game_session):
-        await self.delete_game_info(game_session)
-        for user_id in users_id:
-            await self.delete_user_game_session(user_id)
+    async def invite_game(self, users_id: list):
+        await self.set_users_in_game(users_id, True)
+        game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.MULTI_GAME)
+        game_info = await self.get_game_info(game_session)
+        await self.save_game_result(game_info)
+        await self.delete_game_session_logic(users_id, game_session)
+        await self.set_users_in_game(users_id, False)
 
     async def is_penalty(self, user_id):
         penalty_time = await self._redis.get(f"user:{user_id}:penalty")
@@ -332,79 +251,49 @@ class GameService:
         inviter = await self._redis.get(f"user:{user_id}:invite")
         return penalty_time or in_game or already_multi_queue or already_tournament_queue or inviter
 
-    async def is_user_in_game(self, user_id):
-        in_game = await self._redis.get(f"user:{user_id}:in_game")
-        return in_game == "true"
 
-    async def set_user_in_game(self, user_id, in_game=True):
-        await self._redis.set(f"user:{user_id}:in_game", "true" if in_game else "false")
 
-    async def set_users_in_game(self, users_id, true_or_false: bool):
-        for user_id in users_id:
-            await self.set_user_in_game(user_id, true_or_false)
 
-    async def set_user_game_session(self, user_id, game_session):
-        await self._redis.set(f"user:{user_id}:game_session", game_session)
-
-    async def delete_user_game_session(self, user_id):
-        await self._redis.delete(f"user:{user_id}:game_session")
-
-    async def get_user_game_session(self, user_id):
-        return await self._redis.get(f"user:{user_id}:game_session")
-
-    async def update_game_info(self, game_session, key, value):
-        await self._redis.hset(f"game_info:{game_session}", str(key), str(value))
-
-    async def get_game_info(self, game_session):
-        return await self._redis.hgetall(f"game_info:{game_session}")
-
-    async def delete_game_info(self, game_session):
-        await self._redis.delete(f"game_info:{game_session}")
-
-    async def set_game_info(self, left_user_id, right_user_id, game_type, game_session):
-        await self._redis.hset(f"game_info:{game_session}", mapping={
-            "left_user_id": str(left_user_id),
-            "right_user_id": str(right_user_id),
-            "left_bar_mv": "NONE",
-            "right_bar_mv": "NONE",
-            "game_type": game_type,
-            "left_score": "0",
-            "right_score": "0",
-            "status": self.BEFORE,
-            "winner": "NONE"
-        })
-
-    async def handle_update_message(self, user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y):
-
+    # MATCH_HANDLER
+    async def handle_queue_update_message(self, user_id, cnt):
         await self._channel_layer.group_send(
             str(user_id), {
-                "type": "update.game",
-                "bar_x": bar_x,
-                "bar_y": bar_y,
-                "bar_right_x": bar_right_x,
-                "bar_right_y": bar_right_y,
-                "circle_x": circle_x,
-                "circle_y": circle_y,
+                "type": "queue.update",
+                'cnt': cnt
             })
 
-    async def handle_info_message(self, user_id, game_session):
-        game_info = await self.get_game_info(game_session)
+    async def handle_accept_queue_request_message(self, user_id, queue_session):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "accept.queue.request",
+                "session_id": queue_session
+            })
+
+    async def handle_match_success_message(self, user_id):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "match.success",
+            })
+
+    async def handle_match_fail_message(self, user_id):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "match.fail",
+            })
+
+    async def handle_penalty_message(self, user_id, penalty_time):
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "penalty.wait",
+                "penalty_time": penalty_time
+            })
+
+    async def handle_next_game_message(self, user_id):
 
         await self._channel_layer.group_send(
             str(user_id), {
-                "type": "info.game",
-                "left_user_id": int(game_info.get("left_user_id")),
-                "right_user_id": int(game_info.get("right_user_id")),
-                "game_type": game_info.get("game_type"),
-                "left_score": game_info.get("left_score"),
-                "right_score": game_info.get("right_score"),
-                "status": game_info.get("status"),
-                "winner": game_info.get("winner"),
-                "screen_width": self.SCREEN_WIDTH,
-                "screen_height": self.SCREEN_HEIGHT,
-                "bar_width": self.BAR_WIDTH,
-                "bar_height": self.BAR_HEIGHT,
-                "circle_radius": self.CIRCLE_RADIUS,
+                "type": "next.game",
+                "message": "다음 순서에 게임이 진행됩니다. 준비하세요!"
             })
 
     async def handle_tournament_begin_message(self, user_id, users_id):
@@ -417,21 +306,96 @@ class GameService:
                 "game2_right_user_id": int(users_id[3]),
             })
 
-    async def handle_wait_message(self, user_id, time):
-
+    async def handle_accept_invite_request_message(self, user_id, inviter_user_id):
         await self._channel_layer.group_send(
             str(user_id), {
-                "type": "wait.game",
-                "time": time,
+                "type": "accept.invite.request",
+                "inviter_user_id": inviter_user_id
             })
 
-    async def handle_next_game_message(self, user_id):
-
+    async def handle_invite_impossible_message(self, user_id):
         await self._channel_layer.group_send(
             str(user_id), {
-                "type": "next.game",
-                "message": "다음 순서에 게임이 진행됩니다. 준비하세요!"
+                "type": "invite.impossible",
             })
+
+
+
+
+    # MATCH REDIS
+    async def is_user_in_game(self, user_id):
+        in_game = await self._redis.get(f"user:{user_id}:in_game")
+        return in_game == "true"
+
+    async def set_user_in_game(self, user_id, in_game=True):
+        await self._redis.set(f"user:{user_id}:in_game", "true" if in_game else "false")
+
+    async def set_users_in_game(self, users_id, true_or_false: bool):
+        for user_id in users_id:
+            await self.set_user_in_game(user_id, true_or_false)
+
+    # MATCH DB
+    @database_sync_to_async
+    def save_game_result(self, game_info):
+        Game.create_new_game_and_update_score(game_info)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # GAME_LOGIC
+    async def new_game_session_logic(self, users_id, left_player, right_player, game_type):
+        game_session = str(uuid.uuid4())
+        await self.set_game_info(left_player, right_player, game_type, game_session)
+        for user_id in users_id:
+            await self.set_user_game_session(user_id, game_session)
+            await self.handle_info_message(user_id, game_session)
+        await self.game_start(users_id, game_session)
+        return game_session
+
+    async def delete_game_session_logic(self, users_id, game_session):
+        await self.delete_game_info(game_session)
+        for user_id in users_id:
+            await self.delete_user_game_session(user_id)
+
+    async def move_bar(self, user_id, command):
+        if not await self.is_user_in_game(user_id):
+            return
+
+        game_session = await self.get_user_game_session(user_id)
+        if game_session is None:
+            return
+
+        game_info = await self.get_game_info(game_session)
+        if game_info is None:
+            return
+
+        if game_info.get("status") != self.START:
+            return
+
+        if game_info.get("game_type") == self.SINGLE_GAME:
+            if command in ["U", "D"]:
+                await self.update_game_info(game_session, "right_bar_mv", command)
+            if command in ["W", "S"]:
+                await self.update_game_info(game_session, "left_bar_mv", "U" if command == "W" else "D")
+        else:
+            if game_info.get("left_user_id") == str(user_id):
+                await self.update_game_info(game_session, "left_bar_mv", command)
+            elif game_info.get("right_user_id") == str(user_id):
+                await self.update_game_info(game_session, "right_bar_mv", command)
 
     async def game_start(self, users_id: list, game_session):
         for i in range(7):
@@ -568,3 +532,83 @@ class GameService:
         await self.update_game_info(game_session, "status", self.END)
         for user_id in users_id:
             await self.handle_info_message(user_id, game_session)
+
+
+
+
+    #HANDLE GAME
+    async def handle_update_message(self, user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y):
+
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "update.game",
+                "bar_x": bar_x,
+                "bar_y": bar_y,
+                "bar_right_x": bar_right_x,
+                "bar_right_y": bar_right_y,
+                "circle_x": circle_x,
+                "circle_y": circle_y,
+            })
+
+    async def handle_info_message(self, user_id, game_session):
+        game_info = await self.get_game_info(game_session)
+
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "info.game",
+                "left_user_id": int(game_info.get("left_user_id")),
+                "right_user_id": int(game_info.get("right_user_id")),
+                "game_type": game_info.get("game_type"),
+                "left_score": game_info.get("left_score"),
+                "right_score": game_info.get("right_score"),
+                "status": game_info.get("status"),
+                "winner": game_info.get("winner"),
+                "screen_width": self.SCREEN_WIDTH,
+                "screen_height": self.SCREEN_HEIGHT,
+                "bar_width": self.BAR_WIDTH,
+                "bar_height": self.BAR_HEIGHT,
+                "circle_radius": self.CIRCLE_RADIUS,
+            })
+
+    async def handle_wait_message(self, user_id, time):
+
+        await self._channel_layer.group_send(
+            str(user_id), {
+                "type": "wait.game",
+                "time": time,
+            })
+
+
+
+
+    # GAME REDIS
+    async def set_user_game_session(self, user_id, game_session):
+        await self._redis.set(f"user:{user_id}:game_session", game_session)
+
+    async def delete_user_game_session(self, user_id):
+        await self._redis.delete(f"user:{user_id}:game_session")
+
+    async def get_user_game_session(self, user_id):
+        return await self._redis.get(f"user:{user_id}:game_session")
+
+    async def update_game_info(self, game_session, key, value):
+        await self._redis.hset(f"game_info:{game_session}", str(key), str(value))
+
+    async def get_game_info(self, game_session):
+        return await self._redis.hgetall(f"game_info:{game_session}")
+
+    async def delete_game_info(self, game_session):
+        await self._redis.delete(f"game_info:{game_session}")
+
+    async def set_game_info(self, left_user_id, right_user_id, game_type, game_session):
+        await self._redis.hset(f"game_info:{game_session}", mapping={
+            "left_user_id": str(left_user_id),
+            "right_user_id": str(right_user_id),
+            "left_bar_mv": "NONE",
+            "right_bar_mv": "NONE",
+            "game_type": game_type,
+            "left_score": "0",
+            "right_score": "0",
+            "status": self.BEFORE,
+            "winner": "NONE"
+        })

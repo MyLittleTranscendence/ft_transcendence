@@ -37,6 +37,12 @@ class GameConsumer(DefaultConsumer):
             await self.game_service.join_multi_queue(self.scope['user'].id)
         elif message_type == GameMessageType.JOIN_TOURNAMENT_GAME_QUEUE:
             await self.game_service.join_tournament_queue(self.scope['user'].id)
+        elif message_type == GameMessageType.RESPONSE_ACCEPT_QUEUE:
+            await self.game_service.accept_queue_response(self.scope['user'].id, text_data_json)
+        elif message_type == GameMessageType.INVITE_USER:
+            await self.game_service.invite_user(self.scope['user'].id, text_data_json)
+        elif message_type == GameMessageType.RESPONSE_INVITE:
+            await self.game_service.accept_invite(self.scope['user'].id, text_data_json)
         elif message_type == GameMessageType.DELETE_MULTI_GAME_QUEUE:
             await self.game_service.delete_from_queue(self.scope['user'].id,
                                                       GameService.MULTIPLAYER_QUEUE_KEY,
@@ -45,12 +51,6 @@ class GameConsumer(DefaultConsumer):
             await self.game_service.delete_from_queue(self.scope['user'].id,
                                                       GameService.TOURNAMENT_QUEUE_KEY,
                                                       GameService.TOURNAMENT_QUEUE_SET_KEY)
-        elif message_type == GameMessageType.RESPONSE_ACCEPT_QUEUE:
-            await self.game_service.accept_queue_response(self.scope['user'].id, text_data_json)
-        elif message_type == GameMessageType.INVITE_USER:
-            await self.game_service.invite_user(self.scope['user'].id, text_data_json)
-        elif message_type == GameMessageType.RESPONSE_INVITE:
-            await self.game_service.accept_invite(self.scope['user'].id, text_data_json)
 
     async def update_game(self, event):
         await self.send(text_data=json.dumps({
