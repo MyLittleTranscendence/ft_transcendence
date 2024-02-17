@@ -439,4 +439,7 @@ class GameListView(ListAPIView):
         openapi.Parameter('user_id', openapi.IN_QUERY, type=openapi.TYPE_INTEGER)
     ])
     def get(self, request, *args, **kwargs):
+        """
+        유저의 게임 정보 페이지네이션 조회
+        """
         return super().get(request, *args, **kwargs)
