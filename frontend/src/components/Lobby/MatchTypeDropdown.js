@@ -23,7 +23,7 @@ export default class MatchTypeDropdown extends Component {
   }
 
   mounted() {
-    const { matchType, isFindingMatch } = this.props;
+    const { matchType, isFindingMatch, isMatchFound } = this.props;
 
     const matchTypeButton = new Button(
       this.$target.querySelector("#match-type-btn-holder"),
@@ -31,7 +31,7 @@ export default class MatchTypeDropdown extends Component {
         content: matchType,
         className: "dropdown-toggle",
         attributes: `style="width: 15rem"`,
-        disabled: isFindingMatch,
+        disabled: isFindingMatch || isMatchFound,
       }
     );
     matchTypeButton.render();
