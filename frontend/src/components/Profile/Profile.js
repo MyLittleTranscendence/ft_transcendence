@@ -2,9 +2,9 @@ import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 import Overview from "./Overview.js";
 import { myInfoStore } from "../../store/initialStates.js";
-import imageUpdateHandler from "../../handlers/imageUpdateHandler.js";
+import imageUpdateHandler from "../../handlers/user/imageUpdateHandler.js";
 import Input from "../UI/Input/Input.js";
-import nicknameUpdateHandler from "../../handlers/nicknameUpdateHandler.js";
+import nicknameUpdateHandler from "../../handlers/user/nicknameUpdateHandler.js";
 
 export default class Profile extends Component {
   setup() {

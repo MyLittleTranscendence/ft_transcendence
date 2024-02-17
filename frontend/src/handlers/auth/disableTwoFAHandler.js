@@ -1,6 +1,6 @@
-import fetchAPI from "../utils/fetchAPI.js";
-import { myInfoStore } from "../store/initialStates.js";
-import showToast from "../utils/showToast.js";
+import fetchAPI from "../../utils/fetchAPI.js";
+import { myInfoStore } from "../../store/initialStates.js";
+import showToast from "../../utils/showToast.js";
 
 const disableTwoFAHandler = () => {
   fetchAPI

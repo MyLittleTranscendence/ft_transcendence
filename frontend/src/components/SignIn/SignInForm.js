@@ -3,7 +3,7 @@ import Button from "../UI/Button/Button.js";
 import InputGroup from "../UI/Input/InputGroup.js";
 import Link from "../UI/Link/Link.js";
 
-import signInHandler from "../../handlers/signInHandler.js";
+import signInHandler from "../../handlers/auth/signInHandler.js";
 
 export default class SigninForm extends Component {
   setEvent() {

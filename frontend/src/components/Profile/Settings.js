@@ -1,10 +1,10 @@
 import Component from "../../core/Component.js";
 import { myInfoStore } from "../../store/initialStates.js";
 import Input from "../UI/Input/Input.js";
-import emailUpdateHandler from "../../handlers/emailUpdateHandler.js";
 import TwoFAForm from "../SignIn/TwoFAForm.js";
 import Button from "../UI/Button/Button.js";
-import disableTwoFAHandler from "../../handlers/disableTwoFAHandler.js";
+import disableTwoFAHandler from "../../handlers/auth/disableTwoFAHandler.js";
+import emailUpdateHandler from "../../handlers/user/emailUpdateHandler.js";
 
 export default class Settings extends Component {
   setup() {
