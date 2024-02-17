@@ -9,7 +9,7 @@ from backend.redis import RedisConnection
 from game.models import Game
 
 
-class GameService:
+class MatchService:
     _instance = None
     _redis = None
     _channel_layer = None

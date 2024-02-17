@@ -11,6 +11,9 @@ def get_user_from_jwt(token):
     try:
         decoded_data = AccessToken(token)
         user_id = decoded_data['user_id']
+        mfa_require = decoded_data['mfa_require']
+        if mfa_require:
+            return AnonymousUser()
         return get_user_model().objects.get(id=user_id)
     except (InvalidToken, TokenError, get_user_model().DoesNotExist):
         return AnonymousUser()

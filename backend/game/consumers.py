@@ -4,22 +4,22 @@ from django.contrib.auth.models import AnonymousUser
 
 from backend.consumers import DefaultConsumer
 from game.message_type import GameMessageType
-from game.service import GameService
+from game.service import MatchService
 
 
 class GameConsumer(DefaultConsumer):
-    game_service = None
+    match_service = None
     LOGIN_GROUP = "game_login_group"
 
     async def connect(self):
         await super(GameConsumer, self).connect()
         if not isinstance(self.scope['user'], AnonymousUser):
             await self.channel_layer.group_add(str(self.scope['user'].id), self.channel_name)
-            self.game_service = await GameService.get_instance()
+            self.match_service = await MatchService.get_instance()
             user_id = self.scope['user'].id
-            if await self.game_service.is_user_in_game(user_id):
-                game_session = await self.game_service.get_user_game_session(user_id)
-                await self.game_service.handle_info_message(user_id, game_session)
+            if await self.match_service.is_user_in_game(user_id):
+                game_session = await self.match_service.get_user_game_session(user_id)
+                await self.match_service.handle_info_message(user_id, game_session)
 
     async def disconnect(self, close_code):
         await super(GameConsumer, self).disconnect(close_code)
@@ -33,27 +33,27 @@ class GameConsumer(DefaultConsumer):
         text_data_json = json.loads(text_data)
         message_type = text_data_json.get('type')
         if message_type == GameMessageType.SINGLE_GAME_CREATE:
-            await self.game_service.start_single_pingpong_game(self.scope['user'].id)
+            await self.match_service.start_single_pingpong_game(self.scope['user'].id)
         elif message_type == GameMessageType.MOVE_BAR:
-            await self.game_service.move_bar(self.scope['user'].id, text_data_json.get("command"))
+            await self.match_service.move_bar(self.scope['user'].id, text_data_json.get("command"))
         elif message_type == GameMessageType.JOIN_MULTI_GAME_QUEUE:
-            await self.game_service.join_multi_queue(self.scope['user'].id)
+            await self.match_service.join_multi_queue(self.scope['user'].id)
         elif message_type == GameMessageType.JOIN_TOURNAMENT_GAME_QUEUE:
-            await self.game_service.join_tournament_queue(self.scope['user'].id)
+            await self.match_service.join_tournament_queue(self.scope['user'].id)
         elif message_type == GameMessageType.RESPONSE_ACCEPT_QUEUE:
-            await self.game_service.accept_queue_response(self.scope['user'].id, text_data_json)
+            await self.match_service.accept_queue_response(self.scope['user'].id, text_data_json)
         elif message_type == GameMessageType.INVITE_USER:
-            await self.game_service.invite_user(self.scope['user'].id, text_data_json)
+            await self.match_service.invite_user(self.scope['user'].id, text_data_json)
         elif message_type == GameMessageType.RESPONSE_INVITE:
-            await self.game_service.accept_invite(self.scope['user'].id, text_data_json)
+            await self.match_service.accept_invite(self.scope['user'].id, text_data_json)
         elif message_type == GameMessageType.DELETE_MULTI_GAME_QUEUE:
-            await self.game_service.delete_from_queue(self.scope['user'].id,
-                                                      GameService.MULTIPLAYER_QUEUE_KEY,
-                                                      GameService.MULTIPLAYER_QUEUE_SET_KEY)
+            await self.match_service.delete_from_queue(self.scope['user'].id,
+                                                       MatchService.MULTIPLAYER_QUEUE_KEY,
+                                                       MatchService.MULTIPLAYER_QUEUE_SET_KEY)
         elif message_type == GameMessageType.DELETE_TOURNAMENT_GAME_QUEUE:
-            await self.game_service.delete_from_queue(self.scope['user'].id,
-                                                      GameService.TOURNAMENT_QUEUE_KEY,
-                                                      GameService.TOURNAMENT_QUEUE_SET_KEY)
+            await self.match_service.delete_from_queue(self.scope['user'].id,
+                                                       MatchService.TOURNAMENT_QUEUE_KEY,
+                                                       MatchService.TOURNAMENT_QUEUE_SET_KEY)
 
     async def update_game(self, event):
         """
