@@ -20,7 +20,7 @@ class ChatConsumer(DefaultConsumer):
     async def connect(self):
         await super(ChatConsumer, self).connect()
         if not isinstance(self.scope['user'], AnonymousUser):
-            await self.channel_layer.group_add(f"{self.scope['user'].id}chat", self.channel_name)
+            await self.channel_layer.group_add(f"{self.scope['user'].id}_chat", self.channel_name)
             await self.redis.set(f"user:{str(self.scope['user'].id)}:online", 1)
             await self.friends_status_message()
             await self.handle_login_status(1)
@@ -29,6 +29,7 @@ class ChatConsumer(DefaultConsumer):
         await super(ChatConsumer, self).disconnect(close_code)
         if not isinstance(self.scope['user'], AnonymousUser):
             await self.redis.delete(f"user:{str(self.scope['user'].id)}:online")
+            await self.channel_layer.group_discard(f"{self.scope['user'].id}_chat", self.channel_name)
             await self.handle_login_status(0)
 
     async def receive(self, text_data):
@@ -67,7 +68,7 @@ class ChatConsumer(DefaultConsumer):
             return
 
         await self.channel_layer.group_send(
-            f"{receiver_id}chat", {
+            f"{receiver_id}_chat", {
                 "type": "single.message",
                 "message": message,
                 "sender_id": self.scope['user'].id,
@@ -87,7 +88,7 @@ class ChatConsumer(DefaultConsumer):
             is_online = await self.redis.exists(f"user:{str(relater_id)}:online")
             if is_online:
                 await self.channel_layer.group_send(
-                    f"{relater_id}chat", {
+                    f"{relater_id}_chat", {
                         "type": "friend.login",
                         "friends_status": {str(user_id): status}
                     })

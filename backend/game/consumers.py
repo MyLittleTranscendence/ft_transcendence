@@ -23,6 +23,8 @@ class GameConsumer(DefaultConsumer):
 
     async def disconnect(self, close_code):
         await super(GameConsumer, self).disconnect(close_code)
+        if not isinstance(self.scope['user'], AnonymousUser):
+            await self.channel_layer.group_discard(str(self.scope['user'].id), self.channel_name)
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
