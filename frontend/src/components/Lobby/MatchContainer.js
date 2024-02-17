@@ -13,6 +13,7 @@ export default class MatchContainer extends Component {
       isChosen: false,
       isFindingMatch: false,
       isMatchFound: true,
+      isJoined: false,
     };
   }
 
@@ -28,12 +29,15 @@ export default class MatchContainer extends Component {
     this.addEvent("click", "#cancle-match-btn", () => {
       this.setState({ isMatchFound: false });
     });
+    this.addEvent("click", "#join-match-btn", () => {
+      this.setState({ isJoined: true });
+    });
     // 매치 찾았을 때 isFoundMatch: true 로 setState 및
     // 10초 타임아웃으로 setState isFoundMatch: false
   }
 
   template() {
-    const { isChosen, isFindingMatch, isMatchFound } = this.state;
+    const { isChosen, isFindingMatch, isMatchFound, isJoined } = this.state;
 
     return `
       <h3
@@ -52,10 +56,14 @@ export default class MatchContainer extends Component {
         ${
           isMatchFound
             ? `
-              <text class="text-white fw-bold fs-4">Match Found!</text>
-              <div class="time-left-bar-container">
-                <div class="time-left-bar"></div>
-              </div>
+              ${
+                !isJoined
+                  ? `<text class="text-white fw-bold fs-4">Match Found!</text>
+                    <div class="time-left-bar-container">
+                      <div class="time-left-bar"></div>
+                    </div>`
+                  : `<text class="text-white fw-bold fs-4">Joining match...</text>`
+              }
               <div class="d-flex align-items-center mt-3">
                 <div id="join-btn-holder" class="me-3"></div>
                 <div id="cancle-btn-holder"></div>
@@ -78,7 +86,8 @@ export default class MatchContainer extends Component {
   }
 
   mounted() {
-    const { matchType, isChosen, isFindingMatch, isMatchFound } = this.state;
+    const { matchType, isChosen, isFindingMatch, isMatchFound, isJoined } =
+      this.state;
 
     const matchTypeDropdown = new MatchTypeDropdown(
       this.$target.querySelector("#match-type-dropdown"),
@@ -108,6 +117,7 @@ export default class MatchContainer extends Component {
         {
           id: "join-match-btn",
           content: "Join",
+          disabled: isJoined,
         }
       );
       const cancleMatchButton = new Button(
@@ -116,6 +126,7 @@ export default class MatchContainer extends Component {
           id: "cancle-match-btn",
           content: "Cancle",
           className: "cancle-button",
+          disabled: isJoined,
         }
       );
       joinMatchButton.render();
