@@ -29,17 +29,26 @@ class DefaultConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.group_discard(f"{self.scope['user'].id}_global", self.channel_name)
 
     async def user_info_init(self):
+        """
+        컨슈머 객체 필드에 유저 정보 저장
+        """
         self.nickname = self.scope['user'].nickname
         self.profile_image = f"{settings.BASE_URL}{self.scope['user'].profile_image.url}"
         await self.set_user_info()
 
     async def set_user_info(self):
+        """
+        유저 정보를 레디스에 저장
+        """
         await self.redis.hset(f"{self.scope['user'].id}_info", mapping={
             "nickname": self.nickname,
             "profile_image": self.profile_image,
         })
 
     async def user_updated(self, event):
+        """
+        유저 정보 변경 이벤트 핸들러
+        """
         self.nickname = event["nickname"]
         self.profile_image = event["profile_image"]
         await self.set_user_info()
