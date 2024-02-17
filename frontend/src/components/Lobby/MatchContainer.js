@@ -85,6 +85,7 @@ export default class MatchContainer extends Component {
       {
         matchType: this.state.matchType,
         isFindingMatch,
+        isMatchFound,
       }
     );
     matchTypeDropdown.render();
