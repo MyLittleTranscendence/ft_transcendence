@@ -51,8 +51,8 @@ class ChatConsumer(DefaultConsumer):
                 "type": "total.message",
                 "message": message,
                 "sender_id": self.scope['user'].id,
-                "sender_nickname": self.scope['user'].nickname,
-                "sender_profile_image": f"{settings.BASE_URL}{self.scope['user'].profile_image.url}",
+                "sender_nickname": self.nickname,
+                "sender_profile_image": self.profile_image,
                 "datetime": str(now())
             })
 
@@ -72,8 +72,8 @@ class ChatConsumer(DefaultConsumer):
                 "type": "single.message",
                 "message": message,
                 "sender_id": self.scope['user'].id,
-                "sender_nickname": self.scope['user'].nickname,
-                "sender_profile_image": f"{settings.BASE_URL}{self.scope['user'].profile_image.url}",
+                "sender_nickname": self.nickname,
+                "sender_profile_image": self.profile_image,
                 "datetime": str(now())
             })
 
