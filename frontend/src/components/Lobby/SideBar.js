@@ -5,15 +5,15 @@ import { myInfoStore } from "../../store/initialStates.js";
 
 export default class SideBar extends Component {
   setup() {
-    const unsubscribeStore = myInfoStore.subscribe(this);
-    this.removeObservers.push(unsubscribeStore);
+    const unsubscribe = myInfoStore.subscribe(this);
+    this.removeObservers.push(unsubscribe);
   }
 
   template() {
     return `
       <a 
         id="sidebar-my-profile-link"
-        href="/my-page"
+        href="/profile?user-id=${myInfoStore.getState().id}"
         data-link
       ></a>
       <div

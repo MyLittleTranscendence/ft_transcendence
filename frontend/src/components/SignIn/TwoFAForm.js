@@ -12,11 +12,16 @@ export default class TwoFAForm extends Component {
   }
 
   setup() {
-    this.state = { notifyText: "" };
+    this.state = {
+      notifyText: "sending code to your email...",
+      isTimeout: false,
+    };
   }
 
   setEvent() {
-    this.addEvent("submit", "#two-fa-form", twoFAHandler);
+    this.addEvent("submit", "#two-fa-form", (e) => {
+      twoFAHandler(e, this.props.setIsEditingFalse);
+    });
     this.addEvent("click", "#send-code-btn", () =>
       fetchSendCode((email) => this.onCodeSendSuccess(email))
     );
@@ -26,15 +31,12 @@ export default class TwoFAForm extends Component {
     return `
       <form
         id="two-fa-form"
-        class="
-        d-flex
-        flex-column
-        align-items-center
-        "
+        class="d-flex flex-column align-items-center"
         data-form-type=${this.props.type}
+        style="width: 30rem;"
       >
         <p id="code-sent-notification" style="color:#c2c2c2;">
-          ${this.state.notifyText}
+          ${this.state.notifyText || " "} 
         </p>
         <div
           id="two-fa-group-container"
@@ -64,12 +66,7 @@ export default class TwoFAForm extends Component {
           <div id="code-input-holder"></div>
           <div id="send-code-btn-holder"></div>
         </div>
-        <span
-          id="two-fa-warning"
-          class="mt-1 fw-bold"
-          style="color: #FF9D9D;"
-        >Wrong verification code</span>
-        <div id="confirm-btn-holder"></div>
+        <div id="confirm-btn-holder" class="mt-2"></div>
       </form>
 		`;
   }
@@ -113,6 +110,7 @@ export default class TwoFAForm extends Component {
         type: "submit",
         className: "mt-2",
         attributes: `style="min-width: 10rem;"`,
+        disabled: this.state.isTimeout,
       }
     );
 
@@ -154,14 +152,8 @@ export default class TwoFAForm extends Component {
       if (timeLeft < 0) {
         clearInterval(this.timerInterval);
         this.timerInterval = null;
-        $timer.textContent = "00:00";
-        // Confirm 버튼 비활성화 로직
+        this.setState({ isTimeout: true });
       }
     }, 1000);
-  }
-
-  notifyUserCodeHasSent(email) {
-    const $p = this.$target.querySelector("#code-sent-notification");
-    $p.innerText = `Verification code has sent to ${email}`;
   }
 }

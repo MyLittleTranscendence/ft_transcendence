@@ -16,6 +16,7 @@ export default class Input extends Component {
       required,
       disabled,
       className,
+      attributes,
     } = this.props;
 
     return `
@@ -30,6 +31,7 @@ export default class Input extends Component {
         ${required ? "required" : ""}
         ${disabled ? "disabled" : ""}
         class="form-control rounded-pill input-general ${className ? `${className}` : ""}"
+        ${attributes || ""}
       >
     `;
   }

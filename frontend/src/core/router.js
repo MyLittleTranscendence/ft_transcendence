@@ -15,11 +15,11 @@ const initRouter = () => {
 
       if (searchParams.size > 0 && searchParams.get("login") !== "true") {
         const isMFARequire = searchParams.get("mfa_require") === "true";
-        const isNewOAuthUser = searchParams.get("is_new_user") === "true";
+        const isNewOAuthUser = searchParams.get("is_new_user");
 
         if (isMFARequire) {
           createComponent = routesMemo["/mfa"];
-        } else if (isNewOAuthUser) {
+        } else if (isNewOAuthUser === "true") {
           const userId = searchParams.get("user_id");
           window.history.replaceState(
             null,
@@ -27,7 +27,7 @@ const initRouter = () => {
             `/?set-nickname=true&user_id=${userId}`
           );
           createComponent = routesMemo["/set-nickname"];
-        } else if (!isNewOAuthUser) {
+        } else if (!isNewOAuthUser === "false") {
           window.history.replaceState(
             null,
             "",
@@ -49,9 +49,12 @@ const initRouter = () => {
       }
     };
 
-    const navigate = (path) => {
-      if (window.history.pathname !== path) {
-        window.history.pushState({}, "", path);
+    const navigate = (url) => {
+      const newUrl = new URL(url, window.location.origin);
+      const currentUrl = window.location;
+
+      if (newUrl.href !== currentUrl.href) {
+        window.history.pushState({}, "", newUrl.href);
         handleRouteChange();
       }
     };
@@ -60,11 +63,7 @@ const initRouter = () => {
       const link = e.target.closest("[data-link]");
       if (link) {
         e.preventDefault();
-        const clickedURL = link.href;
-        if (clickedURL !== window.location.href) {
-          const path = new URL(clickedURL).pathname;
-          navigate(path);
-        }
+        navigate(link.href);
       }
     };
 

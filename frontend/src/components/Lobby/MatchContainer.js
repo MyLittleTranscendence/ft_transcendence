@@ -95,6 +95,7 @@ export default class MatchContainer extends Component {
         {
           id: "find-match-btn",
           content: isFindingMatch ? "Cancle" : "Find a match",
+          className: isFindingMatch ? "cancle-button" : "",
         }
       );
       findMatchButton.render();
