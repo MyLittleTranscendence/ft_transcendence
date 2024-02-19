@@ -32,7 +32,7 @@ export default class Overview extends Component {
 			<div class="record">Win Rate 
 				<span
 					class="record-value" style="margin-left: 1rem;">
-					${wins === 0 && losses === 0 ? "-" : `${(wins / (wins + losses)) * 100}%`}
+					${wins === 0 && losses === 0 ? "-" : `${((wins / (wins + losses)) * 100).toFixed(1)}%`}
 				</span>
 			</div>
 		</div>
