@@ -1,17 +1,17 @@
 import Component from "../../core/Component.js";
 import ChatInput from "./ChatInput.js";
-import sendMessageHandler from "../../handlers/sendMessageHandler.js";
+import sendChatHandler from "../../handlers/chat/sendChatHandler.js";
 import { chatSocket } from "../../socket/socketManager.js";
 import GlobalMessage from "./GlobalMessage.js";
 
 export default class GlobalChatContainer extends Component {
   setEvent() {
     this.addEvent("keydown", "#global-chat-input", (e) =>
-      sendMessageHandler(e, "total_message")
+      sendChatHandler(e, "total_message")
     );
     this.addEvent("click", "#global-send-icon", () => {
       const $input = this.$target.querySelector("#global-chat-input");
-      sendMessageHandler({ target: $input, key: "Enter" }, "total_message");
+      sendChatHandler({ target: $input, key: "Enter" }, "total_message");
     });
   }
 
