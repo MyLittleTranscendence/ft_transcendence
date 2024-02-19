@@ -4,7 +4,7 @@ import { myInfoStore } from "../../store/initialStates.js";
 
 const fetchEnableTwoFA = (code, setIsEditingFalse) => {
   fetchAPI
-    .post("/2fa/enable", {
+    .post("/2fa/enable/", {
       mfa_code: code,
     })
     .then(() => {
