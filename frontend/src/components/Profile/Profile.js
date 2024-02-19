@@ -5,11 +5,23 @@ import { myInfoStore } from "../../store/initialStates.js";
 import imageUpdateHandler from "../../handlers/user/imageUpdateHandler.js";
 import Input from "../UI/Input/Input.js";
 import nicknameUpdateHandler from "../../handlers/user/nicknameUpdateHandler.js";
+import fetchUserInfo from "../../api/user/fetchUserInfo.js";
 
 export default class Profile extends Component {
-  setup() {
-    const myInfo = myInfoStore.getState();
+  async setup() {
+    this.state = {
+      userInfo: {
+        nickname: "",
+        userId: 0,
+        profileImage: "asset/default.png",
+        wins: 0,
+        losses: 0,
+      },
+      isEditingNickname: false,
+    };
+
     if (this.props.isMe) {
+      const myInfo = myInfoStore.getState();
       this.state = {
         userInfo: myInfo,
         isEditingNickname: false,
@@ -17,7 +29,9 @@ export default class Profile extends Component {
       const unsubscribe = myInfoStore.subscribe(this);
       this.removeObservers.push(unsubscribe);
     } else {
-      // fetch user
+      const userInfo = await fetchUserInfo(this.props.userId);
+      console.log(userInfo);
+      this.setState({ userInfo });
     }
   }
 
@@ -55,8 +69,9 @@ export default class Profile extends Component {
           ${isMe ? `style="cursor: pointer;"` : ""}
         ></div>
         <div class="d-flex align-items-center position-relative">
+          ${!isEditingNickname ? `<text class="text-warning fs-5 fw-bold">${nickname}</text>` : ""}
           ${
-            isMe && !isEditingNickname
+            isMe
               ? `<text class="text-warning fs-5 fw-bold">${nickname}</text>
                 <svg id="nickname-edit-icon" class="position-absolute" style="right: -1.5rem; cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-pencil-square" viewBox="0 0 16 16">
                   <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
