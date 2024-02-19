@@ -24,14 +24,14 @@ export default class Profile extends Component {
   setEvent() {
     if (this.props.isMe) {
       this.addEvent("click", "#profile-image-content", () =>
-        imageUpdateHandler(this.state.userInfo.id)
+        imageUpdateHandler(this.state.userInfo.userId)
       );
       this.addEvent("click", "#nickname-edit-icon", () => {
         this.setState({ isEditingNickname: true });
       });
       this.addEvent("click", "#nickname-edit-done-icon", () => {
         const $input = this.$target.querySelector("#nickname-edit-input");
-        nicknameUpdateHandler(this.state.userInfo.id, $input, (isEditing) =>
+        nicknameUpdateHandler(this.state.userInfo.userId, $input, (isEditing) =>
           this.setState({ isEditingNickname: isEditing })
         );
       });
@@ -88,7 +88,7 @@ export default class Profile extends Component {
       this.$target.querySelector("#profile-image-content"),
       {
         imageSize,
-        imageSrc: isMe ? myInfo.profile_image : "asset/default.png",
+        imageSrc: isMe ? myInfo.profileImage : "asset/default.png",
         alt,
       }
     );
