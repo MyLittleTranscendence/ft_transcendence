@@ -2,9 +2,9 @@ import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 import Overview from "./Overview.js";
 import { myInfoStore } from "../../store/initialStates.js";
-import imageUpdateHandler from "../../handlers/imageUpdateHandler.js";
+import imageUpdateHandler from "../../handlers/user/imageUpdateHandler.js";
 import Input from "../UI/Input/Input.js";
-import nicknameUpdateHandler from "../../handlers/nicknameUpdateHandler.js";
+import nicknameUpdateHandler from "../../handlers/user/nicknameUpdateHandler.js";
 
 export default class Profile extends Component {
   setup() {
@@ -24,14 +24,14 @@ export default class Profile extends Component {
   setEvent() {
     if (this.props.isMe) {
       this.addEvent("click", "#profile-image-content", () =>
-        imageUpdateHandler(this.state.userInfo.id)
+        imageUpdateHandler(this.state.userInfo.userId)
       );
       this.addEvent("click", "#nickname-edit-icon", () => {
         this.setState({ isEditingNickname: true });
       });
       this.addEvent("click", "#nickname-edit-done-icon", () => {
         const $input = this.$target.querySelector("#nickname-edit-input");
-        nicknameUpdateHandler(this.state.userInfo.id, $input, (isEditing) =>
+        nicknameUpdateHandler(this.state.userInfo.userId, $input, (isEditing) =>
           this.setState({ isEditingNickname: isEditing })
         );
       });
@@ -88,7 +88,7 @@ export default class Profile extends Component {
       this.$target.querySelector("#profile-image-content"),
       {
         imageSize,
-        imageSrc: isMe ? myInfo.profile_image : "asset/default.png",
+        imageSrc: isMe ? myInfo.profileImage : "asset/default.png",
         alt,
       }
     );

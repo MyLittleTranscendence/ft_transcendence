@@ -2,7 +2,7 @@ import Component from "../core/Component.js";
 import PageContainer from "../components/UI/Container/PageContainer.js";
 import InputGroup from "../components/UI/Input/InputGroup.js";
 import Button from "../components/UI/Button/Button.js";
-import handleSubmitNickname from "../handlers/setNicknameHandler.js";
+import handleSubmitNickname from "../handlers/user/setNicknameHandler.js";
 
 export default class SetNicknamePage extends Component {
   setEvent() {

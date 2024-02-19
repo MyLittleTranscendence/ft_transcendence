@@ -13,7 +13,7 @@ const fetchNickname = (body) => {
   }
 
   fetchAPI
-    .patch(`/users/${userId}`, body)
+    .patch(`/users/${userId}/`, body)
     .then(() => {
       if (window.location.pathname === "/profile") {
         showToast("Your nickname has set successfully!");

@@ -1,4 +1,4 @@
-import fetchNickname from "../api/user/fetchNickname.js";
+import fetchNickname from "../../api/user/fetchNickname.js";
 
 const handleSubmitNickname = (event) => {
   event.preventDefault();

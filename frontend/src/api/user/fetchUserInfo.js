@@ -1,17 +1,20 @@
 import fetchAPI from "../../utils/fetchAPI.js";
+import showToast from "../../utils/showToast.js";
 
-const fetchUserInfo = (userId) =>
-  fetchAPI
-    .get(`/users/${userId}`)
-    .then(
-      (data) =>
-        // sessionStorage.setItem("user_id", data.id);
-        // sessionStorage.setItem("nickname", data.nickname);
-        // sessionStorage.setItem("wins", data.wins);
-        // sessionStorage.setItem("losses", data.losses);
-        // sessionStorage.setItem("profile_image", data.profile_image);
-        data
-    )
-    .catch((error) => console.error(error));
+const fetchUserInfo = async (userId) => {
+  try {
+    const data = await fetchAPI.get(`/users/${userId}/`);
+    return {
+      userId: data.id,
+      nickname: data.nickname,
+      wins: data.wins,
+      losses: data.losses,
+      profileImage: data.profile_image,
+    };
+  } catch (e) {
+    showToast("Failed to load user data.");
+    return null;
+  }
+};
 
 export default fetchUserInfo;

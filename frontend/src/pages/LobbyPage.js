@@ -25,7 +25,7 @@ export default class LobbyPage extends Component {
           p-5 me-4
           border border-white border-5
           position-relative"
-        style="min-height: 30rem;"
+        style="width: 20rem;"
       ></div>
       <div
         id="global-chat-container"
@@ -79,9 +79,6 @@ export default class LobbyPage extends Component {
     matchContainer.render();
     globalChatContainer.render();
     sideBar.render();
-
-    chatSocket();
-    gameSocket();
   }
 
   validateSessionOnSignIn() {
@@ -93,6 +90,8 @@ export default class LobbyPage extends Component {
           localStorage.setItem("login", "true");
           showToast(`Welcome, ${data.nickname}!`);
           window.history.replaceState(null, "", "/");
+          chatSocket();
+          gameSocket();
         })
         .catch((e) => {
           showToast(e);

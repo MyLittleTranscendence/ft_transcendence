@@ -5,7 +5,7 @@ import NextMatchBox from "./NextMatchBox.js";
 
 export default class PongGame extends Component {
   template() {
-    const { player1, player2 } = this.props.currentMatch;
+    const { leftUser, rightUser } = this.props.currentMatch;
 
     return `
       <div
@@ -27,12 +27,12 @@ export default class PongGame extends Component {
           ></div>
           <div class="d-flex flex-column align-items-center">
             <div id="player-2-img-holder"></div>
-            <div class="text-white fw-bold">${player2.nickname}</div>
+            <div class="text-white fw-bold">${rightUser.nickname}</div>
           </div>
           <div id="game-canvas-holder"></div>
           <div class="d-flex flex-column align-items-center">
             <div id="player-1-img-holder"></div>
-            <div class="text-warning fw-bold">${player1.nickname}</div>
+            <div class="text-warning fw-bold">${leftUser.nickname}</div>
           </div>
         </div>
         <div class="mt-5" style="width: 10rem">
@@ -46,17 +46,17 @@ export default class PongGame extends Component {
     const gameCanvas = new GameCanvas(
       this.$target.querySelector("#game-canvas-holder")
     );
-    const player1Image = new ProfileImage(
+    const leftUserImage = new ProfileImage(
       this.$target.querySelector("#player-1-img-holder"),
       { imageSize: "image-sm", imageSrc: "asset/default.png" }
     );
-    const player2Image = new ProfileImage(
+    const rightUserImage = new ProfileImage(
       this.$target.querySelector("#player-2-img-holder"),
       { imageSize: "image-sm", imageSrc: "asset/default.png" }
     );
     gameCanvas.render();
-    player1Image.render();
-    player2Image.render();
+    leftUserImage.render();
+    rightUserImage.render();
 
     if (this.props.nextMatch) {
       const nextMatchBox = new NextMatchBox(

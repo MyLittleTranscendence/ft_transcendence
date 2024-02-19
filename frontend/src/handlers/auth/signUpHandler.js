@@ -1,4 +1,4 @@
-import fetchSignUp from "../api/auth/fetchSignUp.js";
+import fetchSignUp from "../../api/auth/fetchSignUp.js";
 
 const signUpHandler = async (event) => {
   event.preventDefault();

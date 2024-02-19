@@ -35,6 +35,8 @@ export default class App extends Component {
           if (e.status && e.status === 401) {
             localStorage.clear();
             navigate("/start");
+          } else {
+            console.error(e);
           }
         });
     };
