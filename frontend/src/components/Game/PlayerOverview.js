@@ -1,12 +1,26 @@
+import fetchUserInfo from "../../api/user/fetchUserInfo.js";
 import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 
 export default class PlayerOverview extends Component {
+  async setup() {
+    this.state = {
+      userId: 0,
+      nickname: "",
+      wins: 0,
+      losses: 0,
+    };
+
+    const userInfo = await fetchUserInfo(this.props.userId);
+
+    this.setState(userInfo);
+  }
+
   template() {
-    const { id, nickname, wins, losses } = this.props;
+    const { userId, nickname, wins, losses } = this.state;
     return `
       <div class="d-flex flex-column align-items-center">
-        <div id="player-${id}-img-holder"></div>
+        <div id="player-${userId}-img-holder"></div>
         <span
           class="text-warning fs-5 fw-bold mb-3"
         >${nickname}</span>
@@ -28,8 +42,8 @@ export default class PlayerOverview extends Component {
 
   mounted() {
     const playerImage = new ProfileImage(
-      this.$target.querySelector(`#player-${this.props.id}-img-holder`),
-      { imageSize: "image-mid", imageSrc: "asset/default.png" }
+      this.$target.querySelector(`#player-${this.state.userId}-img-holder`),
+      { imageSize: "image-mid", imageSrc: this.state.profileImage }
     );
 
     playerImage.render();

@@ -2,7 +2,7 @@ import Component from "../../core/Component.js";
 import Input from "../UI/Input/Input.js";
 import Button from "../UI/Button/Button.js";
 import fetchSendCode from "../../api/auth/fetchSendCode.js";
-import twoFAHandler from "../../handlers/twoFAHandler.js";
+import twoFAHandler from "../../handlers/auth/twoFAHandler.js";
 
 export default class TwoFAForm extends Component {
   constructor($target, props, state) {

@@ -20,21 +20,21 @@ export default class PlayerOverviews extends Component {
   }
 
   mounted() {
-    const { matchOrder, player1, player2 } = this.props;
+    const { matchOrder, leftUserId, rightUserId } = this.props;
     const $container = this.$target.querySelector(
       `#player-${matchOrder}-overview-container`
     );
 
-    const player1Overview = new PlayerOverview(
+    const leftUserOverview = new PlayerOverview(
       $container.querySelector(`#player-${matchOrder}-1-overview`),
-      player1
+      { userId: leftUserId }
     );
-    const player2Overview = new PlayerOverview(
+    const rightUserOverview = new PlayerOverview(
       $container.querySelector(`#player-${matchOrder}-2-overview`),
-      player2
+      { userId: rightUserId }
     );
 
-    player1Overview.render();
-    player2Overview.render();
+    leftUserOverview.render();
+    rightUserOverview.render();
   }
 }

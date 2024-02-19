@@ -48,7 +48,7 @@ export default class SideBar extends Component {
     return `
       <a 
         id="sidebar-my-profile-link"
-        href="/profile?user-id=${myInfoStore.getState().id}"
+        href="/profile?user_id=${myInfoStore.getState().userId}"
         data-link
       ></a>
       <div
@@ -99,7 +99,7 @@ export default class SideBar extends Component {
       this.$target.querySelector("#sidebar-my-profile-link"),
       {
         imageSize: "image-sm",
-        imageSrc: myInfoStore.getState().profile_image,
+        imageSrc: myInfoStore.getState().profileImage,
         alt: "my profile",
       }
     );

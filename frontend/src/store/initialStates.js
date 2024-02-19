@@ -1,18 +1,31 @@
 import createStore from "./store.js";
 
 const myInfoStore = createStore({
-  id: null,
+  userId: null,
   nickname: "",
   wins: 0,
   losses: 0,
-  profile_image: "",
+  profileImage: "asset/default.png",
   username: "",
   email: "",
-  mfa_enable: "",
+  mfaEnable: "",
 });
 
-const gameStateStore = createStore({ gameState: "" });
+const gameInfoStore = createStore({
+  barHeight: 100,
+  barWidth: 18,
+  ballRadius: 9,
+  gameType: "",
+  leftScore: "0",
+  leftUserId: 0,
+  rightScore: "0",
+  rightUserId: 0,
+  screenHeight: 600,
+  screenWidth: 800,
+  status: "before",
+  winner: "NONE",
+});
 
-const testStore = createStore({ number: 0 });
+const gameStatusStore = createStore({ isInGame: false });
 
-export { myInfoStore, gameStateStore, testStore };
+export { myInfoStore, gameInfoStore, gameStatusStore };

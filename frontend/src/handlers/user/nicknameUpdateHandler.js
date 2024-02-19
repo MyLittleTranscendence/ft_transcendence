@@ -1,6 +1,6 @@
-import fetchAPI from "../utils/fetchAPI.js";
-import showToast from "../utils/showToast.js";
-import { myInfoStore } from "../store/initialStates.js";
+import fetchAPI from "../../utils/fetchAPI.js";
+import showToast from "../../utils/showToast.js";
+import { myInfoStore } from "../../store/initialStates.js";
 
 const nicknameUpdateHandler = (userId, $input, setIsEditing) => {
   const nicknameInput = $input.value.trim();

@@ -20,15 +20,15 @@ export default class ProfilePage extends Component {
           class="d-flex flex-column align-items-center"
         ></div>
         <br><br>
-        <div id="match-history-content"></div>
+        <div id="match-history-content" class="d-flex flex-column align-items-center"></div>
       </div>
     `;
   }
 
   mounted() {
     const searchParams = new URLSearchParams(window.location.search);
-    const userId = parseInt(searchParams.get("user-id"), 10);
-    const isMe = userId === myInfoStore.getState().id;
+    const userId = parseInt(searchParams.get("user_id"), 10);
+    const isMe = userId === myInfoStore.getState().userId;
 
     const $profileContainer = this.$target.querySelector("#profile-container");
 
@@ -62,7 +62,8 @@ export default class ProfilePage extends Component {
     }
 
     const matchHistoryContent = new MatchHistoryList(
-      $profileContainer.querySelector("#match-history-content")
+      $profileContainer.querySelector("#match-history-content"),
+      { userId }
     );
 
     pageContainer.render();

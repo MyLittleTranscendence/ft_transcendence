@@ -2,14 +2,14 @@ import Component from "../../core/Component.js";
 import MatchHistoryCard from "./MatchHistoryCard.js";
 import fetchAPI from "../../utils/fetchAPI.js";
 
-export default class MatchmatchInfoList extends Component {
+export default class MatchHistoryList extends Component {
   setup() {
     this.state = { gameList: [], isLoading: true, page: 1 };
-    // fetchAPI
-    //   .get(`/games/?page=${this.state.page}&user_id=${this.props.userId}`)
-    //   .then((data) =>
-    //     this.setState({ gameList: data.results, isLoading: false })
-    //   );
+    fetchAPI
+      .get(`/games/?page=${this.state.page}&user_id=${this.props.userId}`)
+      .then((data) =>
+        this.setState({ gameList: data.results, isLoading: false })
+      );
   }
 
   template() {
@@ -41,10 +41,10 @@ export default class MatchmatchInfoList extends Component {
 
     return `
       ${title}
-      <ul id="game-info-list">
-        ${gameList.map((gameInfo) => `<li id="game-info-${gameInfo.id}"></li>`)}
+      <ul id="game-info-list" class="px-0 d-flex flex-column align-items-center" style="list-style-type: none;">
+        ${gameList.map((gameInfo) => `<li id="game-info-${gameInfo.id}" class="my-2"></li>`).join("")}
       </ul>
-    `;
+`;
   }
 
   mounted() {
@@ -56,12 +56,14 @@ export default class MatchmatchInfoList extends Component {
 
     const $gameInfoList = this.$target.querySelector("#game-info-list");
 
-    gameList.array.forEach((gameInfo) => {
-      const matchHistoryCard = new MatchHistoryCard(
-        $gameInfoList.querySelector(`#game-info-${gameInfo.id}`),
-        { ...gameInfo, isWin: gameInfo.winner.id === this.props.userId }
-      );
-      matchHistoryCard.render();
-    });
+    if (gameList.length > 0) {
+      gameList.forEach((gameInfo) => {
+        const matchHistoryCard = new MatchHistoryCard(
+          $gameInfoList.querySelector(`#game-info-${gameInfo.id}`),
+          { ...gameInfo, isWin: gameInfo.winner.id === this.props.userId }
+        );
+        matchHistoryCard.render();
+      });
+    }
   }
 }

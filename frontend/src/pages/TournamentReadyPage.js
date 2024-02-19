@@ -1,8 +1,8 @@
-import Component from "../../core/Component.js";
-import PageContainerWithLogo from "../UI/Container/PageContainerWithLogo.js";
-import PlayerOverviews from "./PlayerOverviews.js";
+import Component from "../core/Component.js";
+import PageContainerWithLogo from "../components/UI/Container/PageContainerWithLogo.js";
+import PlayerOverviews from "../components/Game/PlayerOverviews.js";
 
-export default class TournamentReady extends Component {
+export default class TournamentReadyPage extends Component {
   template() {
     return `
       <div id="tournament-ready-content" class="d-flex flex-column align-items-center">
@@ -23,13 +23,13 @@ export default class TournamentReady extends Component {
 
     pageContainer.render();
 
-    const { player1, player2, player3, player4 } = this.props;
+    const { leftUser, rightUser, player3, player4 } = this.props;
 
     const playerOverviews1 = new PlayerOverviews(
       $overviewsContainer.querySelector("#first-match-overview"),
       {
-        player1,
-        player2,
+        leftUser,
+        rightUser,
         type: "tournament",
         matchOrder: 1,
       }
@@ -37,8 +37,8 @@ export default class TournamentReady extends Component {
     const playerOverviews2 = new PlayerOverviews(
       $overviewsContainer.querySelector("#second-match-overview"),
       {
-        player1: player3,
-        player2: player4,
+        leftUser: player3,
+        rightUser: player4,
         type: "tournament",
         matchOrder: 2,
       }

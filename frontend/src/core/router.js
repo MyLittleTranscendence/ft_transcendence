@@ -55,8 +55,8 @@ const initRouter = () => {
 
       if (newUrl.href !== currentUrl.href) {
         window.history.pushState({}, "", newUrl.href);
-        handleRouteChange();
       }
+      handleRouteChange();
     };
 
     const handleLinkClick = (e) => {

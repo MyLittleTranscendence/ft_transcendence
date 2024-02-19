@@ -1,7 +1,7 @@
 import Component from "../../core/Component.js";
 import InputGroup from "../UI/Input/InputGroup.js";
 import Button from "../UI/Button/Button.js";
-import signUpHandler from "../../handlers/signUpHandler.js";
+import signUpHandler from "../../handlers/auth/signUpHandler.js";
 
 export default class SignUpForm extends Component {
   setEvent() {

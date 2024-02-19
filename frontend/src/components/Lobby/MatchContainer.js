@@ -3,6 +3,19 @@ import appendCSSLink from "../../utils/appendCSSLink.js";
 import BouncingBallOnRacket from "../UI/BouncingBallOnRacket.js";
 import Button from "../UI/Button/Button.js";
 import MatchTypeDropdown from "./MatchTypeDropdown.js";
+import showToast from "../../utils/showToast.js";
+import {
+  matchFindHandler,
+  cancleMatchFindHandler,
+  queueParticipantCountUpdateHandler,
+  matchFoundHandler,
+  joinMatchHandler,
+  fallbackToMatchFindHandler,
+  penaltyWaitHandler,
+  matchSuccessHandler,
+  createSingleGameHandler,
+  getGameInfoHandler,
+} from "../../handlers/game/matchMakingHandlers.js";
 
 appendCSSLink("src/components/Lobby/TimeLeftBar.css");
 
@@ -12,8 +25,10 @@ export default class MatchContainer extends Component {
       matchType: "Choose Match Type",
       isChosen: false,
       isFindingMatch: false,
-      isMatchFound: true,
+      isMatchFound: false,
       isJoined: false,
+      matchSessionId: "",
+      isPenalty: false,
     };
   }
 
@@ -21,36 +36,61 @@ export default class MatchContainer extends Component {
     this.addEvent("click", ".match-type-dropdown-li", (e) => {
       if (e.target.textContent !== this.state.matchType) {
         this.setState({ matchType: e.target.textContent, isChosen: true });
+        if (e.target.textContent === "Single Play") {
+          createSingleGameHandler();
+        }
       }
     });
     this.addEvent("click", "#find-match-btn", () => {
+      if (this.state.isFindingMatch === false) {
+        matchFindHandler(this.state.matchType);
+      } else {
+        cancleMatchFindHandler(this.state.matchType);
+      }
       this.setState({ isFindingMatch: !this.state.isFindingMatch });
     });
     this.addEvent("click", "#cancle-match-btn", () => {
-      this.setState({ isMatchFound: false });
+      this.initSetState();
+      showToast("Opps, There will be a penalty for canceling.");
     });
     this.addEvent("click", "#join-match-btn", () => {
+      joinMatchHandler(this.state.matchSessionId);
       this.setState({ isJoined: true });
     });
-    // 매치 찾았을 때 isFoundMatch: true 로 setState 및
-    // 10초 타임아웃으로 setState isFoundMatch: false
+
+    queueParticipantCountUpdateHandler(this.$target, this.removeObservers);
+    matchFoundHandler((state) => this.setState(state), this.removeObservers);
+    fallbackToMatchFindHandler(
+      (state) => this.setState(state),
+      this.removeObservers
+    );
+    penaltyWaitHandler((state) => this.setState(state), this.removeObservers);
+    matchSuccessHandler(this.removeObservers);
+    getGameInfoHandler(this.removeObservers);
   }
 
   template() {
-    const { isChosen, isFindingMatch, isMatchFound, isJoined } = this.state;
+    const {
+      matchType,
+      isChosen,
+      isFindingMatch,
+      isMatchFound,
+      isJoined,
+      isPenalty,
+    } = this.state;
 
-    return `
-      <h3
-        class="
-          position-absolute
-          top-0 start-50
-          translate-middle
-          ps-3 pe-3
-          bg-primary
-          text-white"
-        >
-          Match
-      </h2>
+    const title = `<h3 class="position-absolute top-0 start-50 translate-middle ps-3 pe-3 bg-primary text-white">Match</h3>`;
+
+    if (isPenalty) {
+      return `${title}
+        <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center">
+          <h6 class="text-warning fw-bold">You have penalty wait.</h6>
+          <h1 id="wait-counter" class="fw-bold text-white"></h1>
+        </div>
+      `;
+    }
+
+    return `${title}
       <div id="match-type-dropdown" class="dropdown-center mb-5"></div>
       <div class="position-absolute d-flex flex-column align-items-center" style="top: 10rem;">
         ${
@@ -75,7 +115,14 @@ export default class MatchContainer extends Component {
               ${
                 isFindingMatch
                   ? `<text class="text-white fs-5 fw-bold">Looking for a match...</text>
-                    <text class="text-white fs-5 fw-bold"><span id="participant-count">1</span> / 4</text>`
+                    ${
+                      matchType !== "Single Play"
+                        ? `<text class="text-white fs-5 fw-bold">
+                        <span id="participant-count">1</span>
+                        / ${matchType === "1 vs 1" ? "2" : "4"}
+                      </text>`
+                        : ""
+                    }`
                   : ""
               }
             `
@@ -86,8 +133,16 @@ export default class MatchContainer extends Component {
   }
 
   mounted() {
-    const { matchType, isChosen, isFindingMatch, isMatchFound, isJoined } =
+    const { isChosen, isFindingMatch, isMatchFound, isJoined, isPenalty } =
       this.state;
+
+    if (isPenalty) {
+      this.startPenaltyCountdown(
+        this.state.waitTime,
+        this.$target.querySelector("#wait-counter")
+      );
+      return;
+    }
 
     const matchTypeDropdown = new MatchTypeDropdown(
       this.$target.querySelector("#match-type-dropdown"),
@@ -99,7 +154,7 @@ export default class MatchContainer extends Component {
     );
     matchTypeDropdown.render();
 
-    if (isChosen) {
+    if (isChosen && !isMatchFound) {
       const findMatchButton = new Button(
         this.$target.querySelector("#find-match-btn-holder"),
         {
@@ -140,5 +195,32 @@ export default class MatchContainer extends Component {
       }
     );
     bouncingBallOnRacket.render();
+  }
+
+  initSetState() {
+    this.setState({
+      matchType: "Choose Match Type",
+      isChosen: false,
+      isFindingMatch: false,
+      isMatchFound: false,
+      isJoined: false,
+      matchSessionId: "",
+      isPenalty: false,
+    });
+  }
+
+  startPenaltyCountdown(waitTime, counterElement) {
+    let countdown = Math.floor(waitTime / 1000);
+    const $counter = counterElement;
+
+    const intervalId = setInterval(() => {
+      $counter.textContent = countdown;
+      countdown -= 1;
+
+      if (countdown < 0) {
+        clearInterval(intervalId);
+        this.initSetState();
+      }
+    }, 1000);
   }
 }

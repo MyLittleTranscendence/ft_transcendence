@@ -1,4 +1,4 @@
-import fetchSignIn from "../api/auth/fetchSignIn.js";
+import fetchSignIn from "../../api/auth/fetchSignIn.js";
 
 const signInHandler = async (event, $query) => {
   event.preventDefault();

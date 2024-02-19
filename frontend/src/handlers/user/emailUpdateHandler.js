@@ -1,6 +1,6 @@
-import { myInfoStore } from "../store/initialStates.js";
-import fetchAPI from "../utils/fetchAPI.js";
-import showToast from "../utils/showToast.js";
+import { myInfoStore } from "../../store/initialStates.js";
+import fetchAPI from "../../utils/fetchAPI.js";
+import showToast from "../../utils/showToast.js";
 
 const emailUpdateHandler = (inputEmail, defaultValue, setIsEditingFalse) => {
   if (inputEmail === "") {
