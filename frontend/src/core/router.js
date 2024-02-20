@@ -27,7 +27,7 @@ const initRouter = () => {
             `/?set-nickname=true&user_id=${userId}`
           );
           createComponent = routesMemo["/set-nickname"];
-        } else if (!isNewOAuthUser === "false") {
+        } else if (isNewOAuthUser === "false") {
           window.history.replaceState(
             null,
             "",
