@@ -1,3 +1,4 @@
+import fetchFriends from "./api/user/fetchFriends.js";
 import fetchMyInfo from "./api/user/fetchMyInfo.js";
 import Component from "./core/Component.js";
 import getRouter from "./core/router.js";
@@ -23,6 +24,7 @@ export default class App extends Component {
       fetchMyInfo()
         .then(() => {
           localStorage.setItem("login", "true");
+          fetchFriends();
           if (
             ["/start", "/sign-in", "/sign-up", "/mfa"].includes(currentPath)
           ) {
