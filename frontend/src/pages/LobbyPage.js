@@ -7,6 +7,7 @@ import fetchMyInfo from "../api/user/fetchMyInfo.js";
 import showToast from "../utils/showToast.js";
 import getRouter from "../core/router.js";
 import { chatSocket, gameSocket } from "../socket/socketManager.js";
+import fetchFriends from "../api/user/fetchFriends.js";
 
 export default class LobbyPage extends Component {
   template() {
@@ -90,6 +91,7 @@ export default class LobbyPage extends Component {
           localStorage.setItem("login", "true");
           showToast(`Welcome, ${data.nickname}!`);
           window.history.replaceState(null, "", "/");
+          fetchFriends();
           chatSocket();
           gameSocket();
         })
