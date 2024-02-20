@@ -1,15 +1,30 @@
 import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 import Overview from "./Overview.js";
-import { myInfoStore } from "../../store/initialStates.js";
+import { friendListStore, myInfoStore } from "../../store/initialStates.js";
 import imageUpdateHandler from "../../handlers/user/imageUpdateHandler.js";
 import Input from "../UI/Input/Input.js";
 import nicknameUpdateHandler from "../../handlers/user/nicknameUpdateHandler.js";
+import fetchUserInfo from "../../api/user/fetchUserInfo.js";
+import Button from "../UI/Button/Button.js";
+import addFriendHandler from "../../handlers/user/addFriendHandler.js";
+import deleteFriendHandler from "../../handlers/user/deleteFriendHandler.js";
 
 export default class Profile extends Component {
-  setup() {
-    const myInfo = myInfoStore.getState();
+  async setup() {
+    this.state = {
+      userInfo: {
+        nickname: "",
+        userId: 0,
+        profileImage: "asset/default.png",
+        wins: 0,
+        losses: 0,
+      },
+      isEditingNickname: false,
+    };
+
     if (this.props.isMe) {
+      const myInfo = myInfoStore.getState();
       this.state = {
         userInfo: myInfo,
         isEditingNickname: false,
@@ -17,23 +32,35 @@ export default class Profile extends Component {
       const unsubscribe = myInfoStore.subscribe(this);
       this.removeObservers.push(unsubscribe);
     } else {
-      // fetch user
+      const userInfo = await fetchUserInfo(this.props.userId);
+      this.setState({ userInfo });
     }
+
+    const unsubscribe = friendListStore.subscribe(this);
+    this.removeObservers.push(unsubscribe);
   }
 
   setEvent() {
+    const { userId } = this.props;
     if (this.props.isMe) {
       this.addEvent("click", "#profile-image-content", () =>
-        imageUpdateHandler(this.state.userInfo.userId)
+        imageUpdateHandler(userId)
       );
       this.addEvent("click", "#nickname-edit-icon", () => {
         this.setState({ isEditingNickname: true });
       });
       this.addEvent("click", "#nickname-edit-done-icon", () => {
         const $input = this.$target.querySelector("#nickname-edit-input");
-        nicknameUpdateHandler(this.state.userInfo.userId, $input, (isEditing) =>
+        nicknameUpdateHandler(userId, $input, (isEditing) =>
           this.setState({ isEditingNickname: isEditing })
         );
+      });
+    } else {
+      this.addEvent("click", "#add-friend-btn", () => {
+        addFriendHandler(userId);
+      });
+      this.addEvent("click", "#delete-friend-btn", () => {
+        deleteFriendHandler(userId);
       });
     }
   }
@@ -55,10 +82,10 @@ export default class Profile extends Component {
           ${isMe ? `style="cursor: pointer;"` : ""}
         ></div>
         <div class="d-flex align-items-center position-relative">
+          ${!isEditingNickname ? `<text class="text-warning fs-5 fw-bold">${nickname}</text>` : ""}
           ${
-            isMe && !isEditingNickname
-              ? `<text class="text-warning fs-5 fw-bold">${nickname}</text>
-                <svg id="nickname-edit-icon" class="position-absolute" style="right: -1.5rem; cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-pencil-square" viewBox="0 0 16 16">
+            isMe
+              ? `<svg id="nickname-edit-icon" class="position-absolute" style="right: -1.5rem; cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-pencil-square" viewBox="0 0 16 16">
                   <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                   <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
                 </svg>`
@@ -74,6 +101,7 @@ export default class Profile extends Component {
           }
         </div>
         <br>
+        ${!isMe && friendListStore.getState().isFetched ? `<div id="add-or-delete-friend-btn-holder" class="mb-3"></div>` : ""}
         <div id="overview-content"></div>
       </div>
     `;
@@ -99,6 +127,24 @@ export default class Profile extends Component {
         { id: "nickname-edit-input", type: "text", value: myInfo.nickname }
       );
       nicknameInput.render();
+    }
+
+    const { friends, isFetched } = friendListStore.getState();
+
+    if (!isMe && isFetched) {
+      const isFriend = !!friends.find(
+        (friend) => friend.userId === this.state.userInfo.userId
+      );
+      const addOrDeleteFriendButton = new Button(
+        this.$target.querySelector("#add-or-delete-friend-btn-holder"),
+        {
+          id: isFriend ? "delete-friend-btn" : "add-friend-btn",
+          content: isFriend ? "Delete from friends" : "Add to friends",
+          small: true,
+          className: isFriend ? "cancle-button" : "",
+        }
+      );
+      addOrDeleteFriendButton.render();
     }
 
     const overview = new Overview(

@@ -10,7 +10,8 @@ export default class PongGamePage extends Component {
   async setup() {
     this.state = { leftUser: null, rightUser: null };
 
-    gameInfoStore.subscribe(this);
+    const unsubscribe = gameInfoStore.subscribe(this);
+    this.removeObservers.push(unsubscribe);
 
     const gameInfo = gameInfoStore.getState();
 

@@ -141,8 +141,8 @@ export default class SideBar extends Component {
       const { target } = event;
       if (target.classList.contains("dropdown-item")) {
         const action = target.textContent;
-        const userId = target.closest(".dropdown-menu").dataset.userId;
-        const subId = target.closest(".dropdown-menu").dataset.subId;
+        const { userId } = target.closest(".dropdown-menu").dataset;
+        const { subId } = target.closest(".dropdown-menu").dataset;
 
         switch (action) {
           case "DM":

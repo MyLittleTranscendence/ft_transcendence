@@ -14,6 +14,8 @@ const fetchMyInfo = async () => {
     email: data.email,
     mfaEnable: data.mfa_enable,
   });
+
+  return data;
 };
 
 export default fetchMyInfo;

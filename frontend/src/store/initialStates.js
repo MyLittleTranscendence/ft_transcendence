@@ -28,4 +28,6 @@ const gameInfoStore = createStore({
 
 const gameStatusStore = createStore({ isInGame: false });
 
-export { myInfoStore, gameInfoStore, gameStatusStore };
+const friendListStore = createStore({ friends: [], isFetched: false });
+
+export { myInfoStore, gameInfoStore, gameStatusStore, friendListStore };
