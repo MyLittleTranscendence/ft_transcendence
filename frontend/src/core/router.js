@@ -40,7 +40,14 @@ const initRouter = () => {
         currentComponent.unmount();
       }
 
-      if (createComponent && path !== "/mfa" && path !== "/set-nickname") {
+      if (
+        createComponent &&
+        path !== "/mfa" &&
+        path !== "/set-nickname" &&
+        path !== "/game" &&
+        path !== "/pvp-ready" &&
+        path !== "/tournament-ready"
+      ) {
         currentComponent = createComponent($app);
         currentComponent.render();
       } else {
@@ -67,10 +74,21 @@ const initRouter = () => {
       }
     };
 
+    const navigateWithoutPushState = (path) => {
+      const createComponent = routesMemo[path];
+      if (path) {
+        if (currentComponent) {
+          currentComponent.unmount();
+        }
+        currentComponent = createComponent(document.getElementById("app"));
+        currentComponent.render();
+      }
+    };
+
     window.addEventListener("popstate", handleRouteChange);
     window.addEventListener("click", handleLinkClick);
 
-    return { navigate, handleRouteChange };
+    return { navigate, handleRouteChange, navigateWithoutPushState };
   };
 
   return (routes) => {
