@@ -1,3 +1,5 @@
+import json
+
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth.models import AnonymousUser
 
@@ -9,6 +11,7 @@ class DefaultConsumer(AsyncWebsocketConsumer):
     redis = None
     nickname = None
     profile_image = None
+    LOGOUT_MESSAGE = "user_logout"
 
     async def connect(self):
         if isinstance(self.scope['user'], AnonymousUser):
@@ -50,3 +53,16 @@ class DefaultConsumer(AsyncWebsocketConsumer):
         self.nickname = event["nickname"]
         self.profile_image = event["profile_image"]
         await self.set_user_info()
+
+    async def user_logout(self, event):
+        """
+        disconnect 및 로그아웃 메시지 전송
+        """
+        user_id = event["user_id"]
+        await self.send(text_data=json.dumps({
+            "type": self.LOGOUT_MESSAGE,
+        }))
+        await self.close(code=4001)
+
+
+

@@ -10,13 +10,29 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+import user
 from backend import settings
 from backend.checkers import serializer_valid_check
+from backend.signals import logout_signal
 from backend.utils import validate_serializer, set_cookie
 from custom_auth.oauth_42_constant import Oauth42Constant
 from custom_auth.serializers import Oauth42UserPostSerializer, CustomTokenObtainPairSerializer, \
     MFATokenGenerateSerializer, TokenResponseSerializer, CodeResponseSerializer
 from custom_auth.services import EmailService, Oauth42Service
+
+
+class Logout(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        """
+        로그아웃을 위해 소켓 및 인증 토큰 정리를 수행
+        """
+        response = Response()
+        response.set_cookie('access_token', value='', max_age=0)
+        user = request.user
+        logout_signal.send(user=user)
+        return response
 
 
 class Login42(APIView):

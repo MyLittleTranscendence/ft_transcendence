@@ -422,6 +422,22 @@ class UpdateQueue(APIView):
         return Response({"message": "Success"})
 
 
+class GameLogout(APIView):
+    @swagger_auto_schema(
+        operation_description="ws://localhost:8000/ws/game/ \n"
+                              "게임 소켓 로그아웃 알림",
+        responses={
+            200: openapi.Response('수신할 데이터', schema=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['user_logout']),
+                }
+            )),
+        })
+    def get(self, request, *args, **kwargs):
+        return Response({"message": "Success"})
+
+
 class GameListView(ListAPIView):
     serializer_class = GameListSerializer
     permission_classes = [IsAuthenticated]
