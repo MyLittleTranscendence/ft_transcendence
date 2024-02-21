@@ -5,10 +5,11 @@ appendCSSLink("src/components/UI/Link/Link.css");
 
 export default class Link extends Component {
   template() {
-    const { href, small, content, className, attributes } = this.props;
+    const { id, href, small, content, className, attributes } = this.props;
 
     return `
       <a
+        ${id ? `id=${id}` : ""}
         href="${href}"
         class="
           btn rounded-pill link
