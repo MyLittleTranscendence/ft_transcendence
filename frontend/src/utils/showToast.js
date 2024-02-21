@@ -1,4 +1,4 @@
-import Toast from "../components/Toast/Toast.js";
+import Toast from "../components/UI/Toast/Toast.js";
 
 const $toastRoot = document.getElementById("toast-container");
 
