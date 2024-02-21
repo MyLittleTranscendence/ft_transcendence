@@ -6,7 +6,7 @@ from django.db import IntegrityError
 
 def exception_handler(exc, context):
     response = drf_exception_handler(exc, context)
-    if response.status_code == 401:
+    if response is not None and response.status_code == 401:
         response.set_cookie('access_token', value='', max_age=0)
         return response
     if response is None:
