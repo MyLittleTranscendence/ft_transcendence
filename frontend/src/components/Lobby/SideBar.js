@@ -2,41 +2,7 @@ import Component from "../../core/Component.js";
 import FriendsIcon from "../UI/Icon/FriendsIcon.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 import { myInfoStore } from "../../store/initialStates.js";
-import FriendsList from "../Friend/FriendsList.js";
-import fetchAPI from "../../utils/fetchAPI.js";
-import showToast from "../../utils/showToast.js";
-
-function sendMessage(userId) {
-  console.log(`Sending message to ${userId}`);
-  // 메시지 보내기 로직 구현
-}
-
-function requestPvP(userId) {
-  console.log(`Requesting 1 vs 1 game with ${userId}`);
-  // 게임 요청 로직 구현
-}
-
-function blockFriend(userId, friendId) {
-  console.log(`Blocking ${userId}`);
-  fetchAPI
-    .post(`/users/${userId}/blocks`)
-    .then(() => showToast(`Block Success`))
-    .catch(() => showToast("error fetching block friend"));
-  fetchAPI
-    .delete(`/users/${myInfoStore.getState().id}/friends/${friendId}`)
-    .catch(() => showToast("error fetching delete friend"));
-}
-
-function unblockUser(userId, blockId) {
-  console.log(`Unblocking ${userId}`);
-  fetchAPI
-    .delete(`/users/${userId}/blocks/${blockId}`)
-    .then(() => showToast(`Unblock Success`))
-    .catch(() => showToast("error fetching unblock friend"));
-  fetchAPI
-    .post(`/users/${userId}/friends`)
-    .catch(() => showToast("error fetching delete friend"));
-}
+import getFriendsList from "../Friend/FriendsList.js";
 
 export default class SideBar extends Component {
   setup() {
@@ -51,42 +17,31 @@ export default class SideBar extends Component {
         href="/profile?user_id=${myInfoStore.getState().userId}"
         data-link
       ></a>
-      <div
-        id="friends-icon-holder"
-        type="button"
+      <a
+        tabindex="0"
+        data-bs-toggle="popover"
+        id="friends-list-trigger"
         class="
           position-relative
           d-flex justify-content-center
         "
-        data-bs-toggle="modal"
-        data-bs-target="#friends-list-modal"
       >
-      </div>
-      <div id="friends-list-modal" class="modal fade">
+      </a>
+      <div
+        class="modal fade"
+        id="dm-modal"
+        tabindex="-1"
+        aria-labelledby="dm-modal-label"
+        aria-hidden="true"
+      >
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title">Friends</h4>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              <h5 class="modal-title" id="dm-modal-label">DM</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-              <div id="friends-list-holder" class="modal-body"></div>
-              <div class="modal-footer">
-                <button class="btn" data-bs-target="#block-list-modal" data-bs-toggle="modal">Block</button>
-              </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="block-list-modal" class="modal fade">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">Block</h4>
-              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div id="block-list-holder" class="modal-body"></div>
-            <div class="modal-footer">
-              <button class="btn" data-bs-target="#friends-list-modal" data-bs-toggle="modal">Back</button>
+            <div class="modal-body">
+              Chatting comming soon!
             </div>
           </div>
         </div>
@@ -94,7 +49,18 @@ export default class SideBar extends Component {
     `;
   }
 
+  setEvent() {}
+
   mounted() {
+    const popover = new bootstrap.Popover(
+      this.$target.querySelector(`[data-bs-toggle="popover"]`),
+      {
+        html: true,
+        title: "Friends",
+        content: getFriendsList(),
+      }
+    );
+    const modal = new bootstrap.Modal(document.getElementById("dm-modal"));
     const myProfile = new ProfileImage(
       this.$target.querySelector("#sidebar-my-profile-link"),
       {
@@ -104,65 +70,10 @@ export default class SideBar extends Component {
       }
     );
     const friendsIcon = new FriendsIcon(
-      this.$target.querySelector("#friends-icon-holder"),
+      this.$target.querySelector("#friends-list-trigger"),
       { isOnline: true }
     );
     myProfile.render();
     friendsIcon.render();
-
-    const friendsListHolder = this.$target.querySelector(
-      "#friends-list-holder"
-    );
-    fetchAPI
-      .get("/friends")
-      .then((data) => {
-        const friendList = new FriendsList(friendsListHolder, {
-          block: false,
-          friends: data.results,
-        });
-        friendList.render();
-      })
-      .catch(() => showToast("error fetching friends list"));
-    const blockListHolder = this.$target.querySelector("#block-list-holder");
-    fetchAPI
-      .get("/blocks")
-      .then((data) => {
-        const blockList = new FriendsList(blockListHolder, {
-          block: true,
-          friends: data.results,
-        });
-        blockList.render();
-      })
-      .catch(() => showToast("error fetching block list"));
-  }
-
-  setEvent() {
-    document.addEventListener("click", (event) => {
-      const { target } = event;
-      if (target.classList.contains("dropdown-item")) {
-        const action = target.textContent;
-        const { userId } = target.closest(".dropdown-menu").dataset;
-        const { subId } = target.closest(".dropdown-menu").dataset;
-
-        switch (action) {
-          case "DM":
-            sendMessage(userId);
-            break;
-          case "Profile":
-            break;
-          case "1 vs 1":
-            requestPvP(userId);
-            break;
-          case "Block":
-            blockFriend(userId, subId);
-            break;
-          case "Unblock":
-            unblockUser(userId, subId);
-            break;
-          default:
-            console.log("Unknown action");
-        }
-      }
-    });
   }
 }

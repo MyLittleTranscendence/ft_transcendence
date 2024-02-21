@@ -1,18 +1,32 @@
-import Component from "../../core/Component.js";
+document.addEventListener("click", (e) => {
+  if (e.target.matches("#friend-item")) console.log("here");
+});
 
-export default class FriendsList extends Component {
-  template() {
-    const { block, friends } = this.props;
+function getFriendsList() {
+  const friends = [
+    {
+      profile_image: "/asset/default.png",
+      nickname: "Friend1",
+      user_id: 1,
+      friend_id: 1,
+    },
+    {
+      profile_image: "/asset/default.png",
+      nickname: "Friend2",
+      user_id: 2,
+      friend_id: 2,
+    },
+  ];
 
-    if (friends.length === 0) {
-      return `
+  if (friends.length === 0) {
+    return `
         <div class="d-flex justify-content-center">
-          <h4 class="fw-bold g-light-grey">No ${block ? "blocked users" : "friends"}.</h4>
+          <h4 class="fw-bold g-light-grey">No friends.</h4>
         </div>
       `;
-    }
+  }
 
-    return `
+  return `
       <div
         class="list-group list-group-flush"
       >
@@ -23,6 +37,7 @@ export default class FriendsList extends Component {
               class="dropdown dropend"
             >
               <div
+                id="friend-item"
                 class="
                   list-group-item
                   list-group-item-action
@@ -50,8 +65,8 @@ export default class FriendsList extends Component {
                   <small class="g-light-grey">click here to send message</small>
                 </span>
               </div>
-              <ul class="dropdown-menu" data-user-id="${friend.user_id}" data-sub-id=${block ? `${friend.block_id}` : `${friend.friend_id}`}>
-                ${block ? "" : '<li><button class="dropdown-item">DM</button></li>'}
+              <ul class="dropdown-menu" data-user-id="${friend.user_id}">
+                <li><button class="dropdown-item">DM</button></li>
                 <li><a
                   href="/profile?user_id=${friend.user_id}"
                   class="dropdown-item"
@@ -60,9 +75,9 @@ export default class FriendsList extends Component {
                   >
                     Profile
                 </a></li>
-                ${block ? "" : '<li><button class="dropdown-item">1 vs 1</button></li>'}
+                <li><button class="dropdown-item">1 vs 1</button></li>
                 <li><hr class="dropdown-divider"></li>
-                ${block ? '<li><button class="dropdown-item text-primary">Unblock</button></li>' : '<li><button class="dropdown-item text-danger">Block</button></li>'}
+                <li><button class="dropdown-item text-danger">Block</button></li>
               </ul>
             </div>
           `
@@ -70,5 +85,6 @@ export default class FriendsList extends Component {
           .join("")}
       </div>
     `;
-  }
 }
+
+export default getFriendsList;
