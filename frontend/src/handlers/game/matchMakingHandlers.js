@@ -106,7 +106,7 @@ const getGameInfoHandler = (removeObservers) => {
   const { addSocketObserver } = gameSocket();
 
   const removeObserver = addSocketObserver("info_game", (message) => {
-    const { navigate } = getRouter();
+    const { navigateWithoutPushState } = getRouter();
 
     gameInfoStore.setState({
       barHeight: message.bar_height,
@@ -126,14 +126,14 @@ const getGameInfoHandler = (removeObservers) => {
     const { gameType, status } = gameInfoStore.getState();
     if (status === "before") {
       if (gameType === "multi_game") {
-        navigate("/pvp-ready");
+        navigateWithoutPushState("/pvp-ready");
       } else if (gameType === "tournament_game") {
-        navigate("/tournament-ready");
+        navigateWithoutPushState("/tournament-ready");
       } else if (gameType === "single_game") {
-        navigate("/game");
+        navigateWithoutPushState("/game");
       }
     } else if (status === "start") {
-      navigate("/game");
+      navigateWithoutPushState("/game");
     }
   });
 

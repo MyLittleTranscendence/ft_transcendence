@@ -39,9 +39,9 @@ export default class PvPReadyPage extends Component {
 
     const { addSocketObserver } = gameSocket();
     const removeObserver = addSocketObserver("wait_game", (message) => {
-      const { navigate } = getRouter();
-      if (message.time < 3) {
-        navigate("/game");
+      const { navigateWithoutPushState } = getRouter();
+      if (message.time < 4) {
+        navigateWithoutPushState("/game");
       }
     });
     this.removeObservers.push(removeObserver);
