@@ -7,14 +7,14 @@ from drf_yasg.views import get_schema_view
 from rest_framework import routers, permissions
 
 from block.views import BlockUserPost, BlockUserDelete, BlockUserListView
-from chat.views import TotalMessage, SingleMessage, LoginMessage
+from chat.views import TotalMessage, SingleMessage, LoginMessage, ChatLogout
 from custom_auth.views import Login42CallBack, Login42, CustomTokenObtainPairView, MFACodeGenerateView, \
-    MFATokenGenerateView, MFAEnableView, MFADisableView
+    MFATokenGenerateView, MFAEnableView, MFADisableView, Logout
 from friend.views import FriendPostView, FriendDeleteView, FriendListView
 from game.views import GameListView, SingleGameCreate, MoveBar, JoinMultiGameQueue, JoinTournamentGameQueue, \
     DeleteMultiGameQueue, DeleteTournamentGameQueue, ResponseAcceptQueue, InfoGame, UpdateGame, NextGame, WaitGame, \
     RequestAcceptQueue, MatchSuccess, MatchFail, PenaltyWait, TournamentBegin, RequestInvite, InviteImpossible, \
-    InviteUser, ResponseInvite, UpdateQueue
+    InviteUser, ResponseInvite, UpdateQueue, GameLogout
 from user import views
 from user.views import UserProfileUpdateView, MyProfileGetView
 
@@ -53,6 +53,7 @@ urlpatterns = [
     path('api/me/', MyProfileGetView.as_view(), name='my-profile-get'),
 
     # custom_auth
+    path('api/logout/', Logout.as_view(), name='logout'),
     path('api/login/oauth2/42api/', Login42.as_view(), name='oauth-login-42'),
     path('api/login/oauth2/code/42api/', Login42CallBack.as_view(), name='oauth-redirect-42'),
     path('api/2fa/code/', MFACodeGenerateView.as_view(), name='2fa-code-generate'),
@@ -74,6 +75,7 @@ urlpatterns = [
     path("api/socket/chat/single_message/", SingleMessage.as_view(), name="chat-single"),
     path("api/socket/chat/total_message/", TotalMessage.as_view(), name="chat-total"),
     path("api/socket/chat/login_message/", LoginMessage.as_view(), name="chat-login"),
+    path("api/socket/game/chat_logout/", ChatLogout.as_view(), name="chat_logout"),
 
     # game
     path('api/games/', GameListView.as_view(), name='game-list'),
@@ -101,6 +103,7 @@ urlpatterns = [
     path("api/socket/game/invite_user/", InviteUser.as_view(), name="invite_user"),
     path("api/socket/game/response_invite/", ResponseInvite.as_view(), name="response_invite"),
     path("api/socket/game/queue_update/", UpdateQueue.as_view(), name="queue_update"),
+    path("api/socket/game/game_logout/", GameLogout.as_view(), name="game_logout"),
 ]
 
 # urlpatterns += router.urls
