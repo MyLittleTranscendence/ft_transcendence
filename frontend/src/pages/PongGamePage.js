@@ -1,53 +1,27 @@
 import Component from "../core/Component.js";
 import ProfileImage from "../components/UI/Profile/ProfileImage.js";
-import GameCanvas from "../components/Game/GameCanvas.js";
+import PongGame from "../components/Game/PongGame.js";
 import NextMatchBox from "../components/Game/NextMatchBox.js";
 import fetchUserInfo from "../api/user/fetchUserInfo.js";
-import { gameInfoStore } from "../store/initialStates.js";
-import { gameSocket } from "../socket/socketManager.js";
+import { gameInfoStore, myInfoStore } from "../store/initialStates.js";
 
 export default class PongGamePage extends Component {
   async setup() {
     this.state = { leftUser: null, rightUser: null };
 
-    const unsubscribe = gameInfoStore.subscribe(this);
-    this.removeObservers.push(unsubscribe);
+    const { leftUserId, rightUserId } = gameInfoStore.getState();
 
-    const gameInfo = gameInfoStore.getState();
-
-    if (gameInfo.leftUserId !== 0 && gameInfo.rightUserId !== 0) {
-      const leftUser = await fetchUserInfo(gameInfo.leftUserId);
-      const rightUser = await fetchUserInfo(gameInfo.leftUserId);
+    if (leftUserId !== 0 && rightUserId !== 0) {
+      const leftUser = await fetchUserInfo(leftUserId);
+      const rightUser = await fetchUserInfo(rightUserId);
 
       this.setState({ leftUser, rightUser });
     }
   }
 
-  setEvent() {
-    const { addSocketObserver } = gameSocket();
-
-    const removeObserver = addSocketObserver("info_game", (message) => {
-      gameInfoStore.setState({
-        barHeight: message.bar_height,
-        barWidth: message.bar_width,
-        ballRadius: message.circle_radius,
-        gameType: message.game_type,
-        leftScore: message.left_score,
-        leftUserId: message.left_user_id,
-        rightScore: message.right_score,
-        rightUserId: message.right_user_id,
-        tableHeight: message.screen_height,
-        tableWidth: message.screen_width,
-        status: message.status,
-        winner: message.winner,
-      });
-    });
-
-    this.removeObservers.push(removeObserver);
-  }
-
   template() {
     const { leftUser, rightUser } = this.state;
+    const { userId: myId } = myInfoStore.getState();
 
     return `
       <div
@@ -56,25 +30,22 @@ export default class PongGamePage extends Component {
       >
         <div class="d-flex align-items-center position-relative">
           <div
-            id="match-countdown-and-score"
-            class="position-absolute fw-bold text-white fs-3 start-50 translate-middle-x"
-            style="top: -3rem;"
-          >
-            3
-          </div>
-          <div
             id="next-match-box-holder"
             class="position-absolute translate-middle-x"
             style="top: -7rem; right: -2.5rem;"
           ></div>
           <div class="d-flex flex-column align-items-center">
             <div id="player-2-img-holder"></div>
-            <div class="text-white fw-bold">${rightUser?.nickname}</div>
+            <div
+              class="${myId === leftUser?.userId ? "text-warning" : "text-white"} fw-bold"
+            >${leftUser?.nickname}</div>
           </div>
-          <div id="game-canvas-holder"></div>
+          <div id="pong-game-holder" class="position-relative"></div>
           <div class="d-flex flex-column align-items-center">
             <div id="player-1-img-holder"></div>
-            <div class="text-warning fw-bold">${leftUser?.nickname}</div>
+            <div 
+              class="${myId === rightUser?.userId ? "text-warning" : "text-white"} fw-bold"
+              >${rightUser?.nickname}</div>
           </div>
         </div>
         <div class="mt-5" style="width: 10rem">
@@ -85,8 +56,11 @@ export default class PongGamePage extends Component {
   }
 
   mounted() {
-    const gameCanvas = new GameCanvas(
-      this.$target.querySelector("#game-canvas-holder")
+    const pongTable = new PongGame(
+      this.$target.querySelector("#pong-game-holder"),
+      {
+        myId: myInfoStore.getState().userId,
+      }
     );
     const leftUserImage = new ProfileImage(
       this.$target.querySelector("#player-1-img-holder"),
@@ -96,7 +70,7 @@ export default class PongGamePage extends Component {
       this.$target.querySelector("#player-2-img-holder"),
       { imageSize: "image-sm", imageSrc: this.state.rightUser?.profileImage }
     );
-    gameCanvas.render();
+    pongTable.render();
     leftUserImage.render();
     rightUserImage.render();
 
