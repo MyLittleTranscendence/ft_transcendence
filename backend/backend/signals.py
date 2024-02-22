@@ -34,5 +34,6 @@ def handle_user_logout(sender, **kwargs):
         {
             "type": "user_logout",
             "user_id": user.id,
+            "message": "로그아웃 하였습니다."
         }
     )

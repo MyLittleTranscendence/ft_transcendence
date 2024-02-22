@@ -132,6 +132,7 @@ class ChatLogout(APIView):
                 type=openapi.TYPE_OBJECT,
                 properties={
                     'type': openapi.Schema(type=openapi.TYPE_STRING, description='메시지 유형', enum=['user_logout']),
+                    'message': openapi.Schema(type=openapi.TYPE_STRING, description='로그아웃 이유 메시지'),
                 }
             )),
         })
