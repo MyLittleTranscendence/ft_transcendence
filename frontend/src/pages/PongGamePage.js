@@ -6,17 +6,21 @@ import fetchUserInfo from "../api/user/fetchUserInfo.js";
 import { gameInfoStore, myInfoStore } from "../store/initialStates.js";
 
 export default class PongGamePage extends Component {
-  async setup() {
-    this.state = { leftUser: null, rightUser: null };
-
-    const { leftUserId, rightUserId } = gameInfoStore.getState();
-
-    if (leftUserId !== 0 && rightUserId !== 0) {
-      const leftUser = await fetchUserInfo(leftUserId);
-      const rightUser = await fetchUserInfo(rightUserId);
-
-      this.setState({ leftUser, rightUser });
-    }
+  setup() {
+    this.state = {
+      leftUser: null,
+      rightUser: null,
+      nextLeftUser: null,
+      nextRightUser: null,
+    };
+    const { leftUserId, rightUserId, nextLeftUserId, nextRightUserId } =
+      gameInfoStore.getState();
+    this.setPlayerInfo(
+      leftUserId,
+      rightUserId,
+      nextLeftUserId,
+      nextRightUserId
+    );
   }
 
   template() {
@@ -59,6 +63,18 @@ export default class PongGamePage extends Component {
     const pongTable = new PongGame(
       this.$target.querySelector("#pong-game-holder"),
       {
+        setPlayerInfo: (
+          leftUserId,
+          rightUserId,
+          nextLeftUserId,
+          nextRightUserId
+        ) =>
+          this.setPlayerInfo(
+            leftUserId,
+            rightUserId,
+            nextLeftUserId,
+            nextRightUserId
+          ),
         myId: myInfoStore.getState().userId,
       }
     );
@@ -74,12 +90,39 @@ export default class PongGamePage extends Component {
     leftUserImage.render();
     rightUserImage.render();
 
-    // if (this.props.nextMatch) {
-    //   const nextMatchBox = new NextMatchBox(
-    //     this.$target.querySelector("#next-match-box-holder"),
-    //     this.props.nextMatch
-    //   );
-    //   nextMatchBox.render();
-    // }
+    if (this.state.nextLeftUser || this.state.nextRightUser) {
+      const nextMatchBox = new NextMatchBox(
+        this.$target.querySelector("#next-match-box-holder"),
+        {
+          leftUser: this.state.nextLeftUser,
+          rightUser: this.state.nextRightUser,
+        }
+      );
+      nextMatchBox.render();
+    }
+  }
+
+  async setPlayerInfo(
+    leftUserId,
+    rightUserId,
+    nextLeftUserId,
+    nextRightUserId
+  ) {
+    if (leftUserId !== 0 && rightUserId !== 0) {
+      const leftUser = await fetchUserInfo(leftUserId);
+      const rightUser = await fetchUserInfo(rightUserId);
+
+      let nextLeftUser = null;
+      let nextRightUser = null;
+
+      if (nextLeftUserId && nextLeftUserId !== "NONE") {
+        nextLeftUser = await fetchUserInfo(nextLeftUserId);
+      }
+      if (nextRightUserId && nextRightUserId !== "NONE") {
+        nextRightUser = await fetchUserInfo(nextRightUserId);
+      }
+
+      this.setState({ leftUser, rightUser, nextLeftUser, nextRightUser });
+    }
   }
 }

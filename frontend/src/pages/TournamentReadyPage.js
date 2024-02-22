@@ -1,6 +1,8 @@
 import Component from "../core/Component.js";
 import PageContainerWithLogo from "../components/UI/Container/PageContainerWithLogo.js";
 import PlayerOverviews from "../components/Game/PlayerOverviews.js";
+import { tournamentBeginUserIdStore } from "../store/initialStates.js";
+import { waitGameHandler } from "../handlers/game/gameHandler.js";
 
 export default class TournamentReadyPage extends Component {
   template() {
@@ -17,19 +19,26 @@ export default class TournamentReadyPage extends Component {
   }
 
   mounted() {
+    waitGameHandler(this.removeObservers);
+
     const $content = this.$target.querySelector("#tournament-ready-content");
     const $overviewsContainer = $content.querySelector("#overviews-container");
     const pageContainer = new PageContainerWithLogo(this.$target, $content);
 
     pageContainer.render();
 
-    const { leftUser, rightUser, player3, player4 } = this.props;
+    const {
+      game1LeftUserId,
+      game1RightUserId,
+      game2LeftUserId,
+      game2RightUserId,
+    } = tournamentBeginUserIdStore.getState();
 
     const playerOverviews1 = new PlayerOverviews(
       $overviewsContainer.querySelector("#first-match-overview"),
       {
-        leftUser,
-        rightUser,
+        leftUserId: game1LeftUserId,
+        rightUserId: game1RightUserId,
         type: "tournament",
         matchOrder: 1,
       }
@@ -37,8 +46,8 @@ export default class TournamentReadyPage extends Component {
     const playerOverviews2 = new PlayerOverviews(
       $overviewsContainer.querySelector("#second-match-overview"),
       {
-        leftUser: player3,
-        rightUser: player4,
+        leftUserId: game2LeftUserId,
+        rightUserId: game2RightUserId,
         type: "tournament",
         matchOrder: 2,
       }

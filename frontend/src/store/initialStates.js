@@ -26,8 +26,21 @@ const gameInfoStore = createStore({
   winner: "NONE",
 });
 
+const tournamentBeginUserIdStore = createStore({
+  game1LeftUserId: 0,
+  game1RightUserId: 0,
+  game2LeftUserId: 0,
+  game2RightUserId: 0,
+});
+
 const gameStatusStore = createStore({ isInGame: false });
 
 const friendListStore = createStore({ friends: [], isFetched: false });
 
-export { myInfoStore, gameInfoStore, gameStatusStore, friendListStore };
+export {
+  myInfoStore,
+  gameInfoStore,
+  gameStatusStore,
+  friendListStore,
+  tournamentBeginUserIdStore,
+};

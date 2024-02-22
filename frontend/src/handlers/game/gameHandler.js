@@ -1,10 +1,31 @@
 import { gameSocket } from "../../socket/socketManager.js";
 import { gameInfoStore } from "../../store/initialStates.js";
+import getRouter from "../../core/router.js";
 
-const infoGameHandler = (removeObservers) => {
+const waitGameHandler = (removeObservers) => {
+  const { addSocketObserver } = gameSocket();
+  const removeObserver = addSocketObserver("wait_game", (message) => {
+    const { navigateWithoutPushState } = getRouter();
+    if (message.time <= 4) {
+      navigateWithoutPushState("/game");
+    }
+  });
+
+  removeObservers.push(removeObserver);
+};
+
+const infoGameHandler = (setPlayerInfo, removeObservers) => {
   const { addSocketObserver } = gameSocket();
 
   const removeObserver = addSocketObserver("info_game", (message) => {
+    if (message.status === "before") {
+      setPlayerInfo(
+        message.left_user_id,
+        message.right_user_id,
+        message.next_left_player,
+        message.next_right_player
+      );
+    }
     gameInfoStore.setState({
       barHeight: message.bar_height,
       barWidth: message.bar_width,
@@ -18,6 +39,8 @@ const infoGameHandler = (removeObservers) => {
       tableWidth: message.screen_width,
       status: message.status,
       winner: message.winner,
+      nextLeftUserId: message.next_left_player,
+      nextRightUserId: message.next_right_player,
     });
   });
 
@@ -145,6 +168,7 @@ const gameReadyCountdownHandler = ($element, removeObservers) => {
 };
 
 export {
+  waitGameHandler,
   infoGameHandler,
   updateGameHandler,
   gameKeyDownHandler,

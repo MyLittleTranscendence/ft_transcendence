@@ -1,6 +1,9 @@
 import { gameSocket } from "../../socket/socketManager.js";
 import showToast from "../../utils/showToast.js";
-import { gameInfoStore } from "../../store/initialStates.js";
+import {
+  gameInfoStore,
+  tournamentBeginUserIdStore,
+} from "../../store/initialStates.js";
 import getRouter from "../../core/router.js";
 
 const matchFindHandler = (matchType) => {
@@ -121,6 +124,8 @@ const getGameInfoHandler = (removeObservers) => {
       tableWidth: message.screen_width,
       status: message.status,
       winner: message.winner,
+      nextLeftUserId: message.next_left_player,
+      nextRightUserId: message.next_right_player,
     });
 
     const { gameType, status } = gameInfoStore.getState();
@@ -140,6 +145,20 @@ const getGameInfoHandler = (removeObservers) => {
   removeObservers.push(removeObserver);
 };
 
+const tournamentBeginHandler = (removeObservers) => {
+  const { addSocketObserver } = gameSocket();
+
+  const removeObserver = addSocketObserver("tournament_begin", (message) => {
+    tournamentBeginUserIdStore.setState({
+      game1LeftUserId: message.game1_left_user_id,
+      game1RightUserId: message.game1_right_user_id,
+      game2LeftUserId: message.game2_left_user_id,
+      game2RightUserId: message.game2_right_user_id,
+    });
+  });
+  removeObservers.push(removeObserver);
+};
+
 export {
   matchFindHandler,
   cancleMatchFindHandler,
@@ -151,4 +170,5 @@ export {
   matchSuccessHandler,
   createSingleGameHandler,
   getGameInfoHandler,
+  tournamentBeginHandler,
 };
