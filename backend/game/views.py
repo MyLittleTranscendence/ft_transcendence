@@ -181,6 +181,9 @@ class InfoGame(APIView):
                     'circle_radius': openapi.Schema(type=openapi.TYPE_INTEGER, description="공 반지름"),
                     'screen_height': openapi.Schema(type=openapi.TYPE_INTEGER, description="맵 높이"),
                     'screen_width': openapi.Schema(type=openapi.TYPE_INTEGER, description="맵 너비"),
+
+                    'next_left_player': openapi.Schema(type=openapi.TYPE_INTEGER, description="다음 게임 왼쪽 유저 pk"),
+                    'next_right_player': openapi.Schema(type=openapi.TYPE_INTEGER, description="다음 게임 오른쪽 유저 pk"),
                 }
             )),
         })
