@@ -13,7 +13,7 @@ export default class PongGame extends Component {
     const unsubscribe = gameInfoStore.subscribe(this);
     this.removeObservers.push(unsubscribe);
 
-    infoGameHandler(this.removeObservers);
+    infoGameHandler(this.props.setPlayerInfo, this.removeObservers);
     updateGameHandler(
       (message) => this.updateGame(message),
       this.removeObservers
