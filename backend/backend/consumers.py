@@ -17,6 +17,7 @@ class DefaultConsumer(AsyncWebsocketConsumer):
         if isinstance(self.scope['user'], AnonymousUser):
             await self.close(code=4001)
         else:
+            await self.handle_duplicate_login()
             await self.channel_layer.group_add(self.LOGIN_GROUP, self.channel_name)
             await self.channel_layer.group_add(f"{self.scope['user'].id}_global", self.channel_name)
             await self.accept()
@@ -46,6 +47,15 @@ class DefaultConsumer(AsyncWebsocketConsumer):
             "profile_image": self.profile_image,
         })
 
+    async def handle_duplicate_login(self):
+        await self.channel_layer.group_send(
+            f"{self.scope['user'].id}_global",
+            {
+                "type": "user_logout",
+                "user_id": self.scope['user'].id,
+                "message": "중복 로그인이 감지되어 로그아웃 하였습니다."
+            })
+
     async def user_updated(self, event):
         """
         유저 정보 변경 이벤트 핸들러
@@ -61,6 +71,7 @@ class DefaultConsumer(AsyncWebsocketConsumer):
         user_id = event["user_id"]
         await self.send(text_data=json.dumps({
             "type": self.LOGOUT_MESSAGE,
+            "message": event['message']
         }))
         await self.close(code=4001)
 
