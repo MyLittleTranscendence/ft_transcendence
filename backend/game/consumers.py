@@ -87,6 +87,8 @@ class GameConsumer(DefaultConsumer):
             "circle_radius": event["circle_radius"],
             "screen_height": event["screen_height"],
             "screen_width": event["screen_width"],
+            "next_left_player": event["next_left_player"],
+            "next_right_player": event["next_right_player"],
         }))
 
     async def wait_game(self, event):
