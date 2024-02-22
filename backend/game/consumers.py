@@ -10,6 +10,7 @@ from game.service import MatchService
 class GameConsumer(DefaultConsumer):
     match_service = None
     LOGIN_GROUP = "game_login_group"
+    CONSUMER_GROUP = ""
 
     async def connect(self):
         await super(GameConsumer, self).connect()
