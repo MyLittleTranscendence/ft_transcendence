@@ -35,4 +35,8 @@ zope.interface==6.1
 
 channels_redis
 aioredis
+
+pytest
+pytest-django
+pytest-asyncio
 blinker

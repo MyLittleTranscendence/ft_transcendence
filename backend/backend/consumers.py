@@ -49,7 +49,7 @@ class DefaultConsumer(AsyncWebsocketConsumer):
 
     async def handle_duplicate_login(self):
         await self.channel_layer.group_send(
-            f"{self.scope['user'].id}_global",
+            f"{self.scope['user'].id}{self.CONSUMER_GROUP}",
             {
                 "type": "user_logout",
                 "user_id": self.scope['user'].id,

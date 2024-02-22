@@ -9,7 +9,7 @@ from backend.redis import RedisConnection
 from game.models import Game
 
 
-class GameService:
+class MatchService:
     _instance = None
     _redis = None
     _channel_layer = None
@@ -242,14 +242,14 @@ class GameService:
         await asyncio.sleep(3)
         await self.handle_next_game_message(users_id[2])
         await self.handle_next_game_message(users_id[3])
-        game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.TOURNAMENT_GAME)
+        game_session = await self.new_game_session_logic(users_id, users_id[0], users_id[1], self.TOURNAMENT_GAME, users_id[2], users_id[3])
         game_info = await self.get_game_info(game_session)
         winner1 = game_info.get("winner")
         await self.save_game_result(game_info)
         await self.delete_game_session_logic(users_id, game_session)
 
         await self.handle_next_game_message(winner1)
-        game_session = await self.new_game_session_logic(users_id, users_id[2], users_id[3], self.TOURNAMENT_GAME)
+        game_session = await self.new_game_session_logic(users_id, users_id[2], users_id[3], self.TOURNAMENT_GAME, winner1)
         game_info = await self.get_game_info(game_session)
         winner2 = game_info.get("winner")
         await self.save_game_result(game_info)
@@ -437,12 +437,13 @@ class GameService:
 
 
     # GAME_LOGIC
-    async def new_game_session_logic(self, users_id, left_player, right_player, game_type):
+    async def new_game_session_logic(self, users_id, left_player, right_player, game_type,
+                                     next_left_player=None, next_right_player=None):
         """
         새로운 게임 세션을 생성
         """
         game_session = str(uuid.uuid4())
-        await self.set_game_info(left_player, right_player, game_type, game_session)
+        await self.set_game_info(left_player, right_player, game_type, game_session, next_left_player, next_right_player)
         for user_id in users_id:
             await self.set_user_game_session(user_id, game_session)
             await self.handle_info_message(user_id, game_session)
@@ -664,6 +665,8 @@ class GameService:
                 "bar_width": self.BAR_WIDTH,
                 "bar_height": self.BAR_HEIGHT,
                 "circle_radius": self.CIRCLE_RADIUS,
+                "next_left_player": game_info.get("next_left_player"),
+                "next_right_player": game_info.get("next_right_player"),
             })
 
     async def handle_wait_message(self, user_id, time):
@@ -716,7 +719,7 @@ class GameService:
         """
         await self._redis.delete(f"game_info:{game_session}")
 
-    async def set_game_info(self, left_user_id, right_user_id, game_type, game_session):
+    async def set_game_info(self, left_user_id, right_user_id, game_type, game_session, next_left_player, next_right_player):
         """
         게임 세션 정보를 생성
         """
@@ -729,5 +732,7 @@ class GameService:
             "left_score": "0",
             "right_score": "0",
             "status": self.BEFORE,
-            "winner": "NONE"
+            "winner": "NONE",
+            "next_left_player": str(next_left_player) if next_left_player is not None else "NONE",
+            "next_right_player": str(next_right_player) if next_right_player is not None else "NONE",
         })

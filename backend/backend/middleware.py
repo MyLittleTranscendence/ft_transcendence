@@ -11,6 +11,9 @@ def get_user_from_jwt(token):
     try:
         decoded_data = AccessToken(token)
         user_id = decoded_data['user_id']
+        mfa_require = decoded_data['mfa_require']
+        if mfa_require:
+            return AnonymousUser()
         return get_user_model().objects.get(id=user_id)
     except (InvalidToken, TokenError, get_user_model().DoesNotExist):
         return AnonymousUser()
@@ -28,7 +31,6 @@ class JWTAuthMiddleware:
         self.inner = inner
 
     async def __call__(self, scope, receive, send):
-
         cookies = get_cookie_header(scope).split(";")
         cookies = list(map(lambda cookie: cookie.strip(), cookies))
         access_tokens = [cookie.split('=', 1)[1] for cookie in cookies if cookie.startswith('access_token=')]

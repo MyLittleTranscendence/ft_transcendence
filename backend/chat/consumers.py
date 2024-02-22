@@ -16,6 +16,7 @@ class ChatConsumer(DefaultConsumer):
     SINGLE_MESSAGE = "single_message"
     LOGIN_MESSAGE = "login_message"
     LOGIN_GROUP = "chat_login_group"
+    CONSUMER_GROUP = "_chat"
 
     async def connect(self):
         await super(ChatConsumer, self).connect()
