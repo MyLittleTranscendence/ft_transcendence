@@ -124,6 +124,11 @@
            style="padding: 10px; margin-right: 10px;">
     <input id="invite-user-submit" type="button" value="Invite User">
 </div>
+<div class="cheat-container" style="margin-bottom: 20px;">
+    <input id="cheat-input" type="text" placeholder="Enter command"
+           style="padding: 10px; margin-right: 10px;">
+    <input id="cheat-submit" type="button" value="submit">
+</div>
 <!-- 게임 상태를 그릴 캔버스 추가 -->
 
 <script>
@@ -189,8 +194,8 @@
 
             // 탁구채 그리기
             ctx.fillStyle = 'black';
-            ctx.fillRect(gameData.bar_x, gameData.bar_y, 18, 100);
-            ctx.fillRect(gameData.bar_right_x, gameData.bar_right_y, 18, 100);
+            ctx.fillRect(gameData.bar_x, gameData.bar_y, 18, gameData.left_bar_height);
+            ctx.fillRect(gameData.bar_right_x, gameData.bar_right_y, 18, gameData.right_bar_height);
 
             // 탁구공 그리기
             ctx.beginPath();
@@ -308,6 +313,20 @@
             alert('Please enter a user ID to invite.');
         }
     };
+
+    document.querySelector('#cheat-submit').onclick = function (e) {
+        const cheat = document.querySelector('#cheat-input').value;
+        if (cheat) { // 사용자 ID가 입력되었는지 확인
+            gameSocket.send(JSON.stringify({
+                'type': 'move_bar',
+                'command': cheat,
+            }));
+            document.querySelector('#cheat-input').value = ''; // 입력 상자 초기화
+        } else {
+            alert('Please enter a user ID to invite.');
+        }
+    };
+
 
 </script>
 </body>
