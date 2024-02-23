@@ -32,6 +32,8 @@ services:
       - "3000:80"
     volumes:
       - ./frontend:/usr/share/nginx/html
+    depends_on:
+      - django
   redis:
     image: redis:7
     ports:
