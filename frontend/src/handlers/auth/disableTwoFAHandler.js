@@ -4,9 +4,9 @@ import showToast from "../../utils/showToast.js";
 
 const disableTwoFAHandler = () => {
   fetchAPI
-    .post("/2fa/disable")
+    .post("/2fa/disable/")
     .then(() => {
-      myInfoStore.setState({ mfa_enable: false });
+      myInfoStore.setState({ mfaEnable: false });
       showToast("2FA disabled successfully");
     })
     .catch((e) => {
