@@ -13,7 +13,7 @@ const imageUpdateHandler = (id) => {
     const formData = new FormData();
     formData.append("profile_image", file);
     fetchAPI
-      .put(`/users/${id}/profile-image`, formData)
+      .put(`/users/${id}/profile-image/`, formData)
       .then((data) => {
         myInfoStore.setState({ profileImage: data.profile_image });
         showToast("Image updated successfully");

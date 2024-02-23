@@ -14,7 +14,7 @@ const nicknameUpdateHandler = (userId, $input, setIsEditing) => {
   }
   if (nicknameInput.length >= 4) {
     fetchAPI
-      .patch(`/users/${userId}`, {
+      .patch(`/users/${userId}/`, {
         nickname: nicknameInput,
       })
       .then((data) => {

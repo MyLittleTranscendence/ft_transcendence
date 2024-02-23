@@ -1,7 +1,7 @@
-import Component from "../../core/Component.js";
-import appendCSSLink from "../../utils/appendCSSLink.js";
+import Component from "../../../core/Component.js";
+import appendCSSLink from "../../../utils/appendCSSLink.js";
 
-appendCSSLink("src/components/Toast/Toast.css");
+appendCSSLink("src/components/UI/Toast/Toast.css");
 
 export default class Toast extends Component {
   template() {

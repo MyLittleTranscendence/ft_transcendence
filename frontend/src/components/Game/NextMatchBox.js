@@ -12,28 +12,36 @@ export default class NextMatchBox extends Component {
       >
         <h6 class="text-white">Next Match</h6>
         <div class="d-flex align-items-center text-warning fw-bold">
-          <div id="next-player-1-holder"></div>
-          <div class="mx-2 text-white">${leftUser.nickname}</div>
-          vs
-          <div class="mx-2 text-white">${rightUser.nickname}</div>
-          <div id="next-player-2-holder"></div>
+          <div class="d-flex align-items-center justify-content-center">
+            <div id="next-player-1-holder"></div>
+            <div class="text-white ms-2">${leftUser ? leftUser.nickname : "TBD"}</div>
+          </div>
+          <div class="mx-2">vs</div>
+          <div class="d-flex align-items-center justify-content-center">
+            <div class="text-white me-2">${rightUser ? rightUser.nickname : "TBD"}</div>
+            <div id="next-player-2-holder"></div>
+          </div>
         </div>
       </div>
     `;
   }
 
   mounted() {
+    const { leftUser, rightUser } = this.props;
+
     const leftUserImage = new ProfileImage(
       this.$target.querySelector("#next-player-1-holder"),
       {
-        imageSrc: "asset/default.png",
+        imageSrc: leftUser ? leftUser.profileImage : "asset/question_mark.png",
         imageSize: "image-xs",
       }
     );
     const rightUserImage = new ProfileImage(
       this.$target.querySelector("#next-player-2-holder"),
       {
-        imageSrc: "asset/default.png",
+        imageSrc: rightUser
+          ? rightUser.profileImage
+          : "asset/question_mark.png",
         imageSize: "image-xs",
       }
     );

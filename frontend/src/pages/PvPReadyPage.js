@@ -2,8 +2,7 @@ import Component from "../core/Component.js";
 import PageContainerWithLogo from "../components/UI/Container/PageContainerWithLogo.js";
 import PlayerOverviews from "../components/Game/PlayerOverviews.js";
 import { gameInfoStore } from "../store/initialStates.js";
-import { gameSocket } from "../socket/socketManager.js";
-import getRouter from "../core/router.js";
+import { waitGameHandler } from "../handlers/game/gameHandler.js";
 
 export default class PvPReadyPage extends Component {
   setEvent() {}
@@ -18,6 +17,8 @@ export default class PvPReadyPage extends Component {
   }
 
   mounted() {
+    waitGameHandler(this.removeObservers);
+
     const pageContainer = new PageContainerWithLogo(
       this.$target,
       this.$target.querySelector("#pvp-ready-content")
@@ -36,14 +37,5 @@ export default class PvPReadyPage extends Component {
     );
 
     playerOverviews.render();
-
-    const { addSocketObserver } = gameSocket();
-    const removeObserver = addSocketObserver("wait_game", (message) => {
-      const { navigate } = getRouter();
-      if (message.time < 3) {
-        navigate("/game");
-      }
-    });
-    this.removeObservers.push(removeObserver);
   }
 }

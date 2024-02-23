@@ -23,11 +23,24 @@ const gameInfoStore = createStore({
   screenHeight: 600,
   screenWidth: 800,
   status: "before",
-  winner: "NONE",
+  winner: 0,
+});
+
+const tournamentBeginUserIdStore = createStore({
+  game1LeftUserId: 0,
+  game1RightUserId: 0,
+  game2LeftUserId: 0,
+  game2RightUserId: 0,
 });
 
 const gameStatusStore = createStore({ isInGame: false });
 
 const friendListStore = createStore({ friends: [], isFetched: false });
 
-export { myInfoStore, gameInfoStore, gameStatusStore, friendListStore };
+export {
+  myInfoStore,
+  gameInfoStore,
+  gameStatusStore,
+  friendListStore,
+  tournamentBeginUserIdStore,
+};

@@ -18,7 +18,7 @@ const emailUpdateHandler = (inputEmail, defaultValue, setIsEditingFalse) => {
   }
 
   fetchAPI
-    .patch(`/users/${myInfoStore.getState().id}`, { email: inputEmail })
+    .patch(`/users/${myInfoStore.getState().id}/`, { email: inputEmail })
     .then((data) => {
       myInfoStore.setState({ email: data.email });
       setIsEditingFalse();

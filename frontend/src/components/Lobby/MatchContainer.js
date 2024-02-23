@@ -15,6 +15,7 @@ import {
   matchSuccessHandler,
   createSingleGameHandler,
   getGameInfoHandler,
+  tournamentBeginHandler,
 } from "../../handlers/game/matchMakingHandlers.js";
 
 appendCSSLink("src/components/Lobby/TimeLeftBar.css");
@@ -67,6 +68,7 @@ export default class MatchContainer extends Component {
     penaltyWaitHandler((state) => this.setState(state), this.removeObservers);
     matchSuccessHandler(this.removeObservers);
     getGameInfoHandler(this.removeObservers);
+    tournamentBeginHandler(this.removeObservers);
   }
 
   template() {
