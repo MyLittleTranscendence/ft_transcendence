@@ -9,7 +9,7 @@ const fetchEnableTwoFA = (code, setIsEditingFalse) => {
     })
     .then(() => {
       setIsEditingFalse();
-      myInfoStore.setState({ mfa_enable: true });
+      myInfoStore.setState({ mfaEnable: true });
       showToast("2FA enabled successfully");
     })
     .catch(() => showToast("Failed to enable 2FA"));
