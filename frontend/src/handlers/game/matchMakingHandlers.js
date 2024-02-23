@@ -112,8 +112,9 @@ const getGameInfoHandler = (removeObservers) => {
     const { navigateWithoutPushState } = getRouter();
 
     gameInfoStore.setState({
-      barHeight: message.bar_height,
       barWidth: message.bar_width,
+      leftBarHeight: message.left_bar_height,
+      rightBarHeight: message.right_bar_height,
       ballRadius: message.circle_radius,
       gameType: message.game_type,
       leftScore: message.left_score,

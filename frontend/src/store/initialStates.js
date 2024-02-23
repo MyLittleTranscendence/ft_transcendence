@@ -23,7 +23,7 @@ const gameInfoStore = createStore({
   screenHeight: 600,
   screenWidth: 800,
   status: "before",
-  winner: "NONE",
+  winner: 0,
 });
 
 const tournamentBeginUserIdStore = createStore({

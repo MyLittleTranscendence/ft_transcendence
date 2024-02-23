@@ -115,10 +115,10 @@ export default class PongGamePage extends Component {
       let nextLeftUser = null;
       let nextRightUser = null;
 
-      if (nextLeftUserId && nextLeftUserId !== "NONE") {
+      if (nextLeftUserId && nextLeftUserId !== 0) {
         nextLeftUser = await fetchUserInfo(nextLeftUserId);
       }
-      if (nextRightUserId && nextRightUserId !== "NONE") {
+      if (nextRightUserId && nextRightUserId !== 0) {
         nextRightUser = await fetchUserInfo(nextRightUserId);
       }
 
