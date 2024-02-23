@@ -35,7 +35,12 @@ class MatchService:
     SCREEN_HEIGHT = 600
     BAR_WIDTH = 18
     BAR_HEIGHT = 100
+    BAR_CHEAT_HEIGHT = 400
     CIRCLE_RADIUS = 9
+    
+    # bar_size cheet
+    BAR_SIZE_CHEAT = ["sechung is handsome", "jincpark is handsome", "hyeonjun is handsome"]
+
 
     def __init__(self):
         raise RuntimeError("Call get_instance() instead")
@@ -484,8 +489,10 @@ class MatchService:
         else:
             if game_info.get("left_user_id") == str(user_id):
                 await self.update_game_info(game_session, "left_bar_mv", command)
+                await self.bar_size_cheat(game_session, "left_bar_height", command)
             elif game_info.get("right_user_id") == str(user_id):
                 await self.update_game_info(game_session, "right_bar_mv", command)
+                await self.bar_size_cheat(game_session, "right_bar_height", command)
 
     async def game_start(self, users_id: list, game_session):
         """
@@ -562,26 +569,28 @@ class MatchService:
                 bar_move = 0
             await self.update_game_info(game_session, "right_bar_mv", "NONE")
             bar_right_y += bar_move
+            left_bar_height = int(game_info.get("left_bar_height"))
+            right_bar_height = int(game_info.get("right_bar_height"))
 
-            if bar_y >= screen_height - bar_height:
-                bar_y = screen_height - bar_height
+            if bar_y >= screen_height - left_bar_height:
+                bar_y = screen_height - left_bar_height
             elif bar_y <= 0:
                 bar_y = 0
 
-            if bar_right_y >= screen_height - bar_height:
-                bar_right_y = screen_height - bar_height
+            if bar_right_y >= screen_height - right_bar_height:
+                bar_right_y = screen_height - right_bar_height
             elif bar_right_y <= 0:
                 bar_right_y = 0
 
             if circle_x < bar_width:
-                if bar_y - circle_radius <= circle_y <= bar_y + bar_height + circle_radius:
+                if bar_y - circle_radius <= circle_y <= bar_y + left_bar_height + circle_radius:
                     circle_x = bar_width
                     speed_x = -speed_x
                     speed_x *= 1.1
                     speed_y *= 1.1
 
             if circle_x + circle_radius >= bar_right_x:
-                if bar_right_y - circle_radius <= circle_y <= bar_right_y + bar_height + circle_radius:
+                if bar_right_y - circle_radius <= circle_y <= bar_right_y + right_bar_height + circle_radius:
                     circle_x = bar_right_x - circle_diameter
                     speed_x = -speed_x
                     speed_x *= 1.1
@@ -617,7 +626,8 @@ class MatchService:
                 circle_y = screen_height - circle_diameter
 
             for user_id in users_id:
-                await self.handle_update_message(user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y)
+                await self.handle_update_message(user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y,
+                                                 left_bar_height, right_bar_height)
             start_time = current_time
             await asyncio.sleep(1 / 60)  # 1/60초 대기
 
@@ -630,7 +640,8 @@ class MatchService:
 
 
     #HANDLE GAME
-    async def handle_update_message(self, user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y):
+    async def handle_update_message(self, user_id, bar_x, bar_y, bar_right_x, bar_right_y, circle_x, circle_y,
+                                    left_bar_height, right_bar_height):
         """
         게임 실시간 위치 정보 파싱 및 update.game 이벤트 핸들러 호출
         """
@@ -643,6 +654,8 @@ class MatchService:
                 "bar_right_y": bar_right_y,
                 "circle_x": circle_x,
                 "circle_y": circle_y,
+                "left_bar_height": left_bar_height,
+                "right_bar_height": right_bar_height,
             })
 
     async def handle_info_message(self, user_id, game_session):
@@ -663,7 +676,9 @@ class MatchService:
                 "screen_width": self.SCREEN_WIDTH,
                 "screen_height": self.SCREEN_HEIGHT,
                 "bar_width": self.BAR_WIDTH,
-                "bar_height": self.BAR_HEIGHT,
+                # "bar_height": self.BAR_HEIGHT,
+                "left_bar_height": game_info.get("left_bar_height"),
+                "right_bar_height": game_info.get("right_bar_height"),
                 "circle_radius": self.CIRCLE_RADIUS,
                 "next_left_player": int(game_info.get("next_left_player")),
                 "next_right_player": int(game_info.get("next_right_player")),
@@ -680,9 +695,17 @@ class MatchService:
             })
 
 
-
-
     # GAME REDIS
+    async def bar_size_cheat(self, game_session, key, command):
+        if command in self.BAR_SIZE_CHEAT:
+            asyncio.create_task(self.bar_size_cheat_logic(game_session, key))
+
+    async def bar_size_cheat_logic(self, game_session, key):
+        await self.update_game_info(game_session, key, self.BAR_CHEAT_HEIGHT)
+        await asyncio.sleep(7)
+        await self.update_game_info(game_session, key, self.BAR_HEIGHT)
+
+
     async def set_user_game_session(self, user_id, game_session):
         """
         게임 세션 키를 생성
@@ -735,4 +758,8 @@ class MatchService:
             "winner": "0",
             "next_left_player": str(next_left_player) if next_left_player is not None else "0",
             "next_right_player": str(next_right_player) if next_right_player is not None else "0",
+            "bar_width": self.BAR_WIDTH,
+            # "bar_height": self.BAR_HEIGHT,
+            "left_bar_height": self.BAR_HEIGHT,
+            "right_bar_height": self.BAR_HEIGHT,
         })
