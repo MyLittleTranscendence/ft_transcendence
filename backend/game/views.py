@@ -177,7 +177,8 @@ class InfoGame(APIView):
                     'winner': openapi.Schema(type=openapi.TYPE_INTEGER,
                                              description="우승자 pk, 0 이면 존재하지 않는 것"),
                     'bar_width': openapi.Schema(type=openapi.TYPE_INTEGER, description="바 너비"),
-                    'bar_height': openapi.Schema(type=openapi.TYPE_INTEGER, description="바 높이"),
+                    'left_bar_height': openapi.Schema(type=openapi.TYPE_INTEGER, description="왼쪽 바 높이"),
+                    'right_bar_height': openapi.Schema(type=openapi.TYPE_INTEGER, description="오른쪽 바 높이"),
                     'circle_radius': openapi.Schema(type=openapi.TYPE_INTEGER, description="공 반지름"),
                     'screen_height': openapi.Schema(type=openapi.TYPE_INTEGER, description="맵 높이"),
                     'screen_width': openapi.Schema(type=openapi.TYPE_INTEGER, description="맵 너비"),
@@ -206,6 +207,8 @@ class UpdateGame(APIView):
                     'bar_right_y': openapi.Schema(type=openapi.TYPE_NUMBER, description="오른쪽 바 중앙 y 좌표"),
                     'circle_x': openapi.Schema(type=openapi.TYPE_NUMBER, description="공 중앙 x 좌표"),
                     'circle_y': openapi.Schema(type=openapi.TYPE_NUMBER, description="공 중앙 y 좌표"),
+                    'left_bar_height': openapi.Schema(type=openapi.TYPE_INTEGER, description="왼쪽 바 높이"),
+                    'right_bar_height': openapi.Schema(type=openapi.TYPE_INTEGER, description="오른쪽 바 높이"),
                 }
             )),
         })
