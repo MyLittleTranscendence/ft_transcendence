@@ -9,7 +9,7 @@ export default class TournamentGameResultModal extends Modal {
     if (this.props.isFinal) {
       const { winner } = this.props;
 
-      this.$modalContent.textContent = "The Winner of The Tournament";
+      this.$modalContent.textContent = "Winner of The Tournament";
 
       const winnerInfo = await fetchUserInfo(winner);
 
