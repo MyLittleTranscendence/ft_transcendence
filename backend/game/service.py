@@ -659,14 +659,14 @@ class MatchService:
                 "left_score": game_info.get("left_score"),
                 "right_score": game_info.get("right_score"),
                 "status": game_info.get("status"),
-                "winner": game_info.get("winner"),
+                "winner": int(game_info.get("winner")),
                 "screen_width": self.SCREEN_WIDTH,
                 "screen_height": self.SCREEN_HEIGHT,
                 "bar_width": self.BAR_WIDTH,
                 "bar_height": self.BAR_HEIGHT,
                 "circle_radius": self.CIRCLE_RADIUS,
-                "next_left_player": game_info.get("next_left_player"),
-                "next_right_player": game_info.get("next_right_player"),
+                "next_left_player": int(game_info.get("next_left_player")),
+                "next_right_player": int(game_info.get("next_right_player")),
             })
 
     async def handle_wait_message(self, user_id, time):
@@ -732,7 +732,7 @@ class MatchService:
             "left_score": "0",
             "right_score": "0",
             "status": self.BEFORE,
-            "winner": "NONE",
-            "next_left_player": str(next_left_player) if next_left_player is not None else "NONE",
-            "next_right_player": str(next_right_player) if next_right_player is not None else "NONE",
+            "winner": "0",
+            "next_left_player": str(next_left_player) if next_left_player is not None else "0",
+            "next_right_player": str(next_right_player) if next_right_player is not None else "0",
         })
