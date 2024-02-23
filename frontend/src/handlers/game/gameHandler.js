@@ -170,10 +170,17 @@ const gameReadyCountdownHandler = ($element, removeObservers) => {
   removeObservers.push(removeObserver);
 };
 
+const cliSendHandler = (command) => {
+  const { sendSocket } = gameSocket();
+
+  sendSocket("move_bar", { command });
+};
+
 export {
   waitGameHandler,
   infoGameHandler,
   updateGameHandler,
   gameKeyDownHandler,
   gameReadyCountdownHandler,
+  cliSendHandler,
 };

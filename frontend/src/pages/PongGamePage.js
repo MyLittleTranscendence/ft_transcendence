@@ -4,6 +4,9 @@ import PongGame from "../components/Game/PongGame.js";
 import NextMatchBox from "../components/Game/NextMatchBox.js";
 import fetchUserInfo from "../api/user/fetchUserInfo.js";
 import { gameInfoStore, myInfoStore } from "../store/initialStates.js";
+import Input from "../components/UI/Input/Input.js";
+import Button from "../components/UI/Button/Button.js";
+import { cliSendHandler } from "../handlers/game/gameHandler.js";
 
 export default class PongGamePage extends Component {
   setup() {
@@ -21,6 +24,22 @@ export default class PongGamePage extends Component {
       nextLeftUserId,
       nextRightUserId
     );
+  }
+
+  setEvent() {
+    this.addEvent("click", "#cli-send-btn", () => {
+      const $input = this.$target.querySelector("#cli-input");
+      cliSendHandler($input.value);
+      $input.value = "";
+      $input.focus();
+    });
+    this.addEvent("keydown", "#cli-input", (e) => {
+      if (e.key === "Enter") {
+        cliSendHandler(e.target.value);
+        e.target.value = "";
+        e.target.focus();
+      }
+    });
   }
 
   template() {
@@ -51,6 +70,10 @@ export default class PongGamePage extends Component {
               class="${myId === rightUser?.userId ? "text-warning" : "text-white"} fw-bold"
               >${rightUser?.nickname}</div>
           </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <div id="cli-input-holder" class="me-2"></div>
+          <div id="cli-send-btn-holder"></div>
         </div>
         <div class="mt-5" style="width: 10rem">
           <img src="asset/logo-medium.png" class="img-fluid"/>
@@ -86,9 +109,27 @@ export default class PongGamePage extends Component {
       this.$target.querySelector("#player-2-img-holder"),
       { imageSize: "image-sm", imageSrc: this.state.rightUser?.profileImage }
     );
+    const cliInput = new Input(
+      this.$target.querySelector("#cli-input-holder"),
+      {
+        type: "text",
+        id: "cli-input",
+        placeholder: "W, S, U, D",
+        attributes: `style: width=15rem;`,
+      }
+    );
+    const cliSendButton = new Button(
+      this.$target.querySelector("#cli-send-btn-holder"),
+      {
+        id: "cli-send-btn",
+        content: "Send",
+      }
+    );
     pongTable.render();
     leftUserImage.render();
     rightUserImage.render();
+    cliInput.render();
+    cliSendButton.render();
 
     if (this.state.nextLeftUser || this.state.nextRightUser) {
       const nextMatchBox = new NextMatchBox(
