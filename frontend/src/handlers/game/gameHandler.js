@@ -27,8 +27,9 @@ const infoGameHandler = (setPlayerInfo, removeObservers) => {
       );
     }
     gameInfoStore.setState({
-      barHeight: message.bar_height,
       barWidth: message.bar_width,
+      leftBarHeight: message.left_bar_height,
+      rightBarHeight: message.right_bar_height,
       ballRadius: message.circle_radius,
       gameType: message.game_type,
       leftScore: message.left_score,
@@ -56,6 +57,8 @@ const updateGameHandler = (updateGame, removeObservers) => {
       leftBarY: message.bar_y,
       rightBarX: message.bar_right_x,
       rightBarY: message.bar_right_y,
+      leftBarHeight: message.left_bar_height,
+      rightBarHeight: message.right_bar_height,
       ballX: message.circle_x,
       ballY: message.circle_y,
     });

@@ -7,6 +7,8 @@ import {
   gameReadyCountdownHandler,
 } from "../../handlers/game/gameHandler.js";
 import MultiGameResultModal from "./MultiGameResultModal.js";
+import TournamentGameResultModal from "./TournamentGameResultModal.js";
+import SingleGameResultModal from "./SingleGameResultModal.js";
 
 export default class PongGame extends Component {
   setEvent() {
@@ -72,18 +74,27 @@ export default class PongGame extends Component {
   }
 
   updateGame(data) {
-    const { barWidth, barHeight, ballRadius } = gameInfoStore.getState();
+    const { barWidth, ballRadius } = gameInfoStore.getState();
     const $canvas = this.$target.querySelector("canvas");
     const ctx = $canvas.getContext("2d");
 
-    const { leftBarX, leftBarY, rightBarX, rightBarY, ballX, ballY } = data;
+    const {
+      leftBarX,
+      leftBarY,
+      rightBarX,
+      leftBarHeight,
+      rightBarHeight,
+      rightBarY,
+      ballX,
+      ballY,
+    } = data;
 
     ctx.clearRect(0, 0, $canvas.width, $canvas.height);
 
     this.drawCenterLine(ctx, $canvas);
     this.drawBall(ctx, ballX, ballY, ballRadius);
-    this.drawPaddle(ctx, leftBarX, leftBarY, barWidth, barHeight);
-    this.drawPaddle(ctx, rightBarX, rightBarY, barWidth, barHeight);
+    this.drawPaddle(ctx, leftBarX, leftBarY, barWidth, leftBarHeight);
+    this.drawPaddle(ctx, rightBarX, rightBarY, barWidth, rightBarHeight);
   }
 
   drawCenterLine(ctx, $canvas) {
@@ -108,14 +119,45 @@ export default class PongGame extends Component {
   }
 
   handleGameEnd() {
-    const { gameType, status, winner } = gameInfoStore.getState();
+    const {
+      gameType,
+      status,
+      winner,
+      leftUserId,
+      rightUserId,
+      nextLeftUserId,
+      nextRightUserId,
+    } = gameInfoStore.getState();
+    const { userId: myId } = myInfoStore.getState();
+
     if (status !== "end") {
       return;
     }
     if (gameType === "multi_game") {
       const resultModal = new MultiGameResultModal(
         document.getElementById("modal-root"),
-        { isWin: parseInt(winner, 10) === myInfoStore.getState().userId }
+        { isWin: parseInt(winner, 10) === myId }
+      );
+      resultModal.render();
+    } else if (gameType === "tournament_game") {
+      const isFinal = nextLeftUserId === 0 && nextRightUserId === 0;
+
+      if (myId === leftUserId || myId === rightUserId || isFinal) {
+        const resultModal = new TournamentGameResultModal(
+          document.getElementById("modal-root"),
+          {
+            winner,
+            isFinal,
+            leftUser: this.props.leftUser,
+            rightUser: this.props.rightUser,
+            myId,
+          }
+        );
+        resultModal.render();
+      }
+    } else if (gameType === "single_game") {
+      const resultModal = new SingleGameResultModal(
+        document.getElementById("modal-root")
       );
       resultModal.render();
     }
