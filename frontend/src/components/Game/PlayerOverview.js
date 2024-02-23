@@ -33,7 +33,7 @@ export default class PlayerOverview extends Component {
         <span class="g-light-grey fw-bold">
           Win Rate
           <span class="text-white ms-3">
-            ${Math.round((wins / (wins + losses)) * 1000) / 10}%
+            ${wins === 0 && losses === 0 ? "-" : Math.round((wins / (wins + losses)) * 1000) / 10}%
           </span>
         </span>
       </div>
