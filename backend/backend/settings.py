@@ -287,5 +287,5 @@ CHANNEL_LAYERS = {
     },
 }
 
-BASE_URL = "http://" + os.environ.get('GLOBAL_HOST', 'localhost') + ":8000"
+BASE_URL = "http://" + os.environ.get('GLOBAL_HOST', 'localhost') + ":3000"
 OAUTH_FRONT_REDIRECT_URL = "http://" + os.environ.get('GLOBAL_HOST', 'localhost') + ":3000"

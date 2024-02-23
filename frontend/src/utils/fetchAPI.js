@@ -1,5 +1,5 @@
 const fetchRequest = async (url, requestOptions) => {
-  const response = await fetch(`http://localhost:8000/api${url}`, {
+  const response = await fetch(`http://localhost:3000/api${url}`, {
     ...requestOptions,
     credentials: "include",
   });

@@ -4,7 +4,7 @@ const initSocket = (path) => {
   const observers = {};
 
   const createSocket = () => {
-    ws = new WebSocket(`ws://localhost:8000/ws${path}`);
+    ws = new WebSocket(`ws://localhost:3000/ws${path}`);
 
     ws.onmessage = (e) => {
       const message = JSON.parse(e.data);
