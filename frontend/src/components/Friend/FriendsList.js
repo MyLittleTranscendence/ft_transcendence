@@ -10,14 +10,6 @@ export default class FriendsList extends Component {
 
   template() {
     var friends = friendListStore.getState().friends;
-    friends = [
-      {
-        profile_image: "/asset/42logo.png",
-        nickname: "Friend",
-        user_id: 1,
-        friend_id: 1,
-      },
-    ];
 
     if (friends.length === 0) {
       return `
