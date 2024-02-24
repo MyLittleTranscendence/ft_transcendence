@@ -1,4 +1,5 @@
 import Component from "../../core/Component.js";
+import ProfileImage from "../UI/Profile/ProfileImage.js";
 import { blockListStore } from "../../store/initialStates.js";
 
 export default class BlockList extends Component {
@@ -39,16 +40,7 @@ export default class BlockList extends Component {
                 type="button"
                 data-bs-toggle="dropdown"
               >
-                <div
-                  class="overflow-hidden rounded-circle"
-                  style="width: 4rem; height: 4rem;"
-                >
-                  <img
-                    src=${block.profile_image}
-                    class="img-fluid"
-                    alt="default"
-                  >
-                </div>
+                <div id="block-profile-${block.user_id}"></div>
                 <span
                   class="mx-3"
                 >
@@ -74,5 +66,24 @@ export default class BlockList extends Component {
           .join("")}
       </div>
     `;
+  }
+
+  mounted() {
+    const blocks = blockListStore.getState().blocks;
+
+    if (blocks.length > 0) {
+      blocks.forEach((block) => {
+        const blockProfile = new ProfileImage(
+          this.$target.querySelector(`#block-profile-${block.user_id}`),
+          {
+            userId: block.user_id,
+            imageSrc: block.profile_image,
+            imageSize: "image-sm",
+            alt: "/asset/default.png",
+          }
+        );
+        blockProfile.render();
+      });
+    }
   }
 }
