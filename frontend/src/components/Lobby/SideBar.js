@@ -3,6 +3,7 @@ import FriendsIcon from "../UI/Icon/FriendsIcon.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 import { myInfoStore } from "../../store/initialStates.js";
 import FriendsList from "../Friend/FriendsList.js";
+import BlockList from "../Friend/BlockList.js";
 import fetchAPI from "../../utils/fetchAPI.js";
 import showToast from "../../utils/showToast.js";
 
@@ -19,22 +20,22 @@ function requestPvP(userId) {
 function blockFriend(userId, friendId) {
   console.log(`Blocking ${userId}`);
   fetchAPI
-    .post(`/users/${userId}/blocks`)
+    .post(`/users/${userId}/blocks/`)
     .then(() => showToast(`Block Success`))
     .catch(() => showToast("error fetching block friend"));
   fetchAPI
-    .delete(`/users/${myInfoStore.getState().id}/friends/${friendId}`)
+    .delete(`/users/${userId}/friends/${friendId}/`)
     .catch(() => showToast("error fetching delete friend"));
 }
 
 function unblockUser(userId, blockId) {
   console.log(`Unblocking ${userId}`);
   fetchAPI
-    .delete(`/users/${userId}/blocks/${blockId}`)
+    .delete(`/users/${userId}/blocks/${blockId}/`)
     .then(() => showToast(`Unblock Success`))
     .catch(() => showToast("error fetching unblock friend"));
   fetchAPI
-    .post(`/users/${userId}/friends`)
+    .post(`/users/${userId}/friends/`)
     .catch(() => showToast("error fetching delete friend"));
 }
 
@@ -91,6 +92,8 @@ export default class SideBar extends Component {
           </div>
         </div>
       </div>
+
+      <div id="dm-modal" class="modal fade"></div>
     `;
   }
 
@@ -107,33 +110,16 @@ export default class SideBar extends Component {
       this.$target.querySelector("#friends-icon-holder"),
       { isOnline: true }
     );
+    const friendsList = new FriendsList(
+      this.$target.querySelector("#friends-list-holder")
+    );
+    const blockList = new BlockList(
+      this.$target.querySelector("#block-list-holder")
+    );
+    friendsList.render();
+    blockList.render();
     myProfile.render();
     friendsIcon.render();
-
-    const friendsListHolder = this.$target.querySelector(
-      "#friends-list-holder"
-    );
-    fetchAPI
-      .get("/friends")
-      .then((data) => {
-        const friendList = new FriendsList(friendsListHolder, {
-          block: false,
-          friends: data.results,
-        });
-        friendList.render();
-      })
-      .catch(() => showToast("error fetching friends list"));
-    const blockListHolder = this.$target.querySelector("#block-list-holder");
-    fetchAPI
-      .get("/blocks")
-      .then((data) => {
-        const blockList = new FriendsList(blockListHolder, {
-          block: true,
-          friends: data.results,
-        });
-        blockList.render();
-      })
-      .catch(() => showToast("error fetching block list"));
   }
 
   setEvent() {
@@ -146,7 +132,7 @@ export default class SideBar extends Component {
 
         switch (action) {
           case "DM":
-            sendMessage(userId);
+            console.log(target.dataset);
             break;
           case "Profile":
             break;

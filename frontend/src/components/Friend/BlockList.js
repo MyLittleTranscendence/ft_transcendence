@@ -1,19 +1,19 @@
 import Component from "../../core/Component.js";
-import { friendListStore } from "../../store/initialStates.js";
+import { blockListStore } from "../../store/initialStates.js";
 
-export default class FriendsList extends Component {
+export default class BlockList extends Component {
   setup() {
-    const unsubscribe = friendListStore.subscribe(this);
+    const unsubscribe = blockListStore.subscribe(this);
     this.removeObservers.push(unsubscribe);
   }
 
   template() {
-    const friends = friendListStore.getState().friends;
+    const blocks = blockListStore.getState().blocks;
 
-    if (friends.length === 0) {
+    if (blocks.length === 0) {
       return `
         <div class="d-flex justify-content-center">
-          <h4 class="fw-bold g-light-grey">No friends.</h4>
+          <h4 class="fw-bold g-light-grey">No blocked users.</h4>
         </div>
       `;
     }
@@ -22,18 +22,19 @@ export default class FriendsList extends Component {
       <div
         class="list-group list-group-flush"
       >
-        ${friends
+        ${blocks
           .map(
-            (friend) => `
-            <div class="dropdown dropend">
+            (block) => `
+            <div
+              class="dropdown dropend"
+            >
               <div
                 class="
                   list-group-item
                   list-group-item-action
                   d-flex
                   align-items-center
-                  px-0
-                  border-0
+                  dropdown-toggle
                 "
                 type="button"
                 data-bs-toggle="dropdown"
@@ -43,29 +44,29 @@ export default class FriendsList extends Component {
                   style="width: 4rem; height: 4rem;"
                 >
                   <img
-                    src=${friend.profile_image}
+                    src=${block.profile_image}
                     class="img-fluid"
                     alt="default"
                   >
                 </div>
-                <span class="mx-3">
-                  <h5 class="fw-bold mb-1">${friend.nickname}</h5>
+                <span
+                  class="mx-3"
+                >
+                  <h5 class="fw-bold mb-1">${block.nickname}</h5>
                   <small class="g-light-grey">click here to send message</small>
                 </span>
               </div>
-              <ul class="dropdown-menu" data-user-id="${friend.user_id}" data-sub-id=${friend.friend_id}>
-                <li><button class="dropdown-item" data-bs-dismiss="modal">DM</button></li>
+              <ul class="dropdown-menu" data-user-id="${block.user_id}" data-sub-id=${block.block_id}>
                 <li><a
-                  href="/profile?user_id=${friend.user_id}"
+                  href="/profile?user_id=${block.user_id}"
                   class="dropdown-item"
                   data-bs-dismiss="modal"
                   data-link
                   >
                     Profile
                 </a></li>
-                <li><button class="dropdown-item">1 vs 1</button></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><button class="dropdown-item text-danger">Block</button></li>
+                <li><button class="dropdown-item text-primary">Unblock</button></li>
               </ul>
             </div>
           `
