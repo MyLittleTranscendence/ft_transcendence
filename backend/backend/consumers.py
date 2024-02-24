@@ -35,7 +35,7 @@ class DefaultConsumer(AsyncWebsocketConsumer):
         컨슈머 객체 필드에 유저 정보 저장
         """
         self.nickname = self.scope['user'].nickname
-        self.profile_image = f"{settings.BASE_URL}{self.scope['user'].profile_image.url}"
+        self.profile_image = f"{self.scope['user'].profile_image.url}"
         await self.set_user_info()
 
     async def set_user_info(self):
