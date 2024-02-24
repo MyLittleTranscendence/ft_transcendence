@@ -56,7 +56,7 @@ export default class BlockList extends Component {
                   <small class="g-light-grey">click here to send message</small>
                 </span>
               </div>
-              <ul class="dropdown-menu" data-user-id="${block.user_id}" data-sub-id=${block.block_id}>
+              <ul class="dropdown-menu" data-user-id="${block.user_id}">
                 <li><a
                   href="/profile?user_id=${block.user_id}"
                   class="dropdown-item"

@@ -1,4 +1,5 @@
 import Component from "../../core/Component.js";
+import ProfileImage from "../UI/Profile/ProfileImage.js";
 import { friendListStore } from "../../store/initialStates.js";
 
 export default class FriendsList extends Component {
@@ -8,7 +9,15 @@ export default class FriendsList extends Component {
   }
 
   template() {
-    const friends = friendListStore.getState().friends;
+    var friends = friendListStore.getState().friends;
+    friends = [
+      {
+        profile_image: "/asset/42logo.png",
+        nickname: "Friend",
+        user_id: 1,
+        friend_id: 1,
+      },
+    ];
 
     if (friends.length === 0) {
       return `
@@ -19,9 +28,7 @@ export default class FriendsList extends Component {
     }
 
     return `
-      <div
-        class="list-group list-group-flush"
-      >
+      <div class="list-group list-group-flush">
         ${friends
           .map(
             (friend) => `
@@ -38,22 +45,13 @@ export default class FriendsList extends Component {
                 type="button"
                 data-bs-toggle="dropdown"
               >
-                <div
-                  class="overflow-hidden rounded-circle"
-                  style="width: 4rem; height: 4rem;"
-                >
-                  <img
-                    src=${friend.profile_image}
-                    class="img-fluid"
-                    alt="default"
-                  >
-                </div>
+                <div id="friend-profile-${friend.user_id}"></div>
                 <span class="mx-3">
                   <h5 class="fw-bold mb-1">${friend.nickname}</h5>
                   <small class="g-light-grey">click here to send message</small>
                 </span>
               </div>
-              <ul class="dropdown-menu" data-user-id="${friend.user_id}" data-sub-id=${friend.friend_id}>
+              <ul class="dropdown-menu" data-user-id="${friend.user_id}">
                 <li><button class="dropdown-item" data-bs-dismiss="modal">DM</button></li>
                 <li><a
                   href="/profile?user_id=${friend.user_id}"
@@ -73,5 +71,24 @@ export default class FriendsList extends Component {
           .join("")}
       </div>
     `;
+  }
+
+  mounted() {
+    var friends = friendListStore.getState().friends;
+
+    if (friends.length > 0) {
+      friends.forEach((friend) => {
+        const friendProfile = new ProfileImage(
+          this.$target.querySelector(`#friend-profile-${friend.user_id}`),
+          {
+            userId: friend.user_id,
+            imageSrc: friend.profile_image,
+            imageSize: "image-sm",
+            alt: "/asset/default.png",
+          }
+        );
+        friendProfile.render();
+      });
+    }
   }
 }

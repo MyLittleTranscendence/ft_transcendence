@@ -1,43 +1,11 @@
 import Component from "../../core/Component.js";
 import FriendsIcon from "../UI/Icon/FriendsIcon.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
-import { myInfoStore } from "../../store/initialStates.js";
 import FriendsList from "../Friend/FriendsList.js";
 import BlockList from "../Friend/BlockList.js";
-import fetchAPI from "../../utils/fetchAPI.js";
-import showToast from "../../utils/showToast.js";
-
-function sendMessage(userId) {
-  console.log(`Sending message to ${userId}`);
-  // 메시지 보내기 로직 구현
-}
-
-function requestPvP(userId) {
-  console.log(`Requesting 1 vs 1 game with ${userId}`);
-  // 게임 요청 로직 구현
-}
-
-function blockFriend(userId, friendId) {
-  console.log(`Blocking ${userId}`);
-  fetchAPI
-    .post(`/users/${userId}/blocks/`)
-    .then(() => showToast(`Block Success`))
-    .catch(() => showToast("error fetching block friend"));
-  fetchAPI
-    .delete(`/users/${userId}/friends/${friendId}/`)
-    .catch(() => showToast("error fetching delete friend"));
-}
-
-function unblockUser(userId, blockId) {
-  console.log(`Unblocking ${userId}`);
-  fetchAPI
-    .delete(`/users/${userId}/blocks/${blockId}/`)
-    .then(() => showToast(`Unblock Success`))
-    .catch(() => showToast("error fetching unblock friend"));
-  fetchAPI
-    .post(`/users/${userId}/friends/`)
-    .catch(() => showToast("error fetching delete friend"));
-}
+import blockUserHandler from "../../handlers/user/blockUserHandler.js";
+import unblockUserHandler from "../../handlers/user/unblockUserHandler.js";
+import { myInfoStore } from "../../store/initialStates.js";
 
 export default class SideBar extends Component {
   setup() {
@@ -92,8 +60,6 @@ export default class SideBar extends Component {
           </div>
         </div>
       </div>
-
-      <div id="dm-modal" class="modal fade"></div>
     `;
   }
 
@@ -116,6 +82,7 @@ export default class SideBar extends Component {
     const blockList = new BlockList(
       this.$target.querySelector("#block-list-holder")
     );
+
     friendsList.render();
     blockList.render();
     myProfile.render();
@@ -128,22 +95,21 @@ export default class SideBar extends Component {
       if (target.classList.contains("dropdown-item")) {
         const action = target.textContent;
         const { userId } = target.closest(".dropdown-menu").dataset;
-        const { subId } = target.closest(".dropdown-menu").dataset;
 
         switch (action) {
           case "DM":
-            console.log(target.dataset);
+            console.log("Open DM");
             break;
           case "Profile":
             break;
           case "1 vs 1":
-            requestPvP(userId);
+            console.log("Request 1vs1");
             break;
           case "Block":
-            blockFriend(userId, subId);
+            blockUserHandler(userId);
             break;
           case "Unblock":
-            unblockUser(userId, subId);
+            unblockUserHandler(userId);
             break;
           default:
             console.log("Unknown action");
