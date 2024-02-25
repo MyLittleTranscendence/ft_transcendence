@@ -1,12 +1,22 @@
 import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
-import DirectMessageModal from "./DirectMessageModal.js";
 import { friendListStore } from "../../store/initialStates.js";
+import blockUserHandler from "../../handlers/user/blockUserHandler.js";
+import { inviteUserHandler } from "../../handlers/game/inviteUserHandler.js";
 
 export default class FriendList extends Component {
   setup() {
     const unsubscribe = friendListStore.subscribe(this);
     this.removeObservers.push(unsubscribe);
+  }
+
+  setEvent() {
+    this.addEvent("click", "#invite-trigger", (e) => {
+      inviteUserHandler(parseInt(e.target.getAttribute("data-user-id"), 10));
+    });
+    this.addEvent("click", "#block-trigger", (e) => {
+      blockUserHandler(parseInt(e.target.getAttribute("data-user-id"), 10));
+    });
   }
 
   template() {
@@ -44,7 +54,7 @@ export default class FriendList extends Component {
                   <small class="g-light-grey">click here to send message</small>
                 </span>
               </div>
-              <ul class="dropdown-menu" data-user-id="${friend.userId}">
+              <ul class="dropdown-menu">
                 <li>
                   <button
                     class="dropdown-item"
@@ -62,9 +72,19 @@ export default class FriendList extends Component {
                   >
                     Profile
                 </a></li>
-                <li><button class="dropdown-item">1 vs 1</button></li>
+                <li><button
+                  id="invite-trigger"
+                  class="dropdown-item"
+                  data-bs-dismiss="modal"
+                  data-user-id="${friend.userId}"
+                >1 vs 1</button></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><button class="dropdown-item text-danger">Block</button></li>
+                <li><button
+                  id="block-trigger"
+                  class="dropdown-item text-danger"
+                  data-bs-dismiss="modal"
+                  data-user-id="${friend.userId}"
+                >Block</button></li>
               </ul>
             </div>
           `

@@ -3,7 +3,7 @@ import Link from "../UI/Link/Link.js";
 
 export default class SingleGameResultModal extends Modal {
   mounted() {
-    this.$modalContent.textContent = "Match is over";
+    this.$modalTitle.textContent = "Match is over";
     const goHomeLink = new Link(this.$modalButtonGroup, {
       id: "modal-close",
       href: "/",

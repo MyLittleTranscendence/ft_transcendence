@@ -1,11 +1,18 @@
 import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 import { blockListStore } from "../../store/initialStates.js";
+import unblockUserHandler from "../../handlers/user/unblockUserHandler.js";
 
 export default class BlockList extends Component {
   setup() {
     const unsubscribe = blockListStore.subscribe(this);
     this.removeObservers.push(unsubscribe);
+  }
+
+  setEvent() {
+    this.addEvent("click", "#unblock-trigger", (e) => {
+      unblockUserHandler(parseInt(e.target.getAttribute("data-user-id"), 10));
+    });
   }
 
   template() {
@@ -58,7 +65,12 @@ export default class BlockList extends Component {
                     Profile
                 </a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><button class="dropdown-item text-primary">Unblock</button></li>
+                <li><button
+                  id="unblock-trigger"
+                  class="dropdown-item text-primary"
+                  data-bs-dismiss="modal"
+                  data-user-id="${block.userId}"
+                >Unblock</buttonclass=></li>
               </ul>
             </div>
           `

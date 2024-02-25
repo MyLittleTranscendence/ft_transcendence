@@ -4,6 +4,7 @@ import BouncingBallOnRacket from "../UI/BouncingBallOnRacket.js";
 import Button from "../UI/Button/Button.js";
 import MatchTypeDropdown from "./MatchTypeDropdown.js";
 import showToast from "../../utils/showToast.js";
+import { invitationFailHandler } from "../../handlers/game/inviteUserHandler.js";
 import {
   matchFindHandler,
   cancleMatchFindHandler,
@@ -73,6 +74,7 @@ export default class MatchContainer extends Component {
     getGameInfoHandler(this.removeObservers);
     tournamentBeginHandler(this.removeObservers);
     receiveGameInviteHandler(this.removeObservers);
+    invitationFailHandler(this.removeObservers);
     receiveLogoutHandler(this.removeObservers, gameSocket);
   }
 
