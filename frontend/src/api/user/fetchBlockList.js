@@ -2,7 +2,7 @@ import fetchAPI from "../../utils/fetchAPI.js";
 import showToast from "../../utils/showToast.js";
 import { blockListStore } from "../../store/initialStates.js";
 
-const fetchBlocks = async () => {
+const fetchBlockList = async () => {
   try {
     const data = await fetchAPI.get("/blocks/");
     const blockList = data.results.map((block) => ({
@@ -18,4 +18,4 @@ const fetchBlocks = async () => {
   }
 };
 
-export default fetchBlocks;
+export default fetchBlockList;

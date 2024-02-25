@@ -1,4 +1,5 @@
-import fetchFriends from "./api/user/fetchFriends.js";
+import fetchFriendList from "./api/user/fetchFriendList.js";
+import fetchBlockList from "./api/user/fetchBlockList.js";
 import fetchMyInfo from "./api/user/fetchMyInfo.js";
 import Component from "./core/Component.js";
 import getRouter from "./core/router.js";
@@ -24,7 +25,8 @@ export default class App extends Component {
       fetchMyInfo()
         .then(() => {
           localStorage.setItem("login", "true");
-          fetchFriends();
+          fetchFriendList();
+          fetchBlockList();
           if (
             ["/start", "/sign-in", "/sign-up", "/mfa"].includes(currentPath)
           ) {

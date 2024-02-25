@@ -2,7 +2,7 @@ import fetchAPI from "../../utils/fetchAPI.js";
 import showToast from "../../utils/showToast.js";
 import { friendListStore } from "../../store/initialStates.js";
 
-const fetchFriends = async () => {
+const fetchFriendList = async () => {
   try {
     const data = await fetchAPI.get("/friends/");
     const friendList = data.results.map((friend) => ({
@@ -18,4 +18,4 @@ const fetchFriends = async () => {
   }
 };
 
-export default fetchFriends;
+export default fetchFriendList;
