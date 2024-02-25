@@ -44,7 +44,16 @@ export default class FriendsList extends Component {
                 </span>
               </div>
               <ul class="dropdown-menu" data-user-id="${friend.user_id}">
-                <li><button class="dropdown-item" data-bs-dismiss="modal">DM</button></li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    data-bs-dismiss="modal"
+                    data-bs-toggle="modal"
+                    href="#dm-modal"
+                  >
+                    DM
+                  </a>
+                </li>
                 <li><a
                   href="/profile?user_id=${friend.user_id}"
                   class="dropdown-item"

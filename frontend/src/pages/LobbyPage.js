@@ -51,6 +51,7 @@ export default class LobbyPage extends Component {
         style="max-width: 4rem;"
       ></div>
     </div>
+
     `;
   }
 

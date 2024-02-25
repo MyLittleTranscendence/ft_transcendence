@@ -7,6 +7,11 @@ import blockUserHandler from "../../handlers/user/blockUserHandler.js";
 import unblockUserHandler from "../../handlers/user/unblockUserHandler.js";
 import { myInfoStore } from "../../store/initialStates.js";
 
+import { chatSocket } from "../../socket/socketManager.js";
+import sendChatHandler from "../../handlers/chat/sendChatHandler.js";
+import ChatInput from "./ChatInput.js";
+import DirectMessage from "./DirectMessage.js";
+
 export default class SideBar extends Component {
   setup() {
     const unsubscribe = myInfoStore.subscribe(this);
@@ -60,6 +65,40 @@ export default class SideBar extends Component {
           </div>
         </div>
       </div>
+  
+      <div class="modal fade" id="dm-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title" id="exampleModalLabel">DM</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+              <div class="card border-0">
+                <div class="card-header text-center">
+                  <h4 class="text-muted">player1</h4>
+                </div>
+                <div class="card-body">
+                  <div
+                    id="dm-chat-message-container"
+                    class="w-100 mh-100 overflow-auto mt-1"
+                  >
+                    <ul
+                      id="dm-chat-message-ul"
+                      class="list-unstyled"
+                    ></ul>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <div id="dm-chat-input"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
     `;
   }
 
@@ -82,39 +121,45 @@ export default class SideBar extends Component {
     const blockList = new BlockList(
       this.$target.querySelector("#block-list-holder")
     );
-
+    const { addSocketObserver } = chatSocket();
+    const chatInput = new ChatInput(
+      this.$target.querySelector("#dm-chat-input"),
+      { id: "dm-chat-input", name: "dm-chat-input" }
+    );
     friendsList.render();
     blockList.render();
+    chatInput.render();
     myProfile.render();
     friendsIcon.render();
+    const $messageContainer = this.$target.querySelector(
+      "#dm-chat-message-container"
+    );
+    const $messageUL = $messageContainer.querySelector("#dm-chat-message-ul");
+
+    const removeObserver = addSocketObserver("single_message", (message) => {
+      const $messageLI = document.createElement("li");
+      const directMessage = new DirectMessage($messageLI, {
+        content: message.message,
+        senderId: message.sender_id,
+        senderNickname: message.sender_nickname,
+        senderProfileImage: message.sender_profile_image,
+        datetime: message.datetime,
+      });
+      directMessage.render();
+      $messageLI.id = `dm-${message.datetime}`;
+      $messageUL.appendChild($messageLI);
+      $messageContainer.scrollTop = $messageContainer.scrollHeight;
+    });
+    this.removeObservers.push(removeObserver);
   }
 
   setEvent() {
-    document.addEventListener("click", (event) => {
-      const { target } = event;
-      if (target.classList.contains("dropdown-item")) {
-        const action = target.textContent;
-        const { userId } = target.closest(".dropdown-menu").dataset;
-
-        switch (action) {
-          case "DM":
-            console.log("Open DM");
-            break;
-          case "Profile":
-            break;
-          case "1 vs 1":
-            console.log("Request 1vs1");
-            break;
-          case "Block":
-            blockUserHandler(userId);
-            break;
-          case "Unblock":
-            unblockUserHandler(userId);
-            break;
-          default:
-            console.log("Unknown action");
-        }
-      }
+    this.addEvent("keydown", "#dm-chat-input", (e) =>
+      sendChatHandler(e, "single_message")
+    );
+    this.addEvent("click", "#global-send-icon", () => {
+      const $input = this.$target.querySelector("#dm-chat-input");
+      sendChatHandler({ target: $input, key: "Enter" }, "single_message");
     });
   }
 }
