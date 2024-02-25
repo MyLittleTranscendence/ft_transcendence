@@ -5,8 +5,31 @@ import Input from "./Input.js";
 appendCSSLink("src/components/UI/Input/InputGroup.css");
 
 export default class InputGroup extends Component {
+  setup() {
+    this.state = { isValid: false };
+  }
+
+  setEvent() {
+    const { validate } = this.props;
+    if (validate) {
+      this.addEvent("input", `#${this.props.inputProps.id}`, (e) => {
+        validate(
+          e,
+          (text) => {
+            this.$target.querySelector(
+              `#${this.props.inputProps.id}-warning`
+            ).textContent = text;
+          },
+          (isValid) => {
+            this.state.isValid = isValid;
+          }
+        );
+      });
+    }
+  }
+
   template() {
-    const { labelText, warningText, holderId, inputProps } = this.props;
+    const { labelText, holderId, inputProps } = this.props;
     return `
     <div class="
       input-group
@@ -24,11 +47,10 @@ export default class InputGroup extends Component {
         ${labelText}
       </label>
       <div id="${holderId}" class="mx-3"></div>
-      <span class="
-        input-group-right
-        position-absolute
-      ">
-        ${warningText || ""}
+      <span 
+        id="${inputProps.id}-warning"
+        class="input-group-right position-absolute"
+      >
       </span>
     </div>`;
   }

@@ -100,5 +100,7 @@ export default class SigninForm extends Component {
     pwInputGroup.render();
     signInButton.render();
     signUpButton.render();
+
+    idInputGroup.$target.querySelector(`#${idInputProps.id}`).focus();
   }
 }
