@@ -1,11 +1,24 @@
 import { chatSocket } from "../../socket/socketManager.js";
-import logoutHandler from "../auth/logoutHandler.js";
 import GlobalMessage from "../../components/Lobby/GlobalMessage.js";
+import { blockListStore } from "../../store/initialStates.js";
+
+const isBlockedUser = (senderId) => {
+  const blocks = blockListStore.getState();
+
+  if (blocks.find((blockedUser) => blockedUser.userId === senderId)) {
+    return true;
+  }
+  return false;
+};
 
 const receiveTotalChatMessageHandler = ($target, removeObservers) => {
   const { addSocketObserver } = chatSocket();
 
   const removeObserver = addSocketObserver("total_message", (message) => {
+    if (isBlockedUser(message.sender_id)) {
+      return;
+    }
+
     const $messageContainer = $target.querySelector(
       "#global-chat-message-container"
     );
