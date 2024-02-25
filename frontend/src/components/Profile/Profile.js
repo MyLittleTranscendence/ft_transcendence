@@ -10,6 +10,7 @@ import Button from "../UI/Button/Button.js";
 import addFriendHandler from "../../handlers/user/addFriendHandler.js";
 import deleteFriendHandler from "../../handlers/user/deleteFriendHandler.js";
 import { nicknameValidationHandler } from "../../handlers/user/inputValidateHandlers.js";
+import logoutHandler from "../../handlers/auth/logoutHandler.js";
 
 export default class Profile extends Component {
   async setup() {
@@ -72,6 +73,7 @@ export default class Profile extends Component {
           this.state.isNicknameValid
         );
       });
+      this.addEvent("click", "#logout-btn", logoutHandler);
     } else {
       this.addEvent("click", "#add-friend-btn", () => {
         addFriendHandler(userId);
@@ -120,6 +122,7 @@ export default class Profile extends Component {
           }
         </div>
         <br>
+        ${isMe ? `<div id="logout-btn-holder" class="mb-3"></div>` : ""}
         ${!isMe && friendListStore.getState().isFetched ? `<div id="add-or-delete-friend-btn-holder" class="mb-3"></div>` : ""}
         <div id="overview-content"></div>
       </div>
@@ -156,6 +159,18 @@ export default class Profile extends Component {
         "#nickname-edit-input"
       );
       this.moveFocusToBack($input);
+    }
+
+    if (isMe) {
+      const logoutButton = new Button(
+        this.$target.querySelector("#logout-btn-holder"),
+        {
+          id: "logout-btn",
+          content: "Logout",
+          small: true,
+        }
+      );
+      logoutButton.render();
     }
 
     const { friends, isFetched } = friendListStore.getState();
