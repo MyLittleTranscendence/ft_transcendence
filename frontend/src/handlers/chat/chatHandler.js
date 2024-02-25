@@ -30,13 +30,4 @@ const receiveTotalChatMessageHandler = ($target, removeObservers) => {
   removeObservers.push(removeObserver);
 };
 
-const receiveLogoutHandler = (removeObservers) => {
-  const { addSocketObserver } = chatSocket();
-
-  const removeObserver = addSocketObserver("user_logout", () => {
-    logoutHandler();
-  });
-  removeObservers.push(removeObserver);
-};
-
-export { receiveLogoutHandler, receiveTotalChatMessageHandler };
+export { receiveTotalChatMessageHandler };

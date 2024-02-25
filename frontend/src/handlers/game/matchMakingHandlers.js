@@ -7,7 +7,6 @@ import {
 import getRouter from "../../core/router.js";
 import GameInviteModal from "../../components/Lobby/GameInviteModal.js";
 import fetchUserInfo from "../../api/user/fetchUserInfo.js";
-import logoutHandler from "../auth/logoutHandler.js";
 
 const matchFindHandler = (matchType) => {
   const { sendSocket } = gameSocket();
@@ -184,15 +183,6 @@ const receiveGameInviteHandler = (removeObservers) => {
   removeObservers.push(removeObserver);
 };
 
-const receiveLogoutHandler = (removeObservers) => {
-  const { addSocketObserver } = gameSocket();
-
-  const removeObserver = addSocketObserver("user_logout", () => {
-    logoutHandler();
-  });
-  removeObservers.push(removeObserver);
-};
-
 export {
   matchFindHandler,
   cancleMatchFindHandler,
@@ -206,5 +196,4 @@ export {
   getGameInfoHandler,
   tournamentBeginHandler,
   receiveGameInviteHandler,
-  receiveLogoutHandler,
 };

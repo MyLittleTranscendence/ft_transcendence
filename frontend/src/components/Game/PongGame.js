@@ -5,11 +5,12 @@ import {
   updateGameHandler,
   gameKeyDownHandler,
   gameReadyCountdownHandler,
-  receiveLogoutHandler,
 } from "../../handlers/game/gameHandler.js";
 import MultiGameResultModal from "./MultiGameResultModal.js";
 import TournamentGameResultModal from "./TournamentGameResultModal.js";
 import SingleGameResultModal from "./SingleGameResultModal.js";
+import receiveLogoutHandler from "../../handlers/auth/socketLogoutHandler.js";
+import { gameSocket } from "../../socket/socketManager.js";
 
 export default class PongGame extends Component {
   setEvent() {
@@ -21,7 +22,7 @@ export default class PongGame extends Component {
       (message) => this.updateGame(message),
       this.removeObservers
     );
-    receiveLogoutHandler(this.removeObservers);
+    receiveLogoutHandler(this.removeObservers, gameSocket);
 
     const { userId } = myInfoStore.getState();
     const { leftUserId, rightUserId } = gameInfoStore.getState();

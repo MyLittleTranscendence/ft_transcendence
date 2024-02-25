@@ -1,10 +1,9 @@
 import Component from "../../core/Component.js";
 import ChatInput from "./ChatInput.js";
 import sendChatHandler from "../../handlers/chat/sendChatHandler.js";
-import {
-  receiveLogoutHandler,
-  receiveTotalChatMessageHandler,
-} from "../../handlers/chat/chatHandler.js";
+import { receiveTotalChatMessageHandler } from "../../handlers/chat/chatHandler.js";
+import receiveLogoutHandler from "../../handlers/auth/socketLogoutHandler.js";
+import { chatSocket } from "../../socket/socketManager.js";
 
 export default class GlobalChatContainer extends Component {
   setEvent() {
@@ -17,7 +16,7 @@ export default class GlobalChatContainer extends Component {
     });
 
     receiveTotalChatMessageHandler(this.$target, this.removeObservers);
-    receiveLogoutHandler(this.removeObservers);
+    receiveLogoutHandler(this.removeObservers, chatSocket);
   }
 
   template() {
