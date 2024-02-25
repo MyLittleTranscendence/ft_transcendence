@@ -1,6 +1,5 @@
 import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
-import DirectMessageModal from "./DirectMessageModal.js";
 import { friendListStore } from "../../store/initialStates.js";
 
 export default class FriendList extends Component {
