@@ -1,5 +1,6 @@
 import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
+import DirectMessageModal from "./DirectMessageModal.js";
 import { friendListStore } from "../../store/initialStates.js";
 
 export default class FriendList extends Component {
@@ -37,26 +38,24 @@ export default class FriendList extends Component {
                 type="button"
                 data-bs-toggle="dropdown"
               >
-                <div id="friend-profile-${friend.user_id}"></div>
+                <div id="friend-profile-${friend.userId}"></div>
                 <span class="mx-3">
                   <h5 class="fw-bold mb-1">${friend.nickname}</h5>
                   <small class="g-light-grey">click here to send message</small>
                 </span>
               </div>
-              <ul class="dropdown-menu" data-user-id="${friend.user_id}">
+              <ul class="dropdown-menu" data-user-id="${friend.userId}">
                 <li>
                   <button
-                    id="dm-toggle"
                     class="dropdown-item"
                     data-bs-toggle="modal"
-                    data-bs-target="#direct-message-modal"
-                    data-dm-id="${friend.user_id}"
+                    data-bs-target="#dm-modal-${friend.userId}"
                   >
                     DM
                   </button>
                 </li>
                 <li><a
-                  href="/profile?user_id=${friend.user_id}"
+                  href="/profile?user_id=${friend.userId}"
                   class="dropdown-item"
                   data-bs-dismiss="modal"
                   data-link
@@ -81,9 +80,9 @@ export default class FriendList extends Component {
     if (friends.length > 0) {
       friends.forEach((friend) => {
         const friendProfile = new ProfileImage(
-          this.$target.querySelector(`#friend-profile-${friend.user_id}`),
+          this.$target.querySelector(`#friend-profile-${friend.userId}`),
           {
-            userId: friend.user_id,
+            userId: friend.userId,
             imageSrc: friend.profile_image,
             imageSize: "image-sm",
             alt: "/asset/default.png",

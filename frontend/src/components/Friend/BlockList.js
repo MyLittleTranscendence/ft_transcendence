@@ -40,7 +40,7 @@ export default class BlockList extends Component {
                 type="button"
                 data-bs-toggle="dropdown"
               >
-                <div id="block-profile-${block.user_id}"></div>
+                <div id="block-profile-${block.userId}"></div>
                 <span
                   class="mx-3"
                 >
@@ -48,9 +48,9 @@ export default class BlockList extends Component {
                   <small class="g-light-grey">click here to send message</small>
                 </span>
               </div>
-              <ul class="dropdown-menu" data-user-id="${block.user_id}">
+              <ul class="dropdown-menu" data-user-id="${block.userId}">
                 <li><a
-                  href="/profile?user_id=${block.user_id}"
+                  href="/profile?user_id=${block.userId}"
                   class="dropdown-item"
                   data-bs-dismiss="modal"
                   data-link
@@ -74,9 +74,9 @@ export default class BlockList extends Component {
     if (blocks.length > 0) {
       blocks.forEach((block) => {
         const blockProfile = new ProfileImage(
-          this.$target.querySelector(`#block-profile-${block.user_id}`),
+          this.$target.querySelector(`#block-profile-${block.userId}`),
           {
-            userId: block.user_id,
+            userId: block.userId,
             imageSrc: block.profile_image,
             imageSize: "image-sm",
             alt: "/asset/default.png",

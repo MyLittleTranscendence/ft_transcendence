@@ -14,7 +14,7 @@ export default class DirectMessage extends Component {
               ${formatTime(datetime)}
             </span>
           </span>
-          <p class="text-white">
+          <p class="g-light-grey">
             ${content}
           </p>
         </div>

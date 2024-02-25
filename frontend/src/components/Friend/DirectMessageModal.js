@@ -19,10 +19,12 @@ export default class DirectMessageModal extends Component {
   }
 
   mounted() {
+    const { nickname, userId } = this.props;
     const directMessageContainer = new DirectMessageContainer(
       this.$target.querySelector("#dm-container"),
       {
-        receiverId: "Friend",
+        nickname,
+        userId,
       }
     );
 

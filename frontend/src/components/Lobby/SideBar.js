@@ -30,7 +30,8 @@ export default class SideBar extends Component {
       }
     );
     const friend = new Friend(
-      this.$target.querySelector("#sidebar-friend-content")
+      this.$target.querySelector("#sidebar-friend-content"),
+      this
     );
 
     myProfile.render();

@@ -7,14 +7,14 @@ import { chatSocket } from "../../socket/socketManager.js";
 export default class DirectMessageContainer extends Component {
   setEvent() {
     this.addEvent("keydown", "#dm-chat-input", (e) =>
-      sendChatHandler(e, "single_message", this.props.receiverId)
+      sendChatHandler(e, "single_message", this.props.userId)
     );
     this.addEvent("click", "#send-icon", () => {
       const $input = this.$target.querySelector("#dm-chat-input");
       sendChatHandler(
         { target: $input, key: "Enter" },
         "single_message",
-        this.props.receiverId
+        this.props.userId
       );
     });
   }
@@ -23,9 +23,9 @@ export default class DirectMessageContainer extends Component {
     return `
       <div class="card border-0">
         <div class="card-header text-center">
-          <h4 class="text-muted">${this.props.receiverId}</h4>
+          <h4 class="text-muted">${this.props.nickname}</h4>
         </div>
-        <div class="card-body">
+        <div class="card-body overflow-auto" style="min-height: 25rem;">
           <div
             id="dm-chat-message-container"
             class="w-100 mh-100 overflow-auto mt-1"

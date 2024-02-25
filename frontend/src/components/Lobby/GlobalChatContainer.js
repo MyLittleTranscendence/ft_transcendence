@@ -7,11 +7,11 @@ import GlobalMessage from "./GlobalMessage.js";
 export default class GlobalChatContainer extends Component {
   setEvent() {
     this.addEvent("keydown", "#global-chat-input", (e) =>
-      sendChatHandler(e, "total_message", "")
+      sendChatHandler(e, "total_message")
     );
     this.addEvent("click", "#send-icon", () => {
       const $input = this.$target.querySelector("#global-chat-input");
-      sendChatHandler({ target: $input, key: "Enter" }, "total_message", "");
+      sendChatHandler({ target: $input, key: "Enter" }, "total_message");
     });
   }
 
