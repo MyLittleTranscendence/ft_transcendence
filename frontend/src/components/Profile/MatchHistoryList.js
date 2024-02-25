@@ -1,15 +1,22 @@
 import Component from "../../core/Component.js";
 import MatchHistoryCard from "./MatchHistoryCard.js";
 import fetchAPI from "../../utils/fetchAPI.js";
+import getRouter from "../../core/router.js";
 
 export default class MatchHistoryList extends Component {
   setup() {
-    this.state = { gameList: [], isLoading: true, page: 1 };
+    this.state = { gameList: [], isLoading: true };
     fetchAPI
-      .get(`/games/?page=${this.state.page}&user_id=${this.props.userId}`)
+      .get(`/games/?user_id=${this.props.userId}`)
       .then((data) =>
         this.setState({ gameList: data.results, isLoading: false })
-      );
+      )
+      .catch((e) => {
+        if (e.status === 401) {
+          const { navigate } = getRouter();
+          navigate("/start");
+        }
+      });
   }
 
   template() {
