@@ -1,8 +1,9 @@
 import Component from "../../core/Component.js";
 import ChatInput from "./ChatInput.js";
 import sendChatHandler from "../../handlers/chat/sendChatHandler.js";
+import { receiveTotalChatMessageHandler } from "../../handlers/chat/chatHandler.js";
+import receiveLogoutHandler from "../../handlers/auth/socketLogoutHandler.js";
 import { chatSocket } from "../../socket/socketManager.js";
-import GlobalMessage from "./GlobalMessage.js";
 
 export default class GlobalChatContainer extends Component {
   setEvent() {
@@ -13,6 +14,9 @@ export default class GlobalChatContainer extends Component {
       const $input = this.$target.querySelector("#global-chat-input");
       sendChatHandler({ target: $input, key: "Enter" }, "total_message");
     });
+
+    receiveTotalChatMessageHandler(this.$target, this.removeObservers);
+    receiveLogoutHandler(this.removeObservers, chatSocket);
   }
 
   template() {
@@ -47,35 +51,10 @@ export default class GlobalChatContainer extends Component {
   }
 
   mounted() {
-    const { addSocketObserver } = chatSocket();
-
     const chatInput = new ChatInput(
       this.$target.querySelector("#global-chat-input-holder"),
       { id: "global-chat-input", name: "global-chat-input" }
     );
     chatInput.render();
-
-    const $messageContainer = this.$target.querySelector(
-      "#global-chat-message-container"
-    );
-    const $messageUL = $messageContainer.querySelector(
-      "#global-chat-message-ul"
-    );
-
-    const removeObserver = addSocketObserver("total_message", (message) => {
-      const $messageLI = document.createElement("li");
-      const globalMessage = new GlobalMessage($messageLI, {
-        content: message.message,
-        senderId: message.sender_id,
-        senderNickname: message.sender_nickname,
-        senderProfileImage: message.sender_profile_image,
-        datetime: message.datetime,
-      });
-      globalMessage.render();
-      $messageLI.id = `global-${message.datetime}`;
-      $messageUL.appendChild($messageLI);
-      $messageContainer.scrollTop = $messageContainer.scrollHeight;
-    });
-    this.removeObservers.push(removeObserver);
   }
 }
