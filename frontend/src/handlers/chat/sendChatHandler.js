@@ -1,6 +1,6 @@
 import { chatSocket } from "../../socket/socketManager.js";
 
-const sendChatHandler = (e, type, receiverID = null) => {
+const sendChatHandler = (e, type, receiverID) => {
   if ((e.key === "Enter" || e.keyCode === 13) && !e.isComposing) {
     const { sendSocket } = chatSocket();
     const message = e.target.value.trim();

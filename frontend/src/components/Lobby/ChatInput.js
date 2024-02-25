@@ -11,7 +11,7 @@ export default class ChatInput extends Component {
     ">
       <div id="${this.props.id}-holder" class="w-100"></div>
       <img
-        id="global-send-icon"
+        id="send-icon"
         src="asset/sendIcon.svg"
         alt="send message"
         class="position-absolute z-1 end-0 me-3"

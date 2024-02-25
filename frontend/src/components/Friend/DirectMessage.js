@@ -1,5 +1,4 @@
 import Component from "../../core/Component.js";
-import ProfileImage from "../UI/Profile/ProfileImage.js";
 import formatTime from "../../utils/formatTime.js";
 
 export default class DirectMessage extends Component {
@@ -8,7 +7,6 @@ export default class DirectMessage extends Component {
 
     return `
       <div class="d-flex">
-        <div id="sender-img-holder" class="pt-1 ps-1"></div>
         <div class="ms-2">
           <span class="fw-bold g-light-grey">
             ${senderNickname}
@@ -22,13 +20,5 @@ export default class DirectMessage extends Component {
         </div>
       </div>
     `;
-  }
-
-  mounted() {
-    const senderImage = new ProfileImage(
-      this.$target.querySelector("#sender-img-holder"),
-      { imageSize: "image-xs", imageSrc: this.props.senderProfileImage }
-    );
-    senderImage.render();
   }
 }

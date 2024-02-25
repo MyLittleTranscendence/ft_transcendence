@@ -2,7 +2,7 @@ import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 import { friendListStore } from "../../store/initialStates.js";
 
-export default class FriendsList extends Component {
+export default class FriendList extends Component {
   setup() {
     const unsubscribe = friendListStore.subscribe(this);
     this.removeObservers.push(unsubscribe);
@@ -45,14 +45,15 @@ export default class FriendsList extends Component {
               </div>
               <ul class="dropdown-menu" data-user-id="${friend.user_id}">
                 <li>
-                  <a
+                  <button
+                    id="dm-toggle"
                     class="dropdown-item"
-                    data-bs-dismiss="modal"
                     data-bs-toggle="modal"
-                    href="#dm-modal"
+                    data-bs-target="#direct-message-modal"
+                    data-dm-id="${friend.user_id}"
                   >
                     DM
-                  </a>
+                  </button>
                 </li>
                 <li><a
                   href="/profile?user_id=${friend.user_id}"

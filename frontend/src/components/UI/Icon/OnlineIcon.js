@@ -1,12 +1,8 @@
 import Component from "../../../core/Component.js";
 
-export default class FriendsIcon extends Component {
+export default class OnlineIcon extends Component {
   template() {
     return `
-      <img src="asset/icon_people.svg">
-      ${
-        this.props.isOnline
-          ? `
       <div
         class="
           position-absolute
@@ -20,9 +16,7 @@ export default class FriendsIcon extends Component {
           height: 1.5rem;
           transform: translate(-130%, 17%);
         "
-      />`
-          : ""
-      }
+      ></div>
     `;
   }
 }
