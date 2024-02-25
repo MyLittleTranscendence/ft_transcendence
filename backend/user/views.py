@@ -102,7 +102,7 @@ class UserCheckViewSet(viewsets.GenericViewSet):
         """
         nickname = request.query_params.get('nickname')
         exists = User.objects.filter(nickname=nickname).exists()
-        serializer = UserCheckSerializer(exists)
+        serializer = UserCheckSerializer({'exists': exists})
         return Response(serializer.data)
 
     @swagger_auto_schema(manual_parameters=[
@@ -117,5 +117,5 @@ class UserCheckViewSet(viewsets.GenericViewSet):
         """
         username = request.query_params.get('username')
         exists = User.objects.filter(username=username).exists()
-        serializer = UserCheckSerializer(exists)
+        serializer = UserCheckSerializer({'exists': exists})
         return Response(serializer.data)
