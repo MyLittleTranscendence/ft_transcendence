@@ -5,7 +5,6 @@ import SignUpPage from "../pages/SignUpPage.js";
 import SignInPage from "../pages/SignInPage.js";
 import TwoFAPage from "../pages/TwoFAPage.js";
 import SetNicknamePage from "../pages/SetNicknamePage.js";
-import HyeonjunTestPage from "../pages/HyeonjunTestPage.js";
 import PvPReadyPage from "../pages/PvPReadyPage.js";
 import TournamentReadyPage from "../pages/TournamentReadyPage.js";
 import PongGamePage from "../pages/PongGamePage.js";
@@ -21,7 +20,6 @@ const routes = {
   "/tournament-ready": ($element) => new TournamentReadyPage($element),
   "/game": ($element) => new PongGamePage($element),
   "/profile": ($element) => new ProfilePage($element),
-  "/test-hyeonjun": ($element) => new HyeonjunTestPage($element),
 };
 
 export default routes;

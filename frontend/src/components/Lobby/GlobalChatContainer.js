@@ -9,7 +9,7 @@ export default class GlobalChatContainer extends Component {
     this.addEvent("keydown", "#global-chat-input", (e) =>
       sendChatHandler(e, "total_message")
     );
-    this.addEvent("click", "#global-send-icon", () => {
+    this.addEvent("click", "#send-icon", () => {
       const $input = this.$target.querySelector("#global-chat-input");
       sendChatHandler({ target: $input, key: "Enter" }, "total_message");
     });

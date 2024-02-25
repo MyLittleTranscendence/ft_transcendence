@@ -37,10 +37,13 @@ const gameStatusStore = createStore({ isInGame: false });
 
 const friendListStore = createStore({ friends: [], isFetched: false });
 
+const blockListStore = createStore({ blocks: [], isFetched: false });
+
 export {
   myInfoStore,
   gameInfoStore,
   gameStatusStore,
   friendListStore,
+  blockListStore,
   tournamentBeginUserIdStore,
 };
