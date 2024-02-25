@@ -9,6 +9,8 @@ import fetchUserInfo from "../../api/user/fetchUserInfo.js";
 import Button from "../UI/Button/Button.js";
 import addFriendHandler from "../../handlers/user/addFriendHandler.js";
 import deleteFriendHandler from "../../handlers/user/deleteFriendHandler.js";
+import { nicknameValidationHandler } from "../../handlers/user/inputValidateHandlers.js";
+import logoutHandler from "../../handlers/auth/logoutHandler.js";
 
 export default class Profile extends Component {
   async setup() {
@@ -21,6 +23,7 @@ export default class Profile extends Component {
         losses: 0,
       },
       isEditingNickname: false,
+      isNicknameValid: false,
     };
 
     if (this.props.isMe) {
@@ -49,12 +52,28 @@ export default class Profile extends Component {
       this.addEvent("click", "#nickname-edit-icon", () => {
         this.setState({ isEditingNickname: true });
       });
-      this.addEvent("click", "#nickname-edit-done-icon", () => {
-        const $input = this.$target.querySelector("#nickname-edit-input");
-        nicknameUpdateHandler(userId, $input, (isEditing) =>
-          this.setState({ isEditingNickname: isEditing })
+      this.addEvent("input", "#nickname-edit-input", (e) => {
+        nicknameValidationHandler(
+          e,
+          (string) => {
+            this.$target.querySelector("#nickname-warning").textContent =
+              string;
+          },
+          (isValid) => {
+            this.state.isNicknameValid = isValid;
+          }
         );
       });
+      this.addEvent("click", "#nickname-edit-done-icon", () => {
+        const $input = this.$target.querySelector("#nickname-edit-input");
+        nicknameUpdateHandler(
+          userId,
+          $input,
+          (isEditing) => this.setState({ isEditingNickname: isEditing }),
+          this.state.isNicknameValid
+        );
+      });
+      this.addEvent("click", "#logout-btn", logoutHandler);
     } else {
       this.addEvent("click", "#add-friend-btn", () => {
         addFriendHandler(userId);
@@ -81,7 +100,7 @@ export default class Profile extends Component {
           class="mb-3"
           ${isMe ? `style="cursor: pointer;"` : ""}
         ></div>
-        <div class="d-flex align-items-center position-relative">
+        <div class="d-flex align-items-center position-relative justify-content-center">
           ${!isEditingNickname ? `<text class="text-warning fs-5 fw-bold">${nickname}</text>` : ""}
           ${
             isMe && !isEditingNickname
@@ -96,11 +115,14 @@ export default class Profile extends Component {
               ? `<div id="nickname-edit-input-holder"></div>
                 <svg id="nickname-edit-done-icon" class="position-absolute" style="right: -2rem; cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="#00C213" class="bi bi-check-lg" viewBox="0 0 16 16">
                   <path d="M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425z"/>
-                </svg>`
+                </svg>
+                <text id="nickname-warning" class="position-absolute fw-bold" style="top: 100%; color: #ff9d9d;"></text>
+                `
               : ""
           }
         </div>
         <br>
+        ${isMe ? `<div id="logout-btn-holder" class="mb-3"></div>` : ""}
         ${!isMe && friendListStore.getState().isFetched ? `<div id="add-or-delete-friend-btn-holder" class="mb-3"></div>` : ""}
         <div id="overview-content"></div>
       </div>
@@ -124,9 +146,31 @@ export default class Profile extends Component {
     if (isMe && isEditingNickname) {
       const nicknameInput = new Input(
         this.$target.querySelector("#nickname-edit-input-holder"),
-        { id: "nickname-edit-input", type: "text", value: myInfo.nickname }
+        {
+          id: "nickname-edit-input",
+          pattern: "^[A-Za-z0-9]+$",
+          type: "text",
+          value: myInfo.nickname,
+        }
       );
       nicknameInput.render();
+
+      const $input = nicknameInput.$target.querySelector(
+        "#nickname-edit-input"
+      );
+      this.moveFocusToBack($input);
+    }
+
+    if (isMe) {
+      const logoutButton = new Button(
+        this.$target.querySelector("#logout-btn-holder"),
+        {
+          id: "logout-btn",
+          content: "Logout",
+          small: true,
+        }
+      );
+      logoutButton.render();
     }
 
     const { friends, isFetched } = friendListStore.getState();
@@ -156,5 +200,10 @@ export default class Profile extends Component {
     );
     profileImage.render();
     overview.render();
+  }
+
+  moveFocusToBack($input) {
+    $input.focus();
+    $input.setSelectionRange($input.value.length, $input.value.length);
   }
 }
