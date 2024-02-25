@@ -17,6 +17,7 @@ import {
   getGameInfoHandler,
   tournamentBeginHandler,
   receiveGameInviteHandler,
+  receiveLogoutHandler,
 } from "../../handlers/game/matchMakingHandlers.js";
 
 appendCSSLink("src/components/Lobby/TimeLeftBar.css");
@@ -71,6 +72,7 @@ export default class MatchContainer extends Component {
     getGameInfoHandler(this.removeObservers);
     tournamentBeginHandler(this.removeObservers);
     receiveGameInviteHandler(this.removeObservers);
+    receiveLogoutHandler(this.removeObservers);
   }
 
   template() {

@@ -1,6 +1,7 @@
 import { gameSocket } from "../../socket/socketManager.js";
 import { gameInfoStore } from "../../store/initialStates.js";
 import getRouter from "../../core/router.js";
+import logoutHandler from "../auth/logoutHandler.js";
 
 const waitGameHandler = (removeObservers) => {
   const { addSocketObserver } = gameSocket();
@@ -176,6 +177,15 @@ const cliSendHandler = (command) => {
   sendSocket("move_bar", { command });
 };
 
+const receiveLogoutHandler = (removeObservers) => {
+  const { addSocketObserver } = gameSocket();
+
+  const removeObserver = addSocketObserver("user_logout", () => {
+    logoutHandler();
+  });
+  removeObservers.push(removeObserver);
+};
+
 export {
   waitGameHandler,
   infoGameHandler,
@@ -183,4 +193,5 @@ export {
   gameKeyDownHandler,
   gameReadyCountdownHandler,
   cliSendHandler,
+  receiveLogoutHandler,
 };

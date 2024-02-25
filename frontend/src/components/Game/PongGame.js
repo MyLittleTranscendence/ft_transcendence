@@ -5,6 +5,7 @@ import {
   updateGameHandler,
   gameKeyDownHandler,
   gameReadyCountdownHandler,
+  receiveLogoutHandler,
 } from "../../handlers/game/gameHandler.js";
 import MultiGameResultModal from "./MultiGameResultModal.js";
 import TournamentGameResultModal from "./TournamentGameResultModal.js";
@@ -20,6 +21,7 @@ export default class PongGame extends Component {
       (message) => this.updateGame(message),
       this.removeObservers
     );
+    receiveLogoutHandler(this.removeObservers);
 
     const { userId } = myInfoStore.getState();
     const { leftUserId, rightUserId } = gameInfoStore.getState();

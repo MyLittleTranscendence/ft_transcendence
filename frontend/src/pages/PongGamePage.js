@@ -99,7 +99,8 @@ export default class PongGamePage extends Component {
             nextRightUserId
           ),
         myId: myInfoStore.getState().userId,
-      }
+      },
+      this
     );
     const leftUserImage = new ProfileImage(
       this.$target.querySelector("#player-1-img-holder"),
