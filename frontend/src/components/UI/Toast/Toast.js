@@ -8,17 +8,7 @@ export default class Toast extends Component {
     return `
       <div
         id="toast-content"
-        class="
-          border
-          border-4
-          border-warning
-          rounded-pill
-          bg-white
-          fw-bold
-          text-center
-          py-2
-          px-5
-        "
+        class="border border-4 border-warning rounded-pill bg-white fw-bold text-center py-2 px-5"
       >
       </div>
     `;

@@ -9,17 +9,17 @@ export default class TournamentGameResultModal extends Modal {
     if (this.props.isFinal) {
       const { winner } = this.props;
 
-      this.$modalContent.textContent = "Winner of The Tournament";
+      this.$modalTitle.textContent = "Winner of The Tournament";
 
       const winnerInfo = await fetchUserInfo(winner);
 
-      const winnerImage = new ProfileImage(this.$winnerImgaeHolder, {
+      const winnerImage = new ProfileImage(this.$userImgaeHolder, {
         imageSize: "image-mid",
         imageSrc: winnerInfo.profileImage,
       });
       winnerImage.render();
 
-      this.$winnerNickname.textContent = winnerInfo.nickname;
+      this.$textContent.textContent = winnerInfo.nickname;
 
       const goHomeLink = new Link(this.$modalButtonGroup, {
         id: "modal-close",
@@ -28,7 +28,7 @@ export default class TournamentGameResultModal extends Modal {
       });
       goHomeLink.render();
     } else {
-      this.$modalContent.innerHTML =
+      this.$modalTitle.innerHTML =
         this.props.winner === this.props.myId
           ? "<div>Congrats, You Won!</div><div>Get Ready for the final match.</div>"
           : "Sorry, You Lost.";

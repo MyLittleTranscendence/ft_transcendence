@@ -5,6 +5,8 @@ import {
   tournamentBeginUserIdStore,
 } from "../../store/initialStates.js";
 import getRouter from "../../core/router.js";
+import GameInviteModal from "../../components/Lobby/GameInviteModal.js";
+import fetchUserInfo from "../../api/user/fetchUserInfo.js";
 
 const matchFindHandler = (matchType) => {
   const { sendSocket } = gameSocket();
@@ -160,6 +162,27 @@ const tournamentBeginHandler = (removeObservers) => {
   removeObservers.push(removeObserver);
 };
 
+const receiveGameInviteHandler = (removeObservers) => {
+  const { addSocketObserver } = gameSocket();
+
+  const removeObserver = addSocketObserver(
+    "request_invite",
+    async (message) => {
+      const challengerInfo = await fetchUserInfo(message.inviter_user_id);
+      const inviteModal = new GameInviteModal(
+        document.getElementById("modal-root"),
+        {
+          challengerUserId: challengerInfo.userId,
+          challengerProfileImage: challengerInfo.profileImage,
+          challengerNickname: challengerInfo.nickname,
+        }
+      );
+      inviteModal.render();
+    }
+  );
+  removeObservers.push(removeObserver);
+};
+
 export {
   matchFindHandler,
   cancleMatchFindHandler,
@@ -172,4 +195,5 @@ export {
   createSingleGameHandler,
   getGameInfoHandler,
   tournamentBeginHandler,
+  receiveGameInviteHandler,
 };
