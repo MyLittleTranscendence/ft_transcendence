@@ -2,10 +2,34 @@ import Component from "../../core/Component.js";
 import InputGroup from "../UI/Input/InputGroup.js";
 import Button from "../UI/Button/Button.js";
 import signUpHandler from "../../handlers/auth/signUpHandler.js";
+import {
+  idValidationHandler,
+  nicknameValidationHandler,
+  passwordValidationHandler,
+  validateEmailHandler,
+  verifyPasswordHandler,
+} from "../../handlers/user/inputValidateHandlers.js";
 
 export default class SignUpForm extends Component {
   setEvent() {
     this.addEvent("submit", "#sign-up-form", signUpHandler);
+    const validateFormHandler = () => {
+      if (
+        this.idInputGroup.state.isValid &&
+        this.nicknameInputGroup.state.isValid &&
+        this.pwInputGroup.state.isValid &&
+        this.pwVerifyInputGroup.state.isValid &&
+        this.emailInputGroup.state.isValid
+      ) {
+        this.signUpButton.props.disabled = false;
+        this.signUpButton.render();
+      } else {
+        this.signUpButton.props.disabled = true;
+        this.signUpButton.render();
+      }
+    };
+    this.$target.addEventListener("input", validateFormHandler);
+    this.eventListeners.push("input", validateFormHandler);
   }
 
   template() {
@@ -32,17 +56,14 @@ export default class SignUpForm extends Component {
       id: "signup-form-id",
       pattern: "^[A-Za-z0-9]+$",
       name: "signup-form",
-      // value:
-      placeholder: "8 ~ 16 characters",
+      placeholder: "8 ~ 24 characters",
       autocomplete: true,
       required: true,
     };
     const nicknameInputProps = {
       type: "text",
       id: "signup-form-nickname",
-      pattern: "^[A-Za-z0-9]+$",
       name: "signup-form",
-      // value:
       placeholder: "4 ~ 16 characters",
       autocomplete: true,
       required: true,
@@ -50,9 +71,8 @@ export default class SignUpForm extends Component {
     const pwInputProps = {
       type: "password",
       id: "signup-form-pw",
-      pattern: "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\\W).{8,20}",
+      pattern: "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\\W).{13,20}",
       name: "signup-form",
-      // value:
       placeholder: "12 ~ characters",
       autocomplete: true,
       required: true,
@@ -61,78 +81,87 @@ export default class SignUpForm extends Component {
       type: "password",
       id: "signup-form-pw-verify",
       name: "signup-form",
-      // value:
       required: true,
     };
     const emailInputProps = {
       type: "email",
       id: "signup-form-email",
+      pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
       name: "signup-form",
-      // value:
       placeholder: "hello@example.com",
       required: true,
     };
 
-    const idInputGroup = new InputGroup(
+    this.idInputGroup = new InputGroup(
       $signUpForm.querySelector("#id-input-group-holder"),
       {
         labelText: "ID",
-        warningText: "",
+        validate: idValidationHandler,
         inputProps: idInputProps,
         holderId: "id-input-holder",
-      }
+      },
+      this
     );
-    const nicknameInputGroup = new InputGroup(
+    this.nicknameInputGroup = new InputGroup(
       $signUpForm.querySelector("#nickname-input-group-holder"),
       {
         labelText: "Nickname",
+        validate: nicknameValidationHandler,
         warningText: "",
         inputProps: nicknameInputProps,
         holderId: "nickname-input-holder",
-      }
+      },
+      this
     );
-    const pwInputGroup = new InputGroup(
+    this.pwInputGroup = new InputGroup(
       $signUpForm.querySelector("#pw-input-group-holder"),
       {
         labelText: "Password",
-        warningText: "",
+        validate: passwordValidationHandler,
         inputProps: pwInputProps,
         holderId: "pw-input-holder",
-      }
+      },
+      this
     );
-    const pwVerifyInputGroup = new InputGroup(
+    this.pwVerifyInputGroup = new InputGroup(
       $signUpForm.querySelector("#verify-pw-input-group-holder"),
       {
         labelText: "Verify Password",
-        warningText: "",
+        validate: verifyPasswordHandler,
         inputProps: pwVerifyInputProps,
         holderId: "pw-verify-input-holder",
-      }
+      },
+      this
     );
-    const emailInputGroup = new InputGroup(
+    this.emailInputGroup = new InputGroup(
       $signUpForm.querySelector("#email-input-group-holder"),
       {
         labelText: "E-mail",
-        warningText: "",
+        validate: validateEmailHandler,
         inputProps: emailInputProps,
         holderId: "email-input-holder",
-      }
+      },
+      this
     );
-    const signUpButton = new Button(
+
+    this.signUpButton = new Button(
       $signUpForm.querySelector("#sign-up-btn-holder"),
       {
         type: "submit",
-        disabled: false,
+        disabled: true,
         content: "Sign Up",
         attributes: 'style="min-width: 10rem"',
-      }
+      },
+      this
     );
 
-    idInputGroup.render();
-    nicknameInputGroup.render();
-    pwInputGroup.render();
-    pwVerifyInputGroup.render();
-    emailInputGroup.render();
-    signUpButton.render();
+    this.idInputGroup.render();
+    this.nicknameInputGroup.render();
+    this.pwInputGroup.render();
+    this.pwVerifyInputGroup.render();
+    this.emailInputGroup.render();
+    this.signUpButton.render();
+
+    this.idInputGroup.$target.querySelector(`#${idInputProps.id}`).focus();
   }
 }
