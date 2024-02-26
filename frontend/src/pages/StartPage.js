@@ -44,7 +44,7 @@ export default class StartPage extends Component {
       $pageContent.querySelector("#oauth-signin-link"),
       {
         content: `Sign In with <img src="asset/42logo.png" style="max-width: 2rem;" />`,
-        path: "http://localhost:8000/api/login/oauth2/42api",
+        path: "http://localhost:3000/api/login/oauth2/42api",
       }
     );
 
