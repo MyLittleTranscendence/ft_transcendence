@@ -4,7 +4,7 @@ from backend import settings
 class Oauth42Constant:
     __client_id = settings.CLIENT_ID_42
     __response_type = "code"
-    __redirect_uri = "http://localhost:8000/api/login/oauth2/code/42api"
+    __redirect_uri = f"{settings.BASE_URL}/api/login/oauth2/code/42api"
     __scope = "public"
     __client_secret = settings.CLIENT_SECRET_42
     __grant_type = "authorization_code"
