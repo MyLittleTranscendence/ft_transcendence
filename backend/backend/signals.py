@@ -19,7 +19,7 @@ def user_updated(sender, instance, created, **kwargs):
         {
             "type": message_type,
             "nickname": instance.nickname,
-            "profile_image": f"{settings.BASE_URL}{instance.profile_image.url}"
+            "profile_image": instance.profile_image.url
         }
     )
 
