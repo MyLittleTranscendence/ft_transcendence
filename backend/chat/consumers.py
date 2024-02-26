@@ -2,10 +2,8 @@ import json
 
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import AnonymousUser
-from django.db.models import Q
 from django.utils.timezone import now
 
-from backend import settings
 from backend.consumers import DefaultConsumer
 from block.models import BlockUser
 from friend.models import Friend
@@ -47,15 +45,7 @@ class ChatConsumer(DefaultConsumer):
         전체 채팅 전송
         """
         message = message_data["message"]
-        await self.channel_layer.group_send(
-            self.LOGIN_GROUP, {
-                "type": "total.message",
-                "message": message,
-                "sender_id": self.scope['user'].id,
-                "sender_nickname": self.nickname,
-                "sender_profile_image": self.profile_image,
-                "datetime": str(now())
-            })
+        await self.send_message_to_group(self.LOGIN_GROUP, message, "total.message")
 
     async def handle_single_message(self, message_data):
         """
@@ -64,13 +54,15 @@ class ChatConsumer(DefaultConsumer):
         message = message_data["message"]
         receiver_id = message_data["receiver_id"]
         sender_id = self.scope['user'].id
-
+        await self.send_message_to_group(f"{sender_id}_chat", message, "single.message")
         if await database_sync_to_async(BlockUser.is_blocked)(sender_id, receiver_id):
             return
+        await self.send_message_to_group(f"{receiver_id}_chat", message, "single.message")
 
+    async def send_message_to_group(self, group, message, type):
         await self.channel_layer.group_send(
-            f"{receiver_id}_chat", {
-                "type": "single.message",
+            group, {
+                "type": type,
                 "message": message,
                 "sender_id": self.scope['user'].id,
                 "sender_nickname": self.nickname,
