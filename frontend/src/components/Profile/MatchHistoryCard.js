@@ -40,11 +40,13 @@ export default class MatchHistoryCard extends Component {
     );
 
     const leftProfileImage = new ProfileImage($leftProfileImageContent, {
+      userId: this.props.left_user.id,
       imageSize: "image-sm",
       imageSrc: `${this.props.left_user.profile_image}`,
       alt: `${this.props.left_user.nickname}`,
     });
     const rightProfileImage = new ProfileImage($rightProfileImageContent, {
+      userId: this.props.right_user.id,
       imageSize: "image-sm",
       imageSrc: `${this.props.right_user.profile_image}`,
       alt: `${this.props.right_user.nickname}`,
