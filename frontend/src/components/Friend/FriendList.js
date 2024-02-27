@@ -20,7 +20,7 @@ export default class FriendList extends Component {
   }
 
   template() {
-    const friends = friendListStore.getState().friends;
+    const { friends } = friendListStore.getState();
 
     if (friends.length === 0) {
       return `
@@ -95,7 +95,7 @@ export default class FriendList extends Component {
   }
 
   mounted() {
-    const friends = friendListStore.getState().friends;
+    const { friends } = friendListStore.getState();
 
     if (friends.length > 0) {
       friends.forEach((friend) => {
