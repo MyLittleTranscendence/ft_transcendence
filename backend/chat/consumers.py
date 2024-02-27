@@ -26,15 +26,6 @@ class ChatConsumer(DefaultConsumer):
             await self.friends_status_message()
             await self.handle_login_status(1)
             self.block_users = await self.get_block_users()
-            print(self.block_users)
-            print(self.block_users)
-            print(self.block_users)
-            print(self.block_users)
-            print(self.block_users)
-
-    @database_sync_to_async
-    def get_block_users(self):
-        return list(BlockUser.objects.filter(blocker_id=self.scope['user'].id).values_list('blocking_id', flat=True))
 
     async def disconnect(self, close_code):
         await super(ChatConsumer, self).disconnect(close_code)
@@ -70,6 +61,9 @@ class ChatConsumer(DefaultConsumer):
         await self.send_message_to_group(f"{receiver_id}_chat", message, "single.message")
 
     async def send_message_to_group(self, group, message, type):
+        """
+        그룹에게 메시지 전송
+        """
         await self.channel_layer.group_send(
             group, {
                 "type": type,
@@ -128,10 +122,19 @@ class ChatConsumer(DefaultConsumer):
         }))
 
     async def friend_login(self, event):
+        """
+        친구 로그인 상태 전송
+        """
         await self.send(text_data=json.dumps({
             "type": self.LOGIN_MESSAGE,
             "friends_status": event["friends_status"]
         }))
+
+    async def block_updated(self, event):
+        """
+        객체 상태에 차단 목록 업데이트
+        """
+        self.block_users = await self.get_block_users()
 
     async def friends_status_message(self):
         """
@@ -148,3 +151,10 @@ class ChatConsumer(DefaultConsumer):
             "type": self.LOGIN_MESSAGE,
             "friends_status": friends_status
         }))
+
+    @database_sync_to_async
+    def get_block_users(self):
+        """
+        차단 리스트 조회
+        """
+        return BlockUser.getBlockingUserIdList(self.scope["user"].id)

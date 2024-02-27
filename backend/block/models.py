@@ -35,3 +35,11 @@ class BlockUser(models.Model):
             Q(blocker_id=sender_id, blocking_id=receiver_id) |
             Q(blocker_id=receiver_id, blocking_id=sender_id)
         ).exists()
+
+    @classmethod
+    def getBlockingUserIdList(cls, blocker_id):
+        """
+        차단한 사용자 아이디 리스트 반환
+        """
+        return list(BlockUser.objects.filter(blocker_id=blocker_id).values_list('blocking_id', flat=True))
+
