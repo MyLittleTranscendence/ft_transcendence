@@ -226,8 +226,6 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://\w+\.example\.com$",
 ]
 
-CORS_ALLOW_ALL_ORIGINS: True
-
 # 42 API
 CLIENT_ID_42 = os.environ.get('CLIENT_ID_42', "dummy")
 CLIENT_SECRET_42 = os.environ.get('CLIENT_SECRET_42', "dummy")
