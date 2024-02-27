@@ -1,3 +1,26 @@
+.profile-hover {
+  position: relative;
+}
+
+.edit-icon {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: white;
+}
+
+.profile-hover:hover .edit-icon {
+  display: block;
+  z-index: 10;
+}
+
+.profile-hover:hover img {
+  opacity: 0.5;
+}
+
 .image-big {
   width: 10rem;
   height: 10rem;
