@@ -3,7 +3,7 @@ import GlobalMessage from "../../components/Lobby/GlobalMessage.js";
 import { blockListStore } from "../../store/initialStates.js";
 
 const isBlockedUser = (senderId) => {
-  const blocks = blockListStore.getState();
+  const blocks = blockListStore.getState().blocks;
 
   if (blocks.find((blockedUser) => blockedUser.userId === senderId)) {
     return true;

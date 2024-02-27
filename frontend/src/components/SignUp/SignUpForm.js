@@ -71,7 +71,7 @@ export default class SignUpForm extends Component {
     const pwInputProps = {
       type: "password",
       id: "signup-form-pw",
-      pattern: "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\\W).{13,20}",
+      pattern: "(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\\W).{12,20}",
       name: "signup-form",
       placeholder: "12 ~ characters",
       autocomplete: true,
