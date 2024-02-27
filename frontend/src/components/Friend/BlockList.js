@@ -16,7 +16,7 @@ export default class BlockList extends Component {
   }
 
   template() {
-    const blocks = blockListStore.getState().blocks;
+    const { blocks } = blockListStore.getState();
 
     if (blocks.length === 0) {
       return `
@@ -81,7 +81,7 @@ export default class BlockList extends Component {
   }
 
   mounted() {
-    const blocks = blockListStore.getState().blocks;
+    const { blocks } = blockListStore.getState();
 
     if (blocks.length > 0) {
       blocks.forEach((block) => {

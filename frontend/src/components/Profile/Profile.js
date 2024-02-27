@@ -131,15 +131,16 @@ export default class Profile extends Component {
 
   mounted() {
     const { userInfo, isEditingNickname } = this.state;
-    const { imageSize, alt, isMe } = this.props;
+    const { isMe } = this.props;
     const myInfo = myInfoStore.getState();
 
     const profileImage = new ProfileImage(
       this.$target.querySelector("#profile-image-content"),
       {
-        imageSize,
-        imageSrc: isMe ? myInfo.profileImage : "asset/default.png",
-        alt,
+        imageSize: "image-mid",
+        imageSrc: isMe ? myInfo.profileImage : userInfo.profileImage,
+        alt: isMe ? myInfo.nickname : userInfo.nickname,
+        isMyProfile: isMe,
       }
     );
 

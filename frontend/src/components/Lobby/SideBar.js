@@ -11,19 +11,16 @@ export default class SideBar extends Component {
 
   template() {
     return `
-      <a 
-        id="sidebar-my-profile-link"
-        href="/profile?user_id=${myInfoStore.getState().userId}"
-        data-link
-      ></a>
+      <div id="sidebar-my-profile-image-holder"></div>
       <div id="sidebar-friend-content"></div>
     `;
   }
 
   mounted() {
     const myProfile = new ProfileImage(
-      this.$target.querySelector("#sidebar-my-profile-link"),
+      this.$target.querySelector("#sidebar-my-profile-image-holder"),
       {
+        userId: myInfoStore.getState().userId,
         imageSize: "image-sm",
         imageSrc: myInfoStore.getState().profileImage,
         alt: "my profile",
@@ -31,6 +28,7 @@ export default class SideBar extends Component {
     );
     const friend = new Friend(
       this.$target.querySelector("#sidebar-friend-content"),
+      {},
       this
     );
 

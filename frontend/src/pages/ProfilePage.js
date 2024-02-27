@@ -40,12 +40,6 @@ export default class ProfilePage extends Component {
     const profileContent = new Profile(
       $profileContainer.querySelector("#profile-content"),
       {
-        username: "hyeonjun",
-        imageSize: "image-mid",
-        imageSrc: "asset/default.png",
-        alt: "my profile",
-        wins: 42,
-        losses: 42,
         userId,
         isMe,
       },

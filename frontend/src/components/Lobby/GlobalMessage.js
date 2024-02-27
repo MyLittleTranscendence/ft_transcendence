@@ -4,7 +4,7 @@ import formatTime from "../../utils/formatTime.js";
 
 export default class GlobalMessage extends Component {
   template() {
-    const { content, senderId, senderNickname, datetime } = this.props;
+    const { content, senderNickname, datetime } = this.props;
 
     return `
       <div class="d-flex">
@@ -27,7 +27,11 @@ export default class GlobalMessage extends Component {
   mounted() {
     const senderImage = new ProfileImage(
       this.$target.querySelector("#sender-img-holder"),
-      { imageSize: "image-xs", imageSrc: this.props.senderProfileImage }
+      {
+        userId: this.props.senderId,
+        imageSize: "image-xs",
+        imageSrc: this.props.senderProfileImage,
+      }
     );
     senderImage.render();
   }
