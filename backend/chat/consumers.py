@@ -136,6 +136,12 @@ class ChatConsumer(DefaultConsumer):
         """
         self.block_users = await self.get_block_users()
 
+    async def friend_updated(self, event):
+        """
+        친구 목록 업데이트 정보 전송
+        """
+        await self.friends_status_message()
+
     async def friends_status_message(self):
         """
         친구 목록 전체 로그인 상태 전달
