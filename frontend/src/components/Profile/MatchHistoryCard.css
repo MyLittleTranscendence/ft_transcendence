@@ -27,6 +27,10 @@
   align-items: center;
 }
 
+.card-footer-custom {
+  height: 2rem;
+}
+
 .match-history-win,
 .match-history-lose {
   background-color: #00c213;
