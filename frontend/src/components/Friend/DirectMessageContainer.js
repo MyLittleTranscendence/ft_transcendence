@@ -1,9 +1,12 @@
 import Component from "../../core/Component.js";
 import ChatInput from "../Lobby/ChatInput.js";
-import DirectMessage from "./DirectMessage.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 import sendChatHandler from "../../handlers/chat/sendChatHandler.js";
-import { chatSocket } from "../../socket/socketManager.js";
+import {
+  receiveSingleChatMessageHandler,
+  appendDirectMessageToUL,
+} from "../../handlers/chat/chatHandler.js";
+import { myInfoStore } from "../../store/initialStates.js";
 
 export default class DirectMessageContainer extends Component {
   setEvent() {
@@ -18,6 +21,8 @@ export default class DirectMessageContainer extends Component {
         this.props.userId
       );
     });
+
+    receiveSingleChatMessageHandler(this.$target, this.removeObservers);
   }
 
   template() {
@@ -42,8 +47,6 @@ export default class DirectMessageContainer extends Component {
   }
 
   mounted() {
-    const { addSocketObserver } = chatSocket();
-
     const profileImage = new ProfileImage(
       this.$target.querySelector("#dm-profile-image"),
       {
@@ -61,25 +64,24 @@ export default class DirectMessageContainer extends Component {
     profileImage.render();
     chatInput.render();
 
-    const $messageContainer = this.$target.querySelector(
-      "#dm-chat-message-container"
-    );
-    const $messageUL = $messageContainer.querySelector("#dm-chat-message-ul");
+    this.loadStoredChatMessages();
+  }
 
-    const removeObserver = addSocketObserver("single_message", (message) => {
-      const $messageLI = document.createElement("li");
-      const directMessage = new DirectMessage($messageLI, {
-        content: message.message,
-        senderId: message.sender_id,
-        senderNickname: message.sender_nickname,
-        senderProfileImage: message.sender_profile_image,
-        datetime: message.datetime,
-      });
-      directMessage.render();
-      $messageLI.id = `dm-${message.datetime}`;
-      $messageUL.appendChild($messageLI);
-      $messageContainer.scrollTop = $messageContainer.scrollHeight;
+  loadStoredChatMessages() {
+    const { userId: myId } = myInfoStore.getState();
+
+    const storedMessages =
+      JSON.parse(sessionStorage.getItem("direct_message")) || [];
+
+    const $messageUL = this.$target.querySelector("#dm-chat-message-ul");
+
+    storedMessages.forEach((message) => {
+      if (
+        message.sender_id === this.props.userId ||
+        message.sender_id === myId
+      ) {
+        appendDirectMessageToUL($messageUL, message);
+      }
     });
-    this.removeObservers.push(removeObserver);
   }
 }
