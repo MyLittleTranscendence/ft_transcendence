@@ -5,21 +5,31 @@ import ProfileImage from "../UI/Profile/ProfileImage.js";
 import fetchUserInfo from "../../api/user/fetchUserInfo.js";
 
 export default class TournamentGameResultModal extends Modal {
-  async mounted() {
+  async setup() {
     if (this.props.isFinal) {
-      const { winner } = this.props;
+      this.state = { winnerInfo: null };
+      const winnerInfo = await fetchUserInfo(this.props.winner);
+      this.setState({ winnerInfo });
+    }
+  }
 
+  mounted() {
+    if (this.props.isFinal) {
       this.$modalTitle.textContent = "Winner of The Tournament";
 
-      const winnerInfo = await fetchUserInfo(winner);
+      const { winnerInfo } = this.state;
 
-      const winnerImage = new ProfileImage(this.$userImgaeHolder, {
+      const winnerImage = new ProfileImage(this.$userImageHolder, {
+        userId: winnerInfo ? winnerInfo.userId : null,
         imageSize: "image-mid",
-        imageSrc: winnerInfo.profileImage,
+        imageSrc: winnerInfo ? winnerInfo.profileImage : null,
+        alt: `${winnerInfo ? winnerInfo.nickname : ""}\`s profile`,
       });
       winnerImage.render();
 
-      this.$textContent.textContent = winnerInfo.nickname;
+      this.$textContent.textContent = winnerInfo
+        ? winnerInfo.nickname
+        : "Loading...";
 
       const goHomeLink = new Link(this.$modalButtonGroup, {
         id: "modal-close",
