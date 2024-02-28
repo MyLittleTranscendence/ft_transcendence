@@ -17,7 +17,7 @@ const emailUpdateHandler = (
     fetchAPI
       .patch(`/users/${myInfoStore.getState().userId}/`, { email: inputEmail })
       .then((data) => {
-        myInfoStore.setState({ email: data.email });
+        myInfoStore.setState({ email: data.email, mfaEnable: data.mfa_enable });
         setIsEditingFalse();
         showToast("E-Mail updated successfully!");
       })
