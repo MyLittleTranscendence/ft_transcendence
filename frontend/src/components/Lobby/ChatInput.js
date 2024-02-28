@@ -28,7 +28,7 @@ export default class ChatInput extends Component {
       name,
       placeholder: "Type a message ...",
       required: true,
-      className: "form-control-lg pe-5 w-100",
+      className: "form-control-lg border border-1 pe-5 w-100",
     };
     const input = new Input(
       this.$target.querySelector(`#${id}-holder`),
