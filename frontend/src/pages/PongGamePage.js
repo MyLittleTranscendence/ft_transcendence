@@ -58,14 +58,14 @@ export default class PongGamePage extends Component {
             style="top: -7rem; right: -2.5rem;"
           ></div>
           <div class="d-flex flex-column align-items-center">
-            <div id="player-2-img-holder"></div>
+            <div id="player-1-img-holder"></div>
             <div
               class="${myId === leftUser?.userId ? "text-warning" : "text-white"} fw-bold"
             >${leftUser?.nickname}</div>
           </div>
           <div id="pong-game-holder" class="position-relative"></div>
           <div class="d-flex flex-column align-items-center">
-            <div id="player-1-img-holder"></div>
+            <div id="player-2-img-holder"></div>
             <div 
               class="${myId === rightUser?.userId ? "text-warning" : "text-white"} fw-bold"
               >${rightUser?.nickname}</div>
