@@ -11,6 +11,7 @@ import addFriendHandler from "../../handlers/user/addFriendHandler.js";
 import deleteFriendHandler from "../../handlers/user/deleteFriendHandler.js";
 import { nicknameValidationHandler } from "../../handlers/user/inputValidateHandlers.js";
 import logoutHandler from "../../handlers/auth/logoutHandler.js";
+import fetchMyInfo from "../../api/user/fetchMyInfo.js";
 
 export default class Profile extends Component {
   async setup() {
@@ -34,6 +35,7 @@ export default class Profile extends Component {
       };
       const unsubscribe = myInfoStore.subscribe(this);
       this.removeObservers.push(unsubscribe);
+      fetchMyInfo();
     } else {
       const userInfo = await fetchUserInfo(this.props.userId);
       this.setState({ userInfo });
