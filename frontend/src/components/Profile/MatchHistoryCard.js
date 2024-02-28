@@ -13,9 +13,9 @@ export default class MatchHistoryCard extends Component {
         </div>
         <div class="card-body card-body-custom">
             <div
-              class="${this.props.isWin ? "match-history-win" : "match-history-lost"}
+              class="${this.props.isWin ? "match-history-win" : "match-history-lose"}
               match-history-blank">
-              ${this.props.isWin ? "Win" : "Lost"}
+              ${this.props.isWin ? "Win" : "Lose"}
             </div>
             <div id="left-profile-image" class="match-history-image"></div>
             <div class="match-history-username">${this.props.left_user.nickname}</div>

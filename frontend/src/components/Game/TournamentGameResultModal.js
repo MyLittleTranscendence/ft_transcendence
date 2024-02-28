@@ -31,7 +31,7 @@ export default class TournamentGameResultModal extends Modal {
       this.$modalTitle.innerHTML =
         this.props.winner === this.props.myId
           ? "<div>Congrats, You Won!</div><div>Get Ready for the final match.</div>"
-          : "Sorry, You Lost.";
+          : "Sorry, You Lose.";
 
       const confirmButton = new Button(this.$modalButtonGroup, {
         id: "modal-close",
