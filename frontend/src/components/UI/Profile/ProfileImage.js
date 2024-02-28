@@ -16,7 +16,7 @@ export default class ProfileImage extends Component {
     return `
     ${!isMyProfile && userId ? `<a href="/profile?user_id=${userId}" data-link>` : ""}
       <div class="overflow-hidden rounded-circle ${imageSize} ${isMyProfile ? "profile-hover" : ""}">
-        <img class="img-fluid" src=${imageSrc} alt=${alt}>
+        <img class="img-fluid" src=${imageSrc || "asset/default.png"} alt=${alt}>
         ${
           isMyProfile
             ? `<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-pencil-fill edit-icon" viewBox="0 0 16 16">
