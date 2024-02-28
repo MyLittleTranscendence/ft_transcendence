@@ -1,6 +1,7 @@
 import { chatSocket } from "../../socket/socketManager.js";
 import GlobalMessage from "../../components/Lobby/GlobalMessage.js";
 import DirectMessage from "../../components/Friend/DirectMessage.js";
+import { myInfoStore } from "../../store/initialStates.js";
 
 const appendGlobalMessageToUL = ($ul, message) => {
   const $li = document.createElement("li");
@@ -48,17 +49,27 @@ const receiveTotalChatMessageHandler = ($target, removeObservers) => {
   removeObservers.push(removeObserver);
 };
 
-const receiveSingleChatMessageHandler = ($target, removeObservers) => {
+const receiveSingleChatMessageHandler = (
+  $target,
+  removeObservers,
+  opponentId
+) => {
   const { addSocketObserver } = chatSocket();
+  const { userId: myId } = myInfoStore.getState();
 
   const removeObserver = addSocketObserver("single_message", (message) => {
-    const $messageContainer = $target.querySelector(
-      "#dm-chat-message-container"
-    );
-    const $messageUL = $messageContainer.querySelector("#dm-chat-message-ul");
+    if (
+      (message.sender_id === myId && message.receiver_id === opponentId) ||
+      (message.sender_id === opponentId && message.receiver_id === myId)
+    ) {
+      const $messageContainer = $target.querySelector(
+        "#dm-chat-message-container"
+      );
+      const $messageUL = $messageContainer.querySelector("#dm-chat-message-ul");
 
-    appendDirectMessageToUL($messageUL, message);
-    $messageContainer.scrollTop = $messageContainer.scrollHeight;
+      appendDirectMessageToUL($messageUL, message);
+      $messageContainer.scrollTop = $messageContainer.scrollHeight;
+    }
   });
   removeObservers.push(removeObserver);
 };
@@ -78,6 +89,7 @@ const storeChatMessageToSessionStorage = () => {
         sender_nickname: message.sender_nickname,
         sender_profile_image: message.sender_profile_image,
         datetime: message.datetime,
+        receiver_id: message.receiver_id || "all",
       };
 
       currentMessages.push(newMessage);
