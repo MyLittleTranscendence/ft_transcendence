@@ -108,7 +108,7 @@ export default class FriendList extends Component {
           {
             imageSize: "image-sm",
             imageSrc: friend.profileImage,
-            alt: "/asset/default.png",
+            alt: friend.nickname,
           }
         );
         friendProfile.render();
