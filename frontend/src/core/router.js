@@ -63,6 +63,7 @@ const initRouter = () => {
       if (newUrl.href !== currentUrl.href) {
         window.history.pushState({}, "", newUrl.href);
       }
+      document.getElementById("modal-root").innerHTML = "";
       handleRouteChange();
     };
 
