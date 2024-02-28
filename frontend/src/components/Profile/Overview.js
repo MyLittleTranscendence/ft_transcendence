@@ -23,7 +23,7 @@ export default class Overview extends Component {
 					${wins}
 				</span>
 			</div>
-			<div class="record">Lost 
+			<div class="record">Lose 
 				<span
 					class="record-value">
 					${losses}

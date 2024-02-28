@@ -28,7 +28,7 @@ export default class PlayerOverview extends Component {
           Win<span class="text-white ms-3">${wins}</span>
         </span>
         <span class="g-light-grey fw-bold mb-3">
-          Lost<span class="text-white ms-3">${losses}</span>
+          Lose<span class="text-white ms-3">${losses}</span>
         </span>
         <span class="g-light-grey fw-bold">
           Win Rate

@@ -6,23 +6,50 @@ appendCSSLink("src/components/Profile/MatchHistoryCard.css");
 
 export default class MatchHistoryCard extends Component {
   template() {
+    const gameType = ((type) => {
+      switch (type) {
+        case "single_game":
+          return "Single Game";
+        case "multi_game":
+          return "1 vs 1";
+        case "tournament_game":
+          return "Tournament";
+        default:
+          return "Unknown Game Type";
+      }
+    })(this.props.game_type);
+
+    const date = new Date(this.props.created_at);
+
+    const gameDate =
+      date.getFullYear() +
+      "-" +
+      ("0" + (date.getMonth() + 1)).slice(-2) +
+      "-" +
+      ("0" + date.getDate()).slice(-2);
+    const gameTime =
+      ("0" + date.getHours()).slice(-2) +
+      ":" +
+      ("0" + date.getMinutes()).slice(-2);
+
     return `
       <div class="card match-history-card">
         <div class="card-header card-header-custom">
-          ${this.props.game_type}
+          <div class="fs-5">${gameType}</div>
+          <small class="g-light-grey">${gameDate} ${gameTime}</small>
         </div>
         <div class="card-body card-body-custom">
-            <div
-              class="${this.props.isWin ? "match-history-win" : "match-history-lost"}
-              match-history-blank">
-              ${this.props.isWin ? "Win" : "Lost"}
-            </div>
-            <div id="left-profile-image" class="match-history-image"></div>
-            <div class="match-history-username">${this.props.left_user.nickname}</div>
-            <div class="match-history-versus">vs</div>
-            <div class="match-history-username">${this.props.right_user.nickname}</div>
-            <div id="right-profile-image" class="match-history-image"></div>
-            <div class="match-history-blank"></div>
+          <div
+            class="${this.props.isWin ? "match-history-win" : "match-history-lose"}
+            match-history-blank">
+            ${this.props.isWin ? "Win" : "Lose"}
+          </div>
+          <div id="left-profile-image" class="match-history-image"></div>
+          <div class="match-history-username">${this.props.left_user.nickname}</div>
+          <div class="match-history-versus">vs</div>
+          <div class="match-history-username">${this.props.right_user.nickname}</div>
+          <div id="right-profile-image" class="match-history-image"></div>
+          <div class="match-history-blank"></div>
         </div>
         <div class="card-footer card-footer-custom">
           ${this.props.left_score} : ${this.props.right_score}

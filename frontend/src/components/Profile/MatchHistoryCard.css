@@ -27,8 +27,12 @@
   align-items: center;
 }
 
+.card-footer-custom {
+  height: 2rem;
+}
+
 .match-history-win,
-.match-history-lost {
+.match-history-lose {
   background-color: #00c213;
   display: flex;
   justify-content: center;
@@ -37,7 +41,7 @@
   height: 2rem;
 }
 
-.match-history-lost {
+.match-history-lose {
   background-color: #ff6363;
 }
 
