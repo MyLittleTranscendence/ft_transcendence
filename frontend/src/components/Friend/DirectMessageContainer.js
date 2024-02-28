@@ -10,19 +10,24 @@ import { myInfoStore } from "../../store/initialStates.js";
 
 export default class DirectMessageContainer extends Component {
   setEvent() {
+    const { userId: opponentId } = this.props;
     this.addEvent("keydown", "#dm-chat-input", (e) =>
-      sendChatHandler(e, "single_message", this.props.userId)
+      sendChatHandler(e, "single_message", opponentId)
     );
     this.addEvent("click", "#send-icon", () => {
       const $input = this.$target.querySelector("#dm-chat-input");
       sendChatHandler(
         { target: $input, key: "Enter" },
         "single_message",
-        this.props.userId
+        opponentId
       );
     });
 
-    receiveSingleChatMessageHandler(this.$target, this.removeObservers);
+    receiveSingleChatMessageHandler(
+      this.$target,
+      this.removeObservers,
+      opponentId
+    );
   }
 
   template() {
@@ -64,6 +69,7 @@ export default class DirectMessageContainer extends Component {
 
   loadStoredChatMessages() {
     const { userId: myId } = myInfoStore.getState();
+    const { userId: opponentId } = this.props;
 
     const storedMessages =
       JSON.parse(sessionStorage.getItem("direct_message")) || [];
@@ -72,8 +78,8 @@ export default class DirectMessageContainer extends Component {
 
     storedMessages.forEach((message) => {
       if (
-        message.sender_id === this.props.userId ||
-        message.sender_id === myId
+        (message.sender_id === myId && message.receiver_id === opponentId) ||
+        (message.sender_id === opponentId && message.receiver_id === myId)
       ) {
         appendDirectMessageToUL($messageUL, message);
       }
