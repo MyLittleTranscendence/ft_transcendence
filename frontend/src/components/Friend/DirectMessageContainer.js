@@ -1,6 +1,7 @@
 import Component from "../../core/Component.js";
 import ChatInput from "../Lobby/ChatInput.js";
 import DirectMessage from "./DirectMessage.js";
+import ProfileImage from "../UI/Profile/ProfileImage.js";
 import sendChatHandler from "../../handlers/chat/sendChatHandler.js";
 import { chatSocket } from "../../socket/socketManager.js";
 
@@ -21,11 +22,13 @@ export default class DirectMessageContainer extends Component {
 
   template() {
     return `
-      <div class="card border-0">
-        <div class="card-header text-center">
-          <h4 class="text-muted">${this.props.nickname}</h4>
+      <div class="border-0">
+        <div class="d-flex justify-content-center align-items-center">
+          <div id="dm-profile-image" data-dismiss="modal"></div>
+          <span class="text-muted fw-bold fs-4 mx-2">${this.props.nickname}</span>
         </div>
-        <div class="card-body overflow-auto" style="min-height: 25rem;">
+        <hr>
+        <div class="overflow-auto" style="height: 25rem; max-height: 25rem;">
           <div
             id="dm-chat-message-container"
             class="w-100 mh-100 overflow-auto mt-1"
@@ -33,11 +36,7 @@ export default class DirectMessageContainer extends Component {
             <ul id="dm-chat-message-ul" class="list-unstyled"></ul>
           </div>
         </div>
-        <div class="card-footer">
-          <div
-            id="dm-chat-input-holder"
-          ></div>
-        </div>
+        <div id="dm-chat-input-holder"></div>
       </div>
     `;
   }
@@ -45,10 +44,21 @@ export default class DirectMessageContainer extends Component {
   mounted() {
     const { addSocketObserver } = chatSocket();
 
+    const profileImage = new ProfileImage(
+      this.$target.querySelector("#dm-profile-image"),
+      {
+        userId: this.props.userId,
+        imageSize: "image-xs",
+        imageSrc: this.props.profileImage,
+        alt: "/asset/default.png",
+      }
+    );
     const chatInput = new ChatInput(
       this.$target.querySelector("#dm-chat-input-holder"),
       { id: "dm-chat-input", name: "dm-chat-input" }
     );
+
+    profileImage.render();
     chatInput.render();
 
     const $messageContainer = this.$target.querySelector(

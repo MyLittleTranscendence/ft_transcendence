@@ -25,7 +25,7 @@ export default class SigninForm extends Component {
         style="
         font-size: 0.8rem; margin-bottom: 0.5rem;
         font-weight: bold; height: 1rem;
-        font-size: 0.2rem; color: #ff9d9d;
+        color: #ff9d9d;
         ">
       </div>
       <div id="signin-btn-holder"></div>

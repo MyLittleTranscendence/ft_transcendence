@@ -79,8 +79,8 @@ const passwordValidationHandler = (e, setWarningText, setIsValid) => {
   const hasLowercase = /[a-z]/.test(inputValue);
   const hasUppercase = /[A-Z]/.test(inputValue);
 
-  if (inputValue.length < 8) {
-    setWarningText("Password too short. Must be at least 8 characters.");
+  if (inputValue.length < 12) {
+    setWarningText("Password too short. Must be at least 12 characters.");
     setIsValid(false);
   } else if (inputValue.length > 20) {
     setWarningText("Password too long. Must be no more than 20 characters.");

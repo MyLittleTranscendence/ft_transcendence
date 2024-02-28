@@ -88,9 +88,8 @@ export default class BlockList extends Component {
         const blockProfile = new ProfileImage(
           this.$target.querySelector(`#block-profile-${block.userId}`),
           {
-            userId: block.userId,
-            imageSrc: block.profile_image,
             imageSize: "image-sm",
+            imageSrc: block.profileImage,
             alt: "/asset/default.png",
           }
         );

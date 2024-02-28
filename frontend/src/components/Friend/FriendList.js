@@ -1,5 +1,6 @@
 import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
+import onlineCheckHandler from "../../handlers/chat/onlineCheckHandler.js";
 import { friendListStore } from "../../store/initialStates.js";
 import blockUserHandler from "../../handlers/user/blockUserHandler.js";
 import { inviteUserHandler } from "../../handlers/game/inviteUserHandler.js";
@@ -48,7 +49,10 @@ export default class FriendList extends Component {
                 type="button"
                 data-bs-toggle="dropdown"
               >
-                <div id="friend-profile-${friend.userId}"></div>
+                <div class="position-relative">
+                  <div id="friend-profile-${friend.userId}"></div>
+                  <div id="online-icon-${friend.userId}"></div>
+                </div>
                 <span class="mx-3">
                   <h5 class="fw-bold mb-1">${friend.nickname}</h5>
                   <small class="g-light-grey">click here to send message</small>
@@ -102,13 +106,21 @@ export default class FriendList extends Component {
         const friendProfile = new ProfileImage(
           this.$target.querySelector(`#friend-profile-${friend.userId}`),
           {
-            userId: friend.userId,
-            imageSrc: friend.profile_image,
             imageSize: "image-sm",
-            alt: "/asset/default.png",
+            imageSrc: friend.profileImage,
+            alt: friend.nickname,
           }
         );
         friendProfile.render();
+
+        const $onlineIconHolder = this.$target.querySelector(
+          `#online-icon-${friend.userId}`
+        );
+        onlineCheckHandler(
+          $onlineIconHolder,
+          friend.userId,
+          this.removeObservers
+        );
       });
     }
   }

@@ -45,6 +45,7 @@ export default class Friend extends Component {
         const directMessageModal = new DirectMessageModal(
           this.$target.querySelector(`#dm-modal-${friend.userId}`),
           {
+            profileImage: friend.profileImage,
             nickname: friend.nickname,
             userId: friend.userId,
           }
