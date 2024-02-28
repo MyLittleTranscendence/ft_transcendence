@@ -33,13 +33,8 @@ export default class DirectMessageContainer extends Component {
           <span class="text-muted fw-bold fs-4 mx-2">${this.props.nickname}</span>
         </div>
         <hr>
-        <div class="overflow-auto" style="height: 25rem; max-height: 25rem;">
-          <div
-            id="dm-chat-message-container"
-            class="w-100 mh-100 overflow-auto mt-1"
-          >
-            <ul id="dm-chat-message-ul" class="list-unstyled"></ul>
-          </div>
+        <div id="dm-chat-message-container" class="overflow-auto" style="height: 25rem;">
+          <ul id="dm-chat-message-ul" class="list-unstyled"></ul>
         </div>
         <div id="dm-chat-input-holder"></div>
       </div>
