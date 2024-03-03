@@ -4,6 +4,7 @@ import fetchMyInfo from "./api/user/fetchMyInfo.js";
 import Component from "./core/Component.js";
 import getRouter from "./core/router.js";
 import routes from "./core/routes.js";
+import { storeChatMessageToSessionStorage } from "./handlers/chat/chatHandler.js";
 
 export default class App extends Component {
   template() {
@@ -27,6 +28,7 @@ export default class App extends Component {
           localStorage.setItem("login", "true");
           fetchFriendList();
           fetchBlockList();
+          storeChatMessageToSessionStorage();
           if (
             ["/start", "/sign-in", "/sign-up", "/mfa"].includes(currentPath)
           ) {

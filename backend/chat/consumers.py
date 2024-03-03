@@ -57,10 +57,10 @@ class ChatConsumer(DefaultConsumer):
         message = message_data["message"]
         receiver_id = message_data["receiver_id"]
         sender_id = self.scope['user'].id
-        await self.send_message_to_group(f"{sender_id}_chat", message, "single.message")
-        await self.send_message_to_group(f"{receiver_id}_chat", message, "single.message")
+        await self.send_message_to_group(f"{sender_id}_chat", message, "single.message", receiver_id)
+        await self.send_message_to_group(f"{receiver_id}_chat", message, "single.message", receiver_id)
 
-    async def send_message_to_group(self, group, message, type):
+    async def send_message_to_group(self, group, message, type, receiver_id=0):
         """
         그룹에게 메시지 전송
         """
@@ -71,7 +71,8 @@ class ChatConsumer(DefaultConsumer):
                 "sender_id": self.scope['user'].id,
                 "sender_nickname": self.nickname,
                 "sender_profile_image": self.profile_image,
-                "datetime": str(now())
+                "datetime": str(now()),
+                "receiver_id": receiver_id
             })
 
     async def handle_login_status(self, status):
@@ -118,7 +119,8 @@ class ChatConsumer(DefaultConsumer):
             "sender_id": event["sender_id"],
             "sender_nickname": event["sender_nickname"],
             "sender_profile_image": event["sender_profile_image"],
-            "datetime": event["datetime"]
+            "datetime": event["datetime"],
+            "receiver_id": event['receiver_id']
         }))
 
     async def friend_login(self, event):

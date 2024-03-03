@@ -2,6 +2,14 @@
   color: #c1c1c1;
 }
 
+.g-grey {
+  color: grey;
+}
+
+.g-dark-grey {
+  color: rgb(63, 63, 63);
+}
+
 .g-deep-blue-background {
   background-color: #0049d8;
 }

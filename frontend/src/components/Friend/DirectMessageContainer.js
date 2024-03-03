@@ -1,23 +1,33 @@
 import Component from "../../core/Component.js";
 import ChatInput from "../Lobby/ChatInput.js";
-import DirectMessage from "./DirectMessage.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 import sendChatHandler from "../../handlers/chat/sendChatHandler.js";
-import { chatSocket } from "../../socket/socketManager.js";
+import {
+  receiveSingleChatMessageHandler,
+  appendDirectMessageToUL,
+} from "../../handlers/chat/chatHandler.js";
+import { myInfoStore } from "../../store/initialStates.js";
 
 export default class DirectMessageContainer extends Component {
   setEvent() {
+    const { userId: opponentId } = this.props;
     this.addEvent("keydown", "#dm-chat-input", (e) =>
-      sendChatHandler(e, "single_message", this.props.userId)
+      sendChatHandler(e, "single_message", opponentId)
     );
     this.addEvent("click", "#send-icon", () => {
       const $input = this.$target.querySelector("#dm-chat-input");
       sendChatHandler(
         { target: $input, key: "Enter" },
         "single_message",
-        this.props.userId
+        opponentId
       );
     });
+
+    receiveSingleChatMessageHandler(
+      this.$target,
+      this.removeObservers,
+      opponentId
+    );
   }
 
   template() {
@@ -28,13 +38,8 @@ export default class DirectMessageContainer extends Component {
           <span class="text-muted fw-bold fs-4 mx-2">${this.props.nickname}</span>
         </div>
         <hr>
-        <div class="overflow-auto" style="height: 25rem; max-height: 25rem;">
-          <div
-            id="dm-chat-message-container"
-            class="w-100 mh-100 overflow-auto mt-1"
-          >
-            <ul id="dm-chat-message-ul" class="list-unstyled"></ul>
-          </div>
+        <div id="dm-chat-message-container" class="overflow-auto" style="height: 25rem;">
+          <ul id="dm-chat-message-ul" class="list-unstyled"></ul>
         </div>
         <div id="dm-chat-input-holder"></div>
       </div>
@@ -42,8 +47,6 @@ export default class DirectMessageContainer extends Component {
   }
 
   mounted() {
-    const { addSocketObserver } = chatSocket();
-
     const profileImage = new ProfileImage(
       this.$target.querySelector("#dm-profile-image"),
       {
@@ -61,25 +64,25 @@ export default class DirectMessageContainer extends Component {
     profileImage.render();
     chatInput.render();
 
-    const $messageContainer = this.$target.querySelector(
-      "#dm-chat-message-container"
-    );
-    const $messageUL = $messageContainer.querySelector("#dm-chat-message-ul");
+    this.loadStoredChatMessages();
+  }
 
-    const removeObserver = addSocketObserver("single_message", (message) => {
-      const $messageLI = document.createElement("li");
-      const directMessage = new DirectMessage($messageLI, {
-        content: message.message,
-        senderId: message.sender_id,
-        senderNickname: message.sender_nickname,
-        senderProfileImage: message.sender_profile_image,
-        datetime: message.datetime,
-      });
-      directMessage.render();
-      $messageLI.id = `dm-${message.datetime}`;
-      $messageUL.appendChild($messageLI);
-      $messageContainer.scrollTop = $messageContainer.scrollHeight;
+  loadStoredChatMessages() {
+    const { userId: myId } = myInfoStore.getState();
+    const { userId: opponentId } = this.props;
+
+    const storedMessages =
+      JSON.parse(sessionStorage.getItem("direct_message")) || [];
+
+    const $messageUL = this.$target.querySelector("#dm-chat-message-ul");
+
+    storedMessages.forEach((message) => {
+      if (
+        (message.sender_id === myId && message.receiver_id === opponentId) ||
+        (message.sender_id === opponentId && message.receiver_id === myId)
+      ) {
+        appendDirectMessageToUL($messageUL, message);
+      }
     });
-    this.removeObservers.push(removeObserver);
   }
 }

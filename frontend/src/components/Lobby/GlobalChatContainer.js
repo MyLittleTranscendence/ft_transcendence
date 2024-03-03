@@ -1,7 +1,10 @@
 import Component from "../../core/Component.js";
 import ChatInput from "./ChatInput.js";
 import sendChatHandler from "../../handlers/chat/sendChatHandler.js";
-import { receiveTotalChatMessageHandler } from "../../handlers/chat/chatHandler.js";
+import {
+  receiveTotalChatMessageHandler,
+  appendGlobalMessageToUL,
+} from "../../handlers/chat/chatHandler.js";
 import receiveLogoutHandler from "../../handlers/auth/socketLogoutHandler.js";
 import { chatSocket } from "../../socket/socketManager.js";
 
@@ -51,6 +54,15 @@ export default class GlobalChatContainer extends Component {
   }
 
   mounted() {
+    const storedMessages =
+      JSON.parse(sessionStorage.getItem("global_message")) || [];
+
+    const $messageUL = this.$target.querySelector("#global-chat-message-ul");
+
+    storedMessages.forEach((message) => {
+      appendGlobalMessageToUL($messageUL, message);
+    });
+
     const chatInput = new ChatInput(
       this.$target.querySelector("#global-chat-input-holder"),
       { id: "global-chat-input", name: "global-chat-input" }
