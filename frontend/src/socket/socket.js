@@ -39,6 +39,7 @@ const initSocket = (path) => {
 
     const clearSocket = () => {
       instance = null;
+      ws.close();
       ws = null;
       observers = {};
     };
