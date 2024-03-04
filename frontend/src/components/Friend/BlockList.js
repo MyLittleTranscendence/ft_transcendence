@@ -5,8 +5,7 @@ import unblockUserHandler from "../../handlers/user/unblockUserHandler.js";
 
 export default class BlockList extends Component {
   setup() {
-    const unsubscribe = blockListStore.subscribe(this);
-    this.removeObservers.push(unsubscribe);
+    blockListStore.subscribe(this);
   }
 
   setEvent() {

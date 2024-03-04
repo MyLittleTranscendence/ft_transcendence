@@ -7,13 +7,12 @@ import { friendListStore } from "../../store/initialStates.js";
 
 export default class Friend extends Component {
   setup() {
-    const unsubscribe = friendListStore.subscribe(this);
-    this.removeObservers.push(unsubscribe);
+    friendListStore.subscribe(this);
   }
 
   template() {
-    const friends = friendListStore.getState().friends;
-    var dmModals = "";
+    const { friends } = friendListStore.getState();
+    let dmModals = "";
     if (friends.length > 0)
       dmModals = `${friends.map((friend) => `<div id="dm-modal-${friend.userId}" class="modal fade"></div>`).join("")}`;
     return `
@@ -39,7 +38,7 @@ export default class Friend extends Component {
     friendListModal.render();
     blockListModal.render();
 
-    const friends = friendListStore.getState().friends;
+    const { friends } = friendListStore.getState();
     if (friends.length > 0) {
       friends.forEach((friend) => {
         const directMessageModal = new DirectMessageModal(
