@@ -1,14 +1,18 @@
 import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 import onlineCheckHandler from "../../handlers/chat/onlineCheckHandler.js";
-import { friendListStore } from "../../store/initialStates.js";
+import {
+  friendListStore,
+  friendOnlineStatusStore,
+} from "../../store/initialStates.js";
 import blockUserHandler from "../../handlers/user/blockUserHandler.js";
 import { inviteUserHandler } from "../../handlers/game/inviteUserHandler.js";
+import OnlineIcon from "../UI/Icon/OnlineIcon.js";
 
 export default class FriendList extends Component {
   setup() {
-    const unsubscribe = friendListStore.subscribe(this);
-    this.removeObservers.push(unsubscribe);
+    friendListStore.subscribe(this);
+    friendOnlineStatusStore.subscribe(this);
   }
 
   setEvent() {
@@ -18,6 +22,8 @@ export default class FriendList extends Component {
     this.addEvent("click", "#block-trigger", (e) => {
       blockUserHandler(parseInt(e.target.getAttribute("data-user-id"), 10));
     });
+
+    onlineCheckHandler(this.removeObservers);
   }
 
   template() {
@@ -100,6 +106,7 @@ export default class FriendList extends Component {
 
   mounted() {
     const { friends } = friendListStore.getState();
+    const { onlineStatus } = friendOnlineStatusStore.getState();
 
     if (friends.length > 0) {
       friends.forEach((friend) => {
@@ -113,14 +120,12 @@ export default class FriendList extends Component {
         );
         friendProfile.render();
 
-        const $onlineIconHolder = this.$target.querySelector(
-          `#online-icon-${friend.userId}`
-        );
-        onlineCheckHandler(
-          $onlineIconHolder,
-          friend.userId,
-          this.removeObservers
-        );
+        if (onlineStatus[friend.userId]) {
+          const onlineIcon = new OnlineIcon(
+            this.$target.querySelector(`#online-icon-${friend.userId}`)
+          );
+          onlineIcon.render();
+        }
       });
     }
   }
