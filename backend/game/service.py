@@ -484,8 +484,8 @@ class MatchService:
         if game_info.get("game_type") == self.SINGLE_GAME:
             if command in ["U", "D"]:
                 await self.update_game_info(game_session, "right_bar_mv", command)
-            if command in ["W", "S"]:
-                await self.update_game_info(game_session, "left_bar_mv", "U" if command == "W" else "D")
+            if command in ["W", "S", "w", "s", "ㅈ", "ㄴ"]:
+                await self.update_game_info(game_session, "left_bar_mv", "U" if command in ["W", "w", "ㅈ"] else "D")
         else:
             if game_info.get("left_user_id") == str(user_id):
                 await self.update_game_info(game_session, "left_bar_mv", command)
