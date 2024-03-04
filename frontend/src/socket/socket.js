@@ -1,7 +1,7 @@
 const initSocket = (path) => {
   let instance;
   let ws;
-  const observers = {};
+  let observers = {};
 
   const createSocket = () => {
     ws = new WebSocket(`ws://localhost:3000/ws${path}`);
@@ -37,7 +37,13 @@ const initSocket = (path) => {
       ws.send(message);
     };
 
-    return { addSocketObserver, sendSocket };
+    const clearSocket = () => {
+      instance = null;
+      ws = null;
+      observers = {};
+    };
+
+    return { addSocketObserver, sendSocket, clearSocket };
   };
 
   return () => {
