@@ -10,8 +10,12 @@ const fetchSignInTwoFA = (code) => {
     })
     .then(() => navigate("/?login=true"))
     .catch((e) => {
-      showToast(e);
-      navigate("/start");
+      if (e.status === 400) {
+        showToast("Invalid code. Please try again.");
+      } else {
+        showToast(e);
+        navigate("/start");
+      }
     });
 };
 
