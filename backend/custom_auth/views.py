@@ -101,7 +101,6 @@ class MFACodeGenerateView(APIView):
         2fa 코드 발급후 이메일 전송
         """
         user = request.user.update_mfa_code()
-        # EmailService.send_2fa_mail(user.mfa_code, user.email)
         thread = threading.Thread(target=EmailService.send_2fa_mail, args=(user.mfa_code, user.email))
         thread.start()
         return Response({'email': user.email}, status=201)
