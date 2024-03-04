@@ -40,3 +40,5 @@ pytest
 pytest-django
 pytest-asyncio
 blinker
+
+daphne
