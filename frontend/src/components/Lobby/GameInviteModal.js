@@ -1,7 +1,7 @@
 import Modal from "../UI/Modal/Modal.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 import Button from "../UI/Button/Button.js";
-import { gameSocket } from "../../socket/socketManager.js";
+import { gameSocket } from "../../socket/socket.js";
 
 export default class GameInviteModal extends Modal {
   setEvent() {

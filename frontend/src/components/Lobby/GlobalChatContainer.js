@@ -6,7 +6,7 @@ import {
   appendGlobalMessageToUL,
 } from "../../handlers/chat/chatHandler.js";
 import receiveLogoutHandler from "../../handlers/auth/socketLogoutHandler.js";
-import { chatSocket } from "../../socket/socketManager.js";
+import { chatSocket } from "../../socket/socket.js";
 
 export default class GlobalChatContainer extends Component {
   setEvent() {

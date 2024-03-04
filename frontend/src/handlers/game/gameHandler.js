@@ -1,4 +1,4 @@
-import { gameSocket } from "../../socket/socketManager.js";
+import { gameSocket } from "../../socket/socket.js";
 import { gameInfoStore } from "../../store/initialStates.js";
 import getRouter from "../../core/router.js";
 

@@ -1,4 +1,4 @@
-import { gameSocket } from "../../socket/socketManager.js";
+import { gameSocket } from "../../socket/socket.js";
 import showToast from "../../utils/showToast.js";
 import {
   gameInfoStore,

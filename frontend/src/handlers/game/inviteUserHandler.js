@@ -1,5 +1,5 @@
 import showToast from "../../utils/showToast.js";
-import { gameSocket } from "../../socket/socketManager.js";
+import { gameSocket } from "../../socket/socket.js";
 
 const inviteUserHandler = (userId) => {
   const { sendSocket } = gameSocket();

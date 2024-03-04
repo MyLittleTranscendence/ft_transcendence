@@ -1,4 +1,4 @@
-import { chatSocket } from "../../socket/socketManager.js";
+import { chatSocket } from "../../socket/socket.js";
 
 const sendChatHandler = (e, type, receiverID = null) => {
   if ((e.key === "Enter" || e.keyCode === 13) && !e.isComposing) {

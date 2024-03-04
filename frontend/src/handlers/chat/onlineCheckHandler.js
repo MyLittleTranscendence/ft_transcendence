@@ -1,4 +1,4 @@
-import { chatSocket } from "../../socket/socketManager.js";
+import { chatSocket } from "../../socket/socket.js";
 import OnlineIcon from "../../components/UI/Icon/OnlineIcon.js";
 
 const onlineCheckHandler = ($holder, userId, removeObservers) => {
