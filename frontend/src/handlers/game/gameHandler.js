@@ -180,8 +180,8 @@ const cliSendHandler = (command) => {
 const nextGameAlertHandler = (removeObservers) => {
   const { addSocketObserver } = gameSocket();
 
-  const removeObserver = addSocketObserver("next_game", (message) => {
-    showToast(message.message);
+  const removeObserver = addSocketObserver("next_game", () => {
+    showToast("Your match will start after current one. Be prepared!");
   });
 
   removeObservers.push(removeObserver);
