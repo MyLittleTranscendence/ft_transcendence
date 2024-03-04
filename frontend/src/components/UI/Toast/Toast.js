@@ -19,10 +19,15 @@ export default class Toast extends Component {
   }
 
   show(content) {
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.$toastContent.classList.remove("show");
+    }
     this.$toastContent.textContent = content;
     this.$toastContent.classList.add("show");
-    setTimeout(() => {
+    this.timer = setTimeout(() => {
       this.$toastContent.classList.remove("show");
+      this.timer = null;
     }, 4400);
   }
 }
