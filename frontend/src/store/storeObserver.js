@@ -7,7 +7,7 @@ const createObserver = () => {
 
   const subscribe = (component) => {
     observers.push(component);
-    return () => unsubscribe(component);
+    component.removeObservers.push(() => unsubscribe(component));
   };
 
   const notify = () => {
