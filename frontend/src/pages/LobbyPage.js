@@ -6,7 +6,7 @@ import SideBar from "../components/Lobby/SideBar.js";
 import fetchMyInfo from "../api/user/fetchMyInfo.js";
 import showToast from "../utils/showToast.js";
 import getRouter from "../core/router.js";
-import { chatSocket, gameSocket } from "../socket/socketManager.js";
+import { chatSocket, gameSocket } from "../socket/socket.js";
 import fetchFriendList from "../api/user/fetchFriendList.js";
 import fetchBlockList from "../api/user/fetchBlockList.js";
 

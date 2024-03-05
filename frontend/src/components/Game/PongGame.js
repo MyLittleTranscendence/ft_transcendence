@@ -10,7 +10,7 @@ import MultiGameResultModal from "./MultiGameResultModal.js";
 import TournamentGameResultModal from "./TournamentGameResultModal.js";
 import SingleGameResultModal from "./SingleGameResultModal.js";
 import receiveLogoutHandler from "../../handlers/auth/socketLogoutHandler.js";
-import { gameSocket } from "../../socket/socketManager.js";
+import { gameSocket } from "../../socket/socket.js";
 
 export default class PongGame extends Component {
   setEvent() {

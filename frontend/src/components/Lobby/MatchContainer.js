@@ -19,7 +19,7 @@ import {
   tournamentBeginHandler,
   receiveGameInviteHandler,
 } from "../../handlers/game/matchMakingHandlers.js";
-import { gameSocket } from "../../socket/socketManager.js";
+import { gameSocket } from "../../socket/socket.js";
 import receiveLogoutHandler from "../../handlers/auth/socketLogoutHandler.js";
 
 appendCSSLink("src/components/Lobby/TimeLeftBar.css");

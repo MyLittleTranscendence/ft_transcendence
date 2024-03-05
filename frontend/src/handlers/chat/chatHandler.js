@@ -1,4 +1,4 @@
-import { chatSocket } from "../../socket/socketManager.js";
+import { chatSocket } from "../../socket/socket.js";
 import GlobalMessage from "../../components/Lobby/GlobalMessage.js";
 import DirectMessage from "../../components/Friend/DirectMessage.js";
 import { myInfoStore } from "../../store/initialStates.js";
