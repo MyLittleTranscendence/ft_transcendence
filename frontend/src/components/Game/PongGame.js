@@ -5,6 +5,7 @@ import {
   updateGameHandler,
   gameKeyDownHandler,
   gameReadyCountdownHandler,
+  nextGameAlertHandler,
 } from "../../handlers/game/gameHandler.js";
 import MultiGameResultModal from "./MultiGameResultModal.js";
 import TournamentGameResultModal from "./TournamentGameResultModal.js";
@@ -28,6 +29,8 @@ export default class PongGame extends Component {
     if ([leftUserId, rightUserId].includes(userId)) {
       gameKeyDownHandler(this.removeObservers);
     }
+
+    nextGameAlertHandler(this.removeObservers);
   }
 
   template() {

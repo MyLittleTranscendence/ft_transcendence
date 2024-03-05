@@ -1,6 +1,7 @@
 import { gameSocket } from "../../socket/socket.js";
 import { gameInfoStore } from "../../store/initialStates.js";
 import getRouter from "../../core/router.js";
+import showToast from "../../utils/showToast.js";
 
 const waitGameHandler = (removeObservers) => {
   const { addSocketObserver } = gameSocket();
@@ -176,6 +177,16 @@ const cliSendHandler = (command) => {
   sendSocket("move_bar", { command });
 };
 
+const nextGameAlertHandler = (removeObservers) => {
+  const { addSocketObserver } = gameSocket();
+
+  const removeObserver = addSocketObserver("next_game", () => {
+    showToast("Your match will start after current one. Be prepared!");
+  });
+
+  removeObservers.push(removeObserver);
+};
+
 export {
   waitGameHandler,
   infoGameHandler,
@@ -183,4 +194,5 @@ export {
   gameKeyDownHandler,
   gameReadyCountdownHandler,
   cliSendHandler,
+  nextGameAlertHandler,
 };

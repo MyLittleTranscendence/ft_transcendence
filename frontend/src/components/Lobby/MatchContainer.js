@@ -21,6 +21,7 @@ import {
 } from "../../handlers/game/matchMakingHandlers.js";
 import { gameSocket } from "../../socket/socket.js";
 import receiveLogoutHandler from "../../handlers/auth/socketLogoutHandler.js";
+import { nextGameAlertHandler } from "../../handlers/game/gameHandler.js";
 
 appendCSSLink("src/components/Lobby/TimeLeftBar.css");
 
@@ -76,6 +77,7 @@ export default class MatchContainer extends Component {
     receiveGameInviteHandler(this.removeObservers);
     invitationFailHandler(this.removeObservers);
     receiveLogoutHandler(this.removeObservers, gameSocket);
+    nextGameAlertHandler(this.removeObservers);
   }
 
   template() {

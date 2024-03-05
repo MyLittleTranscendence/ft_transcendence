@@ -2,7 +2,10 @@ import Component from "../core/Component.js";
 import PageContainerWithLogo from "../components/UI/Container/PageContainerWithLogo.js";
 import PlayerOverviews from "../components/Game/PlayerOverviews.js";
 import { tournamentBeginUserIdStore } from "../store/initialStates.js";
-import { waitGameHandler } from "../handlers/game/gameHandler.js";
+import {
+  waitGameHandler,
+  nextGameAlertHandler,
+} from "../handlers/game/gameHandler.js";
 
 export default class TournamentReadyPage extends Component {
   template() {
@@ -20,6 +23,7 @@ export default class TournamentReadyPage extends Component {
 
   mounted() {
     waitGameHandler(this.removeObservers);
+    nextGameAlertHandler(this.removeObservers);
 
     const $content = this.$target.querySelector("#tournament-ready-content");
     const $overviewsContainer = $content.querySelector("#overviews-container");
