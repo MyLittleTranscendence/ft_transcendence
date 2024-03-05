@@ -33,16 +33,14 @@ export default class Profile extends Component {
         userInfo: myInfo,
         isEditingNickname: false,
       };
-      const unsubscribe = myInfoStore.subscribe(this);
-      this.removeObservers.push(unsubscribe);
+      myInfoStore.subscribe(this);
       fetchMyInfo();
     } else {
       const userInfo = await fetchUserInfo(this.props.userId);
       this.setState({ userInfo });
     }
 
-    const unsubscribe = friendListStore.subscribe(this);
-    this.removeObservers.push(unsubscribe);
+    friendListStore.subscribe(this);
   }
 
   setEvent() {
