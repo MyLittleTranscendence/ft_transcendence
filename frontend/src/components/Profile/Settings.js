@@ -14,8 +14,7 @@ export default class Settings extends Component {
       isEditingTwoFA: false,
       isEmailValid: false,
     };
-    const unsubscribe = myInfoStore.subscribe(this);
-    this.removeObservers.push(unsubscribe);
+    myInfoStore.subscribe(this);
   }
 
   setEvent() {

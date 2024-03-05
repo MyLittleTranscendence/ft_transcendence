@@ -14,8 +14,7 @@ import { gameSocket } from "../../socket/socket.js";
 
 export default class PongGame extends Component {
   setEvent() {
-    const unsubscribe = gameInfoStore.subscribe(this);
-    this.removeObservers.push(unsubscribe);
+    gameInfoStore.subscribe(this);
 
     infoGameHandler(this.props.setPlayerInfo, this.removeObservers);
     updateGameHandler(

@@ -26,6 +26,7 @@ export default class FriendListModal extends Component {
   mounted() {
     const friendList = new FriendList(
       this.$target.querySelector("#friend-list-holder"),
+      {},
       this
     );
 

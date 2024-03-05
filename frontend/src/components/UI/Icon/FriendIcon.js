@@ -1,7 +1,12 @@
 import Component from "../../../core/Component.js";
 import OnlineIcon from "./OnlineIcon.js";
+import { friendOnlineStatusStore } from "../../../store/initialStates.js";
 
 export default class FriendIcon extends Component {
+  setup() {
+    friendOnlineStatusStore.subscribe(this);
+  }
+
   template() {
     return `
       <div
@@ -20,10 +25,13 @@ export default class FriendIcon extends Component {
   }
 
   mounted() {
-    const onlineIcon = new OnlineIcon(
-      this.$target.querySelector("#online-icon-holder")
-    );
+    const { onlineStatus } = friendOnlineStatusStore.getState();
 
-    onlineIcon.render();
+    if (Object.values(onlineStatus).some((status) => status === 1)) {
+      const onlineIcon = new OnlineIcon(
+        this.$target.querySelector("#online-icon-holder")
+      );
+      onlineIcon.render();
+    }
   }
 }

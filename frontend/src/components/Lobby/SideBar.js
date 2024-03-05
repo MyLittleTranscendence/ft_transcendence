@@ -5,8 +5,7 @@ import { myInfoStore } from "../../store/initialStates.js";
 
 export default class SideBar extends Component {
   setup() {
-    const unsubscribe = myInfoStore.subscribe(this);
-    this.removeObservers.push(unsubscribe);
+    myInfoStore.subscribe(this);
   }
 
   template() {

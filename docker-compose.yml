@@ -3,10 +3,12 @@ version: "3"
 services:
   django:
     build: ./backend
-    command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "python manage.py makemigrations && python manage.py migrate && daphne -e ssl:8000:privateKey=/usr/src/app/django.key:certKey=/usr/src/app/django.crt backend.asgi:application"
     working_dir: /usr/src/app/
     volumes:
       - ./backend:/usr/src/app/
+    environment:
+      - DJANGO_SETTINGS_MODULE=backend.settings
     env_file:
       - ./.env
     depends_on:

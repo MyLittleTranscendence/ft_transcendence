@@ -1,15 +1,19 @@
-import { chatSocket } from "../../socket/socket.js";
-import OnlineIcon from "../../components/UI/Icon/OnlineIcon.js";
+import { chatSocket } from "../../socket/socketManager.js";
+import { friendOnlineStatusStore } from "../../store/initialStates.js";
 
-const onlineCheckHandler = ($holder, userId, removeObservers) => {
+const onlineCheckHandler = (removeObservers) => {
   const { addSocketObserver } = chatSocket();
 
   const removeObserver = addSocketObserver("login_message", (message) => {
-    if (message.friends_status[userId]) {
-      const onlineIcon = new OnlineIcon($holder);
-      onlineIcon.render();
-    }
+    const { onlineStatus: prevStatus } = friendOnlineStatusStore.getState();
+
+    const newStatus = { ...prevStatus, ...message.friends_status };
+
+    friendOnlineStatusStore.setState({
+      onlineStatus: newStatus,
+    });
   });
+
   removeObservers.push(removeObserver);
 };
 

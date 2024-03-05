@@ -26,6 +26,7 @@ export default class BlockListModal extends Component {
   mounted() {
     const blockList = new BlockList(
       this.$target.querySelector("#block-list-holder"),
+      {},
       this
     );
 
