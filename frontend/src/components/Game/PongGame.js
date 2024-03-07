@@ -190,6 +190,8 @@ export default class PongGame extends Component {
 
   unmount() {
     super.unmount();
-    cancelAnimationFrame(this.animationFrameId);
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
   }
 }
