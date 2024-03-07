@@ -116,7 +116,7 @@ const verifyPasswordHandler = (e, setWarningText, setIsValid) => {
 
 const validateEmailHandler = (e, setWarningText, setIsValid) => {
   const inputValue = e.target.value;
-  const pattern = e.target.getAttribute("pattern");
+  const pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
 
   if (pattern && !new RegExp(pattern).test(inputValue)) {
     setWarningText("Invalid E-Mail format");
