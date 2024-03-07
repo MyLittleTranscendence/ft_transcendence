@@ -17,6 +17,8 @@ export default class PongGame extends Component {
   setup() {
     this.gameState = null;
     this.animationFrameId = null;
+    this.gameLoopBound = this.gameLoop.bind(this);
+    this.isGameLoopRunning = false;
     gameInfoStore.subscribe(this);
   }
 
@@ -90,7 +92,10 @@ export default class PongGame extends Component {
 
     this.fixedData = { $canvas, ctx, barWidth, ballRadius };
 
-    this.gameLoop();
+    if (!this.isGameLoopRunning) {
+      this.isGameLoopRunning = true;
+      this.gameLoop();
+    }
     this.handleGameEnd();
   }
 
@@ -98,7 +103,7 @@ export default class PongGame extends Component {
     if (this.gameState) {
       this.updateGame();
     }
-    this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
+    this.animationFrameId = requestAnimationFrame(this.gameLoopBound);
   }
 
   updateGame() {
