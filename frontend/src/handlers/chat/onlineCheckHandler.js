@@ -1,4 +1,4 @@
-import { chatSocket } from "../../socket/socketManager.js";
+import { chatSocket } from "../../socket/socket.js";
 import { friendOnlineStatusStore } from "../../store/initialStates.js";
 
 const onlineCheckHandler = (removeObservers) => {
