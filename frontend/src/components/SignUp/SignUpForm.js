@@ -86,7 +86,6 @@ export default class SignUpForm extends Component {
     const emailInputProps = {
       type: "email",
       id: "signup-form-email",
-      pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
       name: "signup-form",
       placeholder: "hello@example.com",
       required: true,
