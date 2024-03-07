@@ -49,20 +49,11 @@ const infoGameHandler = (setPlayerInfo, removeObservers) => {
   removeObservers.push(removeObserver);
 };
 
-const updateGameHandler = (updateGame, removeObservers) => {
+const updateGameStateHandler = (updateGameState, removeObservers) => {
   const { addSocketObserver } = gameSocket();
 
   const removeObserver = addSocketObserver("update_game", (message) => {
-    updateGame({
-      leftBarX: message.bar_x,
-      leftBarY: message.bar_y,
-      rightBarX: message.bar_right_x,
-      rightBarY: message.bar_right_y,
-      leftBarHeight: message.left_bar_height,
-      rightBarHeight: message.right_bar_height,
-      ballX: message.circle_x,
-      ballY: message.circle_y,
-    });
+    updateGameState(message);
   });
 
   removeObservers.push(removeObserver);
@@ -190,7 +181,7 @@ const nextGameAlertHandler = (removeObservers) => {
 export {
   waitGameHandler,
   infoGameHandler,
-  updateGameHandler,
+  updateGameStateHandler,
   gameKeyDownHandler,
   gameReadyCountdownHandler,
   cliSendHandler,

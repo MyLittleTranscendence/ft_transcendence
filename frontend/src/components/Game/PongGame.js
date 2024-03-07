@@ -2,7 +2,7 @@ import Component from "../../core/Component.js";
 import { gameInfoStore, myInfoStore } from "../../store/initialStates.js";
 import {
   infoGameHandler,
-  updateGameHandler,
+  updateGameStateHandler,
   gameKeyDownHandler,
   gameReadyCountdownHandler,
   nextGameAlertHandler,
@@ -14,14 +14,26 @@ import receiveLogoutHandler from "../../handlers/auth/socketLogoutHandler.js";
 import { gameSocket } from "../../socket/socket.js";
 
 export default class PongGame extends Component {
-  setEvent() {
+  setup() {
+    this.gameState = null;
+    this.animationFrameId = null;
     gameInfoStore.subscribe(this);
+  }
 
+  setEvent() {
     infoGameHandler(this.props.setPlayerInfo, this.removeObservers);
-    updateGameHandler(
-      (message) => this.updateGame(message),
-      this.removeObservers
-    );
+    updateGameStateHandler((message) => {
+      this.gameState = {
+        leftBarX: message.bar_x,
+        leftBarY: message.bar_y,
+        rightBarX: message.bar_right_x,
+        rightBarY: message.bar_right_y,
+        leftBarHeight: message.left_bar_height,
+        rightBarHeight: message.right_bar_height,
+        ballX: message.circle_x,
+        ballY: message.circle_y,
+      };
+    }, this.removeObservers);
     receiveLogoutHandler(this.removeObservers, gameSocket);
 
     const { userId } = myInfoStore.getState();
@@ -74,15 +86,23 @@ export default class PongGame extends Component {
         this.removeObservers
       );
     }
+    const { barWidth, ballRadius } = gameInfoStore.getState();
 
+    this.fixedData = { $canvas, ctx, barWidth, ballRadius };
+
+    this.gameLoop();
     this.handleGameEnd();
   }
 
-  updateGame(data) {
-    const { barWidth, ballRadius } = gameInfoStore.getState();
-    const $canvas = this.$target.querySelector("canvas");
-    const ctx = $canvas.getContext("2d");
+  gameLoop() {
+    if (this.gameState) {
+      this.updateGame();
+    }
+    this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
+  }
 
+  updateGame() {
+    const { $canvas, ctx, barWidth, ballRadius } = this.fixedData;
     const {
       leftBarX,
       leftBarY,
@@ -92,7 +112,7 @@ export default class PongGame extends Component {
       rightBarY,
       ballX,
       ballY,
-    } = data;
+    } = this.gameState;
 
     ctx.clearRect(0, 0, $canvas.width, $canvas.height);
 
@@ -166,5 +186,10 @@ export default class PongGame extends Component {
       );
       resultModal.render();
     }
+  }
+
+  unmount() {
+    super.unmount();
+    cancelAnimationFrame(this.animationFrameId);
   }
 }
