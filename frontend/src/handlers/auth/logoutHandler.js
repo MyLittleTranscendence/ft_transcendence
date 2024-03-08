@@ -10,6 +10,8 @@ const logoutHandler = () => {
     .post("/logout/")
     .then(() => {
       navigate("/start");
+      sessionStorage.removeItem("global_message");
+      sessionStorage.removeItem("direct_message");
       showToast("Bye bye!");
       const { clearSocket: clearGameSocket } = gameSocket();
       const { clearSocket: clearChatSocket } = chatSocket();
