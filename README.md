@@ -25,7 +25,7 @@
 ![Docker](https://img.shields.io/badge/-Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![Nginx](https://img.shields.io/badge/-Nginx-009639?style=flat-square&logo=nginx&logoColor=white)
 
-[Major Functions](#major-functions)
+[주요 기능](#major-functions)
 
 ## Pages
 ### Landing page
