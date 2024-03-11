@@ -1,54 +1,58 @@
-## 개요
+## Introduction
 
 온라인 pong 게임 및 채팅 기능을 제공하는 싱글페이지 웹 어플리케이션입니다.
 
-## 기술 스택
+## Roles
+| Contributor | Role |
+| --- | --- |
+| <a href="https://github.com/Clearsu"><img src="https://github.com/Clearsu.png" width="50" height="50">Clearsu</a> | Front-end |
+| <a href="https://github.com/ddang-jung"><img src="https://github.com/ddang-jung.png" width="50" height="50">ddang-jung</a> | Front-end |
+| <a href="https://github.com/middlefitting"><img src="https://github.com/middlefitting.png" width="50" height="50">middlefitting</a> | Back-end |
 
-### 공통
 
-![Docker](https://img.shields.io/badge/-Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
-![Nginx](https://img.shields.io/badge/-Nginx-009639?style=flat-square&logo=nginx&logoColor=white)
-
+## Skills
 ### Front-end
-
 ![JavaScript](https://img.shields.io/badge/-JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
 ![HTML5](https://img.shields.io/badge/-HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/-CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/-Bootstrap-7952B3?style=flat-square&logo=bootstrap&logoColor=white)
-
 ### Back-end
-
 ![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)
 ![Django](https://img.shields.io/badge/-Django-092E20?style=flat-square&logo=django&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
 ![Redis](https://img.shields.io/badge/-Redis-DC382D?style=flat-square&logo=redis&logoColor=white)
+### Common
+![Docker](https://img.shields.io/badge/-Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+![Nginx](https://img.shields.io/badge/-Nginx-009639?style=flat-square&logo=nginx&logoColor=white)
 
-## 스크린샷
-### 랜딩 페이지
+[Major Functions](#major-functions)
+
+## Pages
+### Landing page
 <img width="500" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/c086f31f-eeed-494d-b04c-5b27b61654b1">
 
-### 로그인 페이지
+### Login page
 <img width="500" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/119e8dae-b552-4637-8f59-ae8462a2b19f">
 
-### 회원가입 페이지
+### Sign-up page
 <img width="500" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/393d85f3-a962-4601-bf09-44fd05c6ff4f">
 
-### 2차 인증 페이지
+### 2FA page
 <img width="500" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/f34f4020-0513-4ef2-9d15-9d277fc44110">
 
-### 게임 페이지
+### Pong game page
 <img width="500" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/93558fdc-f64c-4ccd-a9c1-e4c8b50fdf21">
 
-### 게임 결과 모달
+### Game result modal
 <img width="500" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/fcce64a8-fbc3-43c4-8927-d7de2e59a6c1">
 
-### 유저 프로필 페이지
+### User profile page
 <img width="500" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/354c55a4-7df5-4237-9e99-2547796f8f09">
 
 
-## 주요 기능
+## Major functions
 
-### 인증
+### Authentication
 - 회원가입을 통한 일반 로그인 및 42 OAuth 로그인
 <img width="300" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/b94ed52b-49ee-41cf-a5ad-984da7ec8c7a">
 <img width="300" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/622195b4-2e63-4ea8-9e60-166287710d22">
@@ -61,7 +65,7 @@
 <img width="259" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/b0ac5b4d-7588-4fb2-8c48-b86096388a56">
 
 
-### 매치 메이킹
+### Match making
 
 - 1대1, 4인 토너먼트, 싱글 플레이 중 하나를 선택할 수 있습니다.
 <img width="287" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/4fd4518e-fd86-4a8f-b405-da674607e344">
@@ -78,7 +82,7 @@
 - 친구에게 1대1 신청을 할 수 있습니다.
 
 
-### 게임
+### Pong game
 
 - 1대1 Pong 게임
 <img width="600" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/51be3b33-ac08-475f-a2d1-575318cd8933">
@@ -94,14 +98,14 @@
 
 
 
-### 채팅
+### Chatting
 - 전체 채팅
 <img width="617" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/9770d12a-6408-4c35-93b8-2704ec6344b8">
 
 - DM
 <img width="378" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/bdd6da6c-d46c-4847-824d-6223de8eae81">
 
-### 친구
+### Friends
 - 온라인 상태 확인
 <img width="566" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/65639400-7972-4e16-815c-fca68b0e05d9">
 
@@ -117,7 +121,7 @@
 <img width="361" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/a5d361ed-0254-449d-b5ed-e010b2a0d49d">
 
 
-### 유저
+### User management
 - 내 프로필 페이지에서 프로필 이미지, 닉네임, 이메일 주소를 수정할 수 있습니다.
 <img width="280" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/a19f29b5-a660-45b4-add2-7e637ce811bd">
 <img width="277" alt="image" src="https://github.com/MyLittleTranscendence/ft_transcendence/assets/67998022/594aaff5-5356-447b-aabc-dd1d22d72114">
