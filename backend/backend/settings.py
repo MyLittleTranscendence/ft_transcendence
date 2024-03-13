@@ -283,8 +283,8 @@ CHANNEL_LAYERS = {
     },
 }
 
-BASE_URL = "http://" + os.environ.get('GLOBAL_HOST', 'localhost') + ":3000"
-OAUTH_FRONT_REDIRECT_URL = "http://" + os.environ.get('GLOBAL_HOST', 'localhost') + ":3000"
+BASE_URL = "https://" + os.environ.get('GLOBAL_HOST', 'localhost')
+OAUTH_FRONT_REDIRECT_URL = "https://" + os.environ.get('GLOBAL_HOST', 'localhost')
 
 MEDIA_URL = BASE_URL + '/media/'
 MEDIA_STATIC_URL = '/media/'
