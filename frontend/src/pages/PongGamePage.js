@@ -164,6 +164,7 @@ export default class PongGamePage extends Component {
         nextRightUser = await fetchUserInfo(nextRightUserId);
       }
 
+      this.unmount();
       this.setState({ leftUser, rightUser, nextLeftUser, nextRightUser });
     }
   }
