@@ -1,3 +1,5 @@
+import escapeHtml from "../utils/escapeHTML.js";
+
 const initSocket = (path) => {
   let instance;
   let ws;
@@ -33,7 +35,13 @@ const initSocket = (path) => {
     };
 
     const sendSocket = (type, data) => {
-      const message = JSON.stringify({ type, ...data });
+      const escapedData = Object.keys(data).reduce((acc, key) => {
+        const value = data[key];
+        acc[key] = typeof value === "string" ? escapeHtml(value) : value;
+        return acc;
+      }, {});
+
+      const message = JSON.stringify({ type, ...escapedData });
       ws.send(message);
     };
 
