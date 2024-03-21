@@ -35,13 +35,16 @@ const initSocket = (path) => {
     };
 
     const sendSocket = (type, data) => {
-      const escapedData = Object.keys(data).reduce((acc, key) => {
-        const value = data[key];
-        acc[key] = typeof value === "string" ? escapeHtml(value) : value;
-        return acc;
-      }, {});
+      let finalData = data;
 
-      const message = JSON.stringify({ type, ...escapedData });
+      if (path === "/chat/") {
+        finalData = Object.keys(data).reduce((acc, key) => {
+          const value = data[key];
+          acc[key] = typeof value === "string" ? escapeHtml(value) : value;
+          return acc;
+        }, {});
+      }
+      const message = JSON.stringify({ type, ...finalData });
       ws.send(message);
     };
 
