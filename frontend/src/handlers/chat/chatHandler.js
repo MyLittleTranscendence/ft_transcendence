@@ -74,6 +74,27 @@ const receiveSingleChatMessageHandler = (
   removeObservers.push(removeObserver);
 };
 
+const receivePostMessageHandler = ($target, removeObservers, opponentId) => {
+  const { addSocketObserver } = chatSocket();
+  const { userId: myId } = myInfoStore.getState();
+
+  const removeObserver = addSocketObserver("single_message", (message) => {
+    if (
+      (message.sender_id === myId && message.receiver_id === opponentId) ||
+      (message.sender_id === opponentId && message.receiver_id === myId)
+    ) {
+      const $messageContainer = $target.querySelector(
+        "#dm-chat-message-container"
+      );
+      const $messageUL = $messageContainer.querySelector("#dm-chat-message-ul");
+
+      appendDirectMessageToUL($messageUL, message);
+      $messageContainer.scrollTop = $messageContainer.scrollHeight;
+    }
+  });
+  removeObservers.push(removeObserver);
+};
+
 const storeChatMessageToSessionStorage = () => {
   const { addSocketObserver } = chatSocket();
 

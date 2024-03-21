@@ -1,7 +1,7 @@
 import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 import Friend from "../Friend/Friend.js";
-import PostBox from "./PostBox.js";
+import PostBox from "../PostBox/PostBox.js";
 import { myInfoStore } from "../../store/initialStates.js";
 
 export default class SideBar extends Component {

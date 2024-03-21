@@ -16,9 +16,9 @@ export default class PostBoxIcon extends Component {
           d-flex justify-content-center
         "
         data-bs-toggle="modal"
-        data-bs-target="#postbox-message-list-modal"
+        data-bs-target="#postbox-modal"
       >
-        <img src="asset/icon_people.svg">
+        <img src="asset/icon_message.svg">
         <div id="online-icon-holder"></div>
       </div>
     `;

@@ -39,6 +39,8 @@ const friendListStore = createStore({ friends: [], isFetched: false });
 
 const blockListStore = createStore({ blocks: [], isFetched: false });
 
+const directMessageUserIdStore = createStore({ userId: 0 });
+
 const friendOnlineStatusStore = createStore({ onlineStatus: {} });
 
 export {
@@ -47,6 +49,7 @@ export {
   gameStatusStore,
   friendListStore,
   blockListStore,
+  directMessageUserIdStore,
   tournamentBeginUserIdStore,
   friendOnlineStatusStore,
 };

@@ -6,11 +6,26 @@ import {
   receiveSingleChatMessageHandler,
   appendDirectMessageToUL,
 } from "../../handlers/chat/chatHandler.js";
+import fetchUserInfo from "../../api/user/fetchUserInfo.js";
+import { directMessageUserIdStore } from "../../store/initialStates.js";
 import { myInfoStore } from "../../store/initialStates.js";
 
 export default class DirectMessageContainer extends Component {
+  setup() {
+    this.state = null;
+    const { userId } = directMessageUserIdStore.getState();
+
+    console.log(userId);
+    if (userId !== 0) {
+      fetchUserInfo(userId).then((data) => {
+        this.setState(data);
+      });
+    }
+  }
+
   setEvent() {
-    const { userId: opponentId } = this.props;
+    const { userId: opponentId } = directMessageUserIdStore.getState();
+
     this.addEvent("keydown", "#dm-chat-input", (e) =>
       sendChatHandler(e, "single_message", opponentId)
     );
@@ -31,11 +46,12 @@ export default class DirectMessageContainer extends Component {
   }
 
   template() {
+    if (!this.state) return;
     return `
       <div class="border-0">
         <div class="d-flex justify-content-center align-items-center">
           <div id="dm-profile-image" data-dismiss="modal"></div>
-          <span class="text-muted fw-bold fs-4 mx-2">${this.props.nickname}</span>
+          <span class="text-muted fw-bold fs-4 mx-2">${this.state.nickname}</span>
         </div>
         <hr>
         <div id="dm-chat-message-container" class="overflow-auto" style="height: 25rem;">
@@ -47,12 +63,13 @@ export default class DirectMessageContainer extends Component {
   }
 
   mounted() {
+    if (!this.state) return;
     const profileImage = new ProfileImage(
       this.$target.querySelector("#dm-profile-image"),
       {
-        userId: this.props.userId,
+        userId: this.state.userId,
         imageSize: "image-xs",
-        imageSrc: this.props.profileImage,
+        imageSrc: this.state.profileImage,
         alt: "/asset/default.png",
       }
     );
@@ -69,7 +86,7 @@ export default class DirectMessageContainer extends Component {
 
   loadStoredChatMessages() {
     const { userId: myId } = myInfoStore.getState();
-    const { userId: opponentId } = this.props;
+    const { userId: opponentId } = this.state;
 
     const storedMessages =
       JSON.parse(sessionStorage.getItem("direct_message")) || [];
