@@ -15,7 +15,6 @@ export default class DirectMessageContainer extends Component {
     this.state = null;
     const { userId } = directMessageUserIdStore.getState();
 
-    console.log(userId);
     if (userId !== 0) {
       fetchUserInfo(userId).then((data) => {
         this.setState(data);

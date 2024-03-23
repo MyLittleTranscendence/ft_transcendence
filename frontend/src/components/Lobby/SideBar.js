@@ -33,7 +33,9 @@ export default class SideBar extends Component {
       this
     );
     const postbox = new PostBox(
-      this.$target.querySelector("#sidebar-postbox-content")
+      this.$target.querySelector("#sidebar-postbox-content"),
+      {},
+      this
     );
 
     myProfile.render();

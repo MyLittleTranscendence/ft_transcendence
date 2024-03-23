@@ -5,6 +5,7 @@ import Component from "./core/Component.js";
 import getRouter from "./core/router.js";
 import routes from "./core/routes.js";
 import { storeChatMessageToSessionStorage } from "./handlers/chat/chatHandler.js";
+import { initPostListFromSessionStorage } from "./utils/initStoreFromSessionStorage.js";
 
 export default class App extends Component {
   template() {
@@ -29,6 +30,7 @@ export default class App extends Component {
           fetchFriendList();
           fetchBlockList();
           storeChatMessageToSessionStorage();
+          initPostListFromSessionStorage();
           if (
             ["/start", "/sign-in", "/sign-up", "/mfa"].includes(currentPath)
           ) {
