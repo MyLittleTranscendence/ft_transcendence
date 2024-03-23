@@ -24,7 +24,6 @@ export default class DirectMessageModal extends Component {
   }
 
   mounted() {
-    console.log(directMessageUserIdStore.getState());
     const directMessageContainer = new DirectMessageContainer(
       this.$target.querySelector("#dm-container"),
       {},

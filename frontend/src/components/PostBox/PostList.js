@@ -1,6 +1,6 @@
 import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
-import NewIcon from "../UI/Icon/NewIcon.js";
+// import NewIcon from "../UI/Icon/NewIcon.js";
 import { newSingleMessageHandler } from "../../handlers/chat/chatHandler.js";
 import { postListStore } from "../../store/initialStates.js";
 import { directMessageUserIdStore } from "../../store/initialStates.js";
@@ -81,12 +81,12 @@ export default class PostList extends Component {
         );
         userProfile.render();
 
-        if (user.newMessage) {
-          const newIcon = new NewIcon(
-            this.$target.querySelector(`#new-icon-${user.userId}`)
-          );
-          newIcon.render();
-        }
+        // if (user.newMessage) {
+        //   const newIcon = new NewIcon(
+        //     this.$target.querySelector(`#new-icon-${user.userId}`)
+        //   );
+        //   newIcon.render();
+        // }
       });
     }
   }
