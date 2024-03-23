@@ -1,4 +1,8 @@
+import re
+
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
 from .models import User
 
 
@@ -13,6 +17,8 @@ class UserPatchSerializer(serializers.ModelSerializer):
         fields = ['id', 'email', 'nickname', 'mfa_enable']
 
     def update(self, instance, validated_data):
+        if not re.match(r'^\S{4,24}$', validated_data.get('nickname', '')):
+            raise ValidationError("Invalid nickname")
         if 'email' in validated_data and instance.email != validated_data.get('email'):
             instance.mfa_enable = False
             instance.save(update_fields=['mfa_enable'])
@@ -49,6 +55,15 @@ class UserPostSerializer(UserMyProfileSerializer):
         fields = UserMyProfileSerializer.Meta.fields + ['password']
 
     def create(self, validated_data):
+        if not re.match(r'^[A-Za-z0-9]{8,24}$', validated_data.get('username', '')):
+            raise ValidationError("Invalid username")
+
+        if not re.match(r'^\S{4,24}$', validated_data.get('nickname', '')):
+            raise ValidationError("Invalid nickname")
+
+        if not re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,20}$',
+                        validated_data.get('password', '')):
+            raise ValidationError("Invalid password")
         user = User.objects.create_user(**validated_data)
         return user
 
