@@ -1,7 +1,12 @@
 import Component from "../../core/Component.js";
 import DirectMessageContainer from "./DirectMessageContainer.js";
+import { directMessageUserIdStore } from "../../store/initialStates.js";
 
 export default class DirectMessageModal extends Component {
+  setup() {
+    directMessageUserIdStore.subscribe(this);
+  }
+
   template() {
     return `
       <div class="modal-dialog">
@@ -19,14 +24,11 @@ export default class DirectMessageModal extends Component {
   }
 
   mounted() {
-    const { profileImage, nickname, userId } = this.props;
+    console.log(directMessageUserIdStore.getState());
     const directMessageContainer = new DirectMessageContainer(
       this.$target.querySelector("#dm-container"),
-      {
-        profileImage,
-        nickname,
-        userId,
-      }
+      {},
+      this
     );
 
     directMessageContainer.render();

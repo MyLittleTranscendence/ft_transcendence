@@ -1,7 +1,12 @@
 import { chatSocket } from "../../socket/socket.js";
 import GlobalMessage from "../../components/Lobby/GlobalMessage.js";
 import DirectMessage from "../../components/Friend/DirectMessage.js";
-import { myInfoStore } from "../../store/initialStates.js";
+import {
+  myInfoStore,
+  postListStore,
+  // isNewSingleMessageStore,
+} from "../../store/initialStates.js";
+import fetchUserInfo from "../../api/user/fetchUserInfo.js";
 
 const appendGlobalMessageToUL = ($ul, message) => {
   const $li = document.createElement("li");
@@ -74,6 +79,30 @@ const receiveSingleChatMessageHandler = (
   removeObservers.push(removeObserver);
 };
 
+const newSingleMessageHandler = (removeObservers) => {
+  const { addSocketObserver } = chatSocket();
+  const { userId: myId } = myInfoStore.getState();
+  const userList = postListStore.getState().users;
+
+  const removeObserver = addSocketObserver("single_message", (message) => {
+    if (message.sender_id !== myId) {
+      if (
+        undefined === userList.find((user) => user.userId === message.sender_id)
+      ) {
+        fetchUserInfo(message.sender_id).then((data) => {
+          userList.push({
+            userId: data.userId,
+            nickname: data.nickname,
+            profileImage: data.profileImage,
+          });
+          postListStore.setState({ users: userList });
+        });
+      }
+    }
+  });
+  removeObservers.push(removeObserver);
+};
+
 const storeChatMessageToSessionStorage = () => {
   const { addSocketObserver } = chatSocket();
 
@@ -126,6 +155,7 @@ const storeChatMessageToSessionStorage = () => {
 export {
   receiveTotalChatMessageHandler,
   receiveSingleChatMessageHandler,
+  newSingleMessageHandler,
   storeChatMessageToSessionStorage,
   appendGlobalMessageToUL,
   appendDirectMessageToUL,

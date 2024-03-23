@@ -7,6 +7,7 @@ import {
 } from "../../store/initialStates.js";
 import blockUserHandler from "../../handlers/user/blockUserHandler.js";
 import { inviteUserHandler } from "../../handlers/game/inviteUserHandler.js";
+import { directMessageUserIdStore } from "../../store/initialStates.js";
 import OnlineIcon from "../UI/Icon/OnlineIcon.js";
 
 export default class FriendList extends Component {
@@ -21,6 +22,11 @@ export default class FriendList extends Component {
     });
     this.addEvent("click", "#block-trigger", (e) => {
       blockUserHandler(parseInt(e.target.getAttribute("data-user-id"), 10));
+    });
+    this.addEvent("click", ".dm-button", (e) => {
+      directMessageUserIdStore.setState({
+        userId: parseInt(e.target.getAttribute("data-user-id"), 10),
+      });
     });
 
     onlineCheckHandler(this.removeObservers);
@@ -67,9 +73,10 @@ export default class FriendList extends Component {
               <ul class="dropdown-menu">
                 <li>
                   <button
-                    class="dropdown-item"
+                    class="dropdown-item dm-button"
                     data-bs-toggle="modal"
-                    data-bs-target="#dm-modal-${friend.userId}"
+                    data-bs-target="#dm-modal"
+                    data-user-id="${friend.userId}"
                   >
                     DM
                   </button>

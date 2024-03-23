@@ -1,6 +1,7 @@
 import Component from "../../core/Component.js";
 import ProfileImage from "../UI/Profile/ProfileImage.js";
 import Friend from "../Friend/Friend.js";
+import PostBox from "../PostBox/PostBox.js";
 import { myInfoStore } from "../../store/initialStates.js";
 
 export default class SideBar extends Component {
@@ -12,6 +13,7 @@ export default class SideBar extends Component {
     return `
       <div id="sidebar-my-profile-image-holder"></div>
       <div id="sidebar-friend-content"></div>
+      <div id="sidebar-postbox-content"></div>
     `;
   }
 
@@ -30,8 +32,14 @@ export default class SideBar extends Component {
       {},
       this
     );
+    const postbox = new PostBox(
+      this.$target.querySelector("#sidebar-postbox-content"),
+      {},
+      this
+    );
 
     myProfile.render();
     friend.render();
+    postbox.render();
   }
 }

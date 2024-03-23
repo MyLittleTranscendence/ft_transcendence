@@ -3,27 +3,23 @@ import FriendIcon from "../UI/Icon/FriendIcon.js";
 import FriendListModal from "./FriendListModal.js";
 import BlockListModal from "./BlockListModal.js";
 import DirectMessageModal from "./DirectMessageModal.js";
-import { friendListStore } from "../../store/initialStates.js";
 
 export default class Friend extends Component {
-  setup() {
-    friendListStore.subscribe(this);
-  }
-
   template() {
-    const { friends } = friendListStore.getState();
-    let dmModals = "";
-    if (friends.length > 0)
-      dmModals = `${friends.map((friend) => `<div id="dm-modal-${friend.userId}" class="modal fade"></div>`).join("")}`;
     return `
+      <div id="dm-modal" class="modal fade"></div>
       <div id="friend-icon-holder"></div>
       <div id="friend-list-modal" class="modal fade"></div>
       <div id="block-list-modal" class="modal fade"></div>
-      ${dmModals}
     `;
   }
 
   mounted() {
+    const directMessageModal = new DirectMessageModal(
+      this.$target.querySelector("#dm-modal"),
+      {},
+      this
+    );
     const friendIcon = new FriendIcon(
       this.$target.querySelector("#friend-icon-holder")
     );
@@ -34,24 +30,9 @@ export default class Friend extends Component {
       this.$target.querySelector("#block-list-modal")
     );
 
+    directMessageModal.render();
     friendIcon.render();
     friendListModal.render();
     blockListModal.render();
-
-    const { friends } = friendListStore.getState();
-    if (friends.length > 0) {
-      friends.forEach((friend) => {
-        const directMessageModal = new DirectMessageModal(
-          this.$target.querySelector(`#dm-modal-${friend.userId}`),
-          {
-            profileImage: friend.profileImage,
-            nickname: friend.nickname,
-            userId: friend.userId,
-          }
-        );
-
-        directMessageModal.render();
-      });
-    }
   }
 }
