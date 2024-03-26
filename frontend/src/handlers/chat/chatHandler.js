@@ -83,21 +83,19 @@ const newSingleMessageHandler = (removeObservers) => {
   const { addSocketObserver } = chatSocket();
   const { userId: myId } = myInfoStore.getState();
   const userList = postListStore.getState().users;
-
   const removeObserver = addSocketObserver("single_message", (message) => {
-    if (message.sender_id !== myId) {
-      if (
-        undefined === userList.find((user) => user.userId === message.sender_id)
-      ) {
-        fetchUserInfo(message.sender_id).then((data) => {
-          userList.push({
-            userId: data.userId,
-            nickname: data.nickname,
-            profileImage: data.profileImage,
-          });
-          postListStore.setState({ users: userList });
+    const opponentId =
+      message.sender_id === myId ? message.receiver_id : message.sender_id;
+
+    if (userList.find((user) => user.userId === opponentId) === undefined) {
+      fetchUserInfo(opponentId).then((data) => {
+        userList.push({
+          userId: data.userId,
+          nickname: data.nickname,
+          profileImage: data.profileImage,
         });
-      }
+        postListStore.setState({ users: userList });
+      });
     }
   });
   removeObservers.push(removeObserver);
