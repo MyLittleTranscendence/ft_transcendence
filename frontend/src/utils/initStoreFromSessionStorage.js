@@ -8,9 +8,9 @@ const initPostListFromSessionStorage = () => {
     ...new Set(directMessages.map((message) => message.sender_id)),
   ];
   const users = uniqueSenderIds
-    .filter((senderId) => senderId !== myId)
+    .filter((senderId) => senderId != myId)
     .map((senderId) => {
-      const message = directMessages.find((msg) => msg.sender_id === senderId);
+      const message = directMessages.find((msg) => msg.sender_id == senderId);
       return {
         userId: message.sender_id,
         nickname: message.sender_nickname,

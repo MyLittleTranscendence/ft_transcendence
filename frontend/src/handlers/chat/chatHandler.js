@@ -81,13 +81,13 @@ const receiveSingleChatMessageHandler = (
 
 const newSingleMessageHandler = (removeObservers) => {
   const { addSocketObserver } = chatSocket();
-  const { userId: myId } = myInfoStore.getState();
-  const userList = postListStore.getState().users;
   const removeObserver = addSocketObserver("single_message", (message) => {
+    const { userId: myId } = myInfoStore.getState();
+    const userList = postListStore.getState().users;
     const opponentId =
-      message.sender_id === myId ? message.receiver_id : message.sender_id;
+      (message.sender_id == myId ? message.receiver_id : message.sender_id);
 
-    if (userList.find((user) => user.userId === opponentId) === undefined) {
+    if (userList.find((user) => user.userId == opponentId) === undefined) {
       fetchUserInfo(opponentId).then((data) => {
         userList.push({
           userId: data.userId,
